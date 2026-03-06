@@ -247,7 +247,7 @@ shi @human_present ur shi @e_stop_pressed khi sek mek @stop sek nek
 
 Propagation rules for `ur` over `undefined` are normative in NIP-005.
 
-[Full Auditor Demo Walkthrough](docs/auditor_demo.md)
+[Full Auditor Demo Walkthrough](examples/auditor_demo/README.md)
 
 <br />
 
@@ -312,7 +312,7 @@ Every decision produces a JSON certificate with hash commitments. Example (trunc
 }
 ```
 
-An auditor can replay the decision by freezing the context, re-evaluating the chain, and verifying that the hashes match. See a full example at [shipment_certificate_strict.json](examples/shipment_certificate_strict.json).
+An auditor can replay the decision by freezing the context, re-evaluating the chain, and verifying that the hashes match. See a full example at [shipment_certificate_strict.json](examples/auditor_demo/shipment_certificate_strict.json)
 
 Store certificates in an append-only log. Auditors verify them by recomputing `context_hashes.safe` and replaying the chain against `context_snapshot.safe`.
 
@@ -433,9 +433,9 @@ nips/                   # Specification documents (NIP-005, NIP-009, NIP-010, NI
 <br />
 
 ## Documentation
-- [NIP-011: Conformance](nips/NIP-011-CONFORMANCE.md) - normative vectors and manifest
-- [ROS 2 Integration Pattern](docs/ros2_integration.md) - integration guide
-- [Canonicalization Tests](tests/test_canonicalization.md) - order-invariant hashing coverage
+- [NIP-011: Conformance](tests/nip011/README.md) - normative vectors and manifest
+- [ROS 2 Integration Pattern](docs/ros2_integration_example.md) - integration guide
+- [Canonicalization Tests](tests/test_context_canonicalization.py) - order-invariant hashing coverage
 - [Error Codes](docs/error_codes.md) - strict-mode failure semantics
 - [Threat Model](THREAT_MODEL.md) - trust boundaries, adversary assumptions, and limits
 
