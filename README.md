@@ -2,6 +2,8 @@
 
 **A deterministic action-gating kernel for autonomous systems.**
 
+**Thesis:** As autonomy stacks increasingly rely on untrusted proposers such as LLMs, planners, and learned components, it becomes critical to separate proposal from permission. In safety-relevant environments, it is not enough to generate an action; the system must also be able to show why that action was admissible under grounded context and replay the same decision later under the same rule and commitments. Noe is a deterministic action-admission kernel designed for that purpose.
+
 Noe is an **enforcement boundary** between **untrusted proposers** such as humans, LLMs, and planners, and **critical actuators** such as robots and industrial automation. A proposer suggests an action. Noe evaluates a small deterministic decision chain against a frozen, grounded context (`C_safe`) and returns one of three outcomes:
 
 - **`list[action]`** → permitted; action proposal emitted
@@ -75,12 +77,11 @@ Given the same **chain + registry + semantics + `C_safe`**, any conforming runti
 - exactly one **normative interpretation** under the fixed grammar, registry, and semantics
 - exactly one evaluation outcome for normative fields
 
-Noe's determinism claim is intentionally narrow. It applies to the **admissible decision boundary** and to the fields covered by the canonical replay contract. It does **not** claim to make upstream sensing, grounding, or physical actuation deterministic.
+Noe’s determinism claim is intentionally narrow. It applies only to the normative replay boundary: given the same chain, registry, semantics, and admitted C_safe, a conforming runtime must produce the same normative outcome and the same canonical commitments for normative fields. It does not claim to make upstream sensing, grounding, or physical actuation deterministic.
 
 Noe enforces an **integer-only contract** for normative commitments. Every `*_hash` input is float-free. Richer upstream context may contain floats, but sensor and planner adapters must quantize before projection into `C_safe`.
 
-`π_safe` is the deterministic projection from richer upstream state into the minimal context the evaluator is allowed to consume. It is responsible for pruning stale inputs, enforcing admissibility rules, and exposing grounded predicate membership to the kernel. Debounce, hysteresis, and other perception-side smoothing belong upstream of `π_safe`.
-
+`π_safe` is the deterministic projection from richer upstream state into the minimal context the evaluator is allowed to consume. In practice, `π_safe` is the policy-controlled admission layer that converts richer upstream state into the minimal, canonical, admissible context consumed by Noe. It is responsible for pruning stale inputs, enforcing admissibility rules, and exposing grounded predicate membership to the kernel. Debounce, hysteresis, and other perception-side smoothing belong upstream of `π_safe`.
 <br />
 
 ## Epistemic admission
