@@ -6,18 +6,19 @@ Validation layer for the Noe Runtime (Validator V2).
 This module enforces safety invariants before a chain is evaluated
 by the pure logic engine in noe_parser.py.
 
-It inspects the **Rich Context** ($C_{rich}$) which may contain annotated evidence.
-It does NOT apply the Safe Projection ($\pi_{safe}$). That is the responsibility
-of the Runtime before evaluation.
+It separates concerns according to NIP-009 / NIP-015:
+1. `validate_context_strict` handles shape and staleness checks on the flat `C_merged`.
+2. `build_safe_context` handles the explicit canonical projection (π_safe), structurally filtering the layered inputs (`C_root`, `C_domain`, `C_local`) into the final `c_safe` execution boundary.
 
-It does NOT execute chains. It only inspects:
-- the chain text
-- the context snapshot C
-and decides whether it is safe to proceed.
+Key functions:
+  build_safe_context(C_root, C_domain, C_local, *, mode, now_ms)
+      → {c_safe, hashes: {root, domain, local, safe}, stale, error}
 
-This MUST only be called on chains that have passed the Verified Compiler.
+  validate_chain(chain_text, context_object, *, context_layers, ...)
+      → existing shape + {c_safe, h_safe} (non-breaking extension)
 
-If ok is False, the runtime MUST treat the chain as undefined and MUST NOT execute any actions.
+If ok is False, the runtime MUST return domain="error" with the appropriate
+error code and MUST NOT execute any actions.
 """
 
 from typing import Dict, Any, List, Optional
@@ -31,8 +32,6 @@ import os
 import sys
 
 
-from .context_projection import pi_safe, ProjectionConfig, extract_evidence_from_context
-import os
 
 # ==========================================
 # DEBUGGING INSTRUMENTATION
@@ -146,13 +145,30 @@ def _extract_literals(chain_text: str) -> List[str]:
     return list({m.group(0) for m in _LITERAL_RE.finditer(chain_text)})
 
 
-from noe.canonical import canonical_json, canonical_literal_key, canonicalize_chain
-from noe.tokenize import extract_ops as _tokenize_extract_ops
+from .canonical import canonical_json, canonical_literal_key, canonicalize_chain
+from .tokenize import extract_ops as _tokenize_extract_ops
+
+def _ast_depth(node: Any, d: int = 0) -> int:
+    if d > _MAX_CONTEXT_DEPTH: return d
+    
+    # Lazy import to avoid import errors if arpeggio isn't installed
+    try:
+        from arpeggio import PTNode
+        has_arpeggio = True
+    except ImportError:
+        has_arpeggio = False
+        
+    if has_arpeggio and isinstance(node, PTNode):
+        if not node: return d + 1
+        return max((_ast_depth(c, d+1) for c in node), default=d+1)
+        
+    if isinstance(node, (list, tuple)):
+        return max((_ast_depth(c, d+1) for c in node), default=d+1) if node else d+1
+    return d+1
 
 def validate_ast_safety(ast_node: Any) -> bool:
     """Validates AST safety (depth, banned nodes)."""
-    # For now, just depth check to prevent stack overflow
-    return _check_depth(ast_node)
+    return _ast_depth(ast_node) <= _MAX_CONTEXT_DEPTH
 
 def _canonical_json(obj: Any) -> bytes:
     """
@@ -218,6 +234,361 @@ def compute_context_hashes(C: Dict[str, Any]) -> Dict[str, str]:
     }
 
 
+# ============================================================
+# build_safe_context  (NIP-009 §π_safe  /  NIP-015 §eval)
+# ============================================================
+
+def _deep_merge_layers(C_root: dict, C_domain: dict, C_local: dict) -> dict:
+    """
+    Standard three-layer merge with local winning: root < domain < local.
+    Pure function; all inputs are dicts.
+    """
+    def _merge(base: dict, overlay: dict) -> dict:
+        if not isinstance(base, dict) or not isinstance(overlay, dict):
+            return copy.deepcopy(overlay)
+        result = base.copy()
+        for k, v in overlay.items():
+            if k in result and isinstance(result[k], dict) and isinstance(v, dict):
+                result[k] = _merge(result[k], v)
+            else:
+                result[k] = copy.deepcopy(v)
+        return result
+
+    merged = _merge(_merge({}, C_root), C_domain)
+    return _merge(merged, C_local)
+
+
+SafeBuildResult = Dict[str, Any]   # type alias for clarity
+
+
+def build_safe_context(
+    C_root: Dict[str, Any],
+    C_domain: Dict[str, Any],
+    C_local: Dict[str, Any],
+    *,
+    mode: str = "strict",
+    now_ms: int = 0,
+) -> SafeBuildResult:
+    """
+    Validator-owned C_safe construction  (NIP-009 §π_safe / NIP-015 §eval).
+
+    This is the **sole** place where π_safe is applied.  The runtime must
+    call this and consume the returned c_safe verbatim; it must never pass
+    raw c_merged or snap.structured directly to the evaluator.
+
+    Pipeline:
+      1. Deep-merge layers (root < domain < local) → C_rich
+      2. Compute H_root, H_domain, H_local from raw shards
+      3. Resolve now_ms (temporal.now from merged, or caller-supplied)
+      4. Extract annotated evidence from C_rich
+      5. Apply π_safe → bare safe literals
+      6. Enforce strict-mode staleness:  if *no* evidence survives for a
+         literal that was present in C_rich, and the raw entry is still
+         there (meaning it was suppressed by the staleness filter, not
+         simply absent), emit ERR_STALE_CONTEXT.
+      7. Reconstruct C_safe:  start from C_rich, overwrite literals +
+         modal.knowledge with the projected bare literals only.
+      8. Compute H_safe = SHA-256(canonical_json(C_safe))
+      9. Inject C_safe.meta = {h_root, h_domain, h_local, h_safe}
+
+    Returns:
+      {
+        "c_safe":  dict,            # projected context ready for evaluator
+        "hashes":  {               # all four NIP-009-required hashes
+           "root":   str,
+           "domain": str,
+           "local":  str,
+           "safe":   str,          # normative; use this for provenance
+        },
+        "stale":   bool,           # True if validator suppressed stale entries
+        "error":   None | {"code": str, "detail": str},
+      }
+    """
+    from .context_projection import (
+        extract_evidence_from_context,
+        pi_safe,
+        ProjectionConfig,
+    )
+
+    # 1. Merge layers
+    C_rich = _deep_merge_layers(
+        C_root if isinstance(C_root, dict) else {},
+        C_domain if isinstance(C_domain, dict) else {},
+        C_local if isinstance(C_local, dict) else {},
+    )
+
+    # 2. Raw shard hashes (always computed, exposed in provenance)
+    h_root_bytes   = hashlib.sha256(_canonical_json(C_root   if isinstance(C_root,   dict) else {})).digest()
+    h_domain_bytes = hashlib.sha256(_canonical_json(C_domain if isinstance(C_domain, dict) else {})).digest()
+    h_local_bytes  = hashlib.sha256(_canonical_json(C_local  if isinstance(C_local,  dict) else {})).digest()
+
+    h_root   = h_root_bytes.hex()
+    h_domain = h_domain_bytes.hex()
+    h_local  = h_local_bytes.hex()
+
+    # 3. Resolve now_ms
+    temporal = C_rich.get("temporal", {})
+    if isinstance(temporal, dict):
+        resolved_now = temporal.get("now", now_ms)
+        try:
+            resolved_now = int(resolved_now)
+        except (TypeError, ValueError):
+            resolved_now = now_ms
+    else:
+        resolved_now = now_ms
+
+    # 4. Extract annotated evidence (C_rich layer)
+    config = ProjectionConfig()
+    annotated_list = extract_evidence_from_context(C_rich)
+
+    # 5. Apply π_safe
+    safe_bare_literals, _ = pi_safe(
+        annotated_list,
+        config,
+        resolved_now,
+        with_explanations=True,
+        full_context=C_rich,
+    )
+    safe_pred_set = {bl.predicate for bl in safe_bare_literals}
+
+    # 6. Staleness check (strict mode)
+    #    Evidence was present but filtered → stale, not absent.
+    #    We compare predicates in raw evidence vs predicates that survived pi_safe.
+    stale = False
+    stale_detail = None
+    if annotated_list:  # only meaningful when there is evidence at all
+        raw_preds = {al.predicate for al in annotated_list}
+        suppressed = raw_preds - safe_pred_set
+        if suppressed and mode == "strict":
+            # pi_safe suppressed evidence that was present → staleness
+            stale = True
+            stale_detail = f"Stale evidence suppressed for: {', '.join(sorted(suppressed))}"
+
+    if stale and mode == "strict":
+        return {
+            "c_safe": None,
+            "hashes": {"root": h_root, "domain": h_domain, "local": h_local, "safe": ""},
+            "stale": True,
+            "error": {"code": "ERR_STALE_CONTEXT", "detail": stale_detail or "Stale evidence"},
+        }
+
+    # 7. Reconstruct C_safe
+    #    Start from an explicitly empty canonical schema allowlist.
+    #    Map only the 9 required NIP-009 Phase 1 canonical subtrees from C_rich.
+    c_safe = {}
+
+    # Helper to enforce pure scalar values (no nested dicts/lists)
+    def _is_scalar(v):
+        return isinstance(v, (bool, int, float, str))
+
+    # Unconditional Subtrees
+    # 1. literals (Start with existing bare literals, explicitly dropping non-scalar payloads)
+    literals = {}
+    if "literals" in C_rich and isinstance(C_rich["literals"], dict):
+        for k, v in C_rich["literals"].items():
+            if _is_scalar(v):
+                literals[k] = v
+    c_safe["literals"] = literals
+
+    # 2. temporal (Freeze exact fields, no deepcopy of arbitrary payloads)
+    if "temporal" in C_rich and isinstance(C_rich["temporal"], dict):
+        temporal = {}
+        rich_temp = C_rich["temporal"]
+        for allowed_key in ["now", "max_skew_ms", "now_us", "max_staleness_us"]:
+            if allowed_key in rich_temp:
+                val = rich_temp[allowed_key]
+                if isinstance(val, int) and not isinstance(val, bool):
+                    temporal[allowed_key] = val
+        if temporal:
+            c_safe["temporal"] = temporal
+    
+    # 3. modal (preserve knowledge, belief, certainty enforcing only bare scalars)
+    modal = {}
+    if "modal" in C_rich and isinstance(C_rich["modal"], dict):
+        rich_modal = C_rich["modal"]
+        for subtype in ["knowledge", "belief", "certainty"]:
+            if subtype in rich_modal and isinstance(rich_modal[subtype], dict):
+                clean_subj = {}
+                for k, v in rich_modal[subtype].items():
+                    if _is_scalar(v):
+                        clean_subj[k] = v
+                if clean_subj:
+                    modal[subtype] = clean_subj
+    c_safe["modal"] = modal
+    
+    # 4. axioms (preserve value_system)
+    axioms = {}
+    if "axioms" in C_rich and isinstance(C_rich["axioms"], dict):
+        rich_axioms = C_rich["axioms"]
+        if "value_system" in rich_axioms: axioms["value_system"] = copy.deepcopy(rich_axioms["value_system"])
+    c_safe["axioms"] = axioms
+
+    # Conditional Subtrees
+    # 5. spatial (preserve thresholds and orientation)
+    if "spatial" in C_rich and isinstance(C_rich["spatial"], dict):
+        spatial = {}
+        rich_spatial = C_rich["spatial"]
+        if "thresholds" in rich_spatial: spatial["thresholds"] = copy.deepcopy(rich_spatial["thresholds"])
+        if "thresholds_mm" in rich_spatial: spatial["thresholds_mm"] = copy.deepcopy(rich_spatial["thresholds_mm"])
+        if "orientation" in rich_spatial: spatial["orientation"] = copy.deepcopy(rich_spatial["orientation"])
+        c_safe["spatial"] = spatial
+    
+    # 6. entities (safe copy of grounding object dict)
+    #    Entities must be structurally frozen to known physical/spatial properties.
+    #    Any arbitrary metadata payload (`confidence`, `sensor_fusion`, `driver_notes`) 
+    #    is violently stripped by explicitly reconstructing ONLY allowed canonical sub-keys.
+    if "entities" in C_rich and isinstance(C_rich["entities"], dict):
+        entities = {}
+        for ent_id, ent_val in C_rich["entities"].items():
+            if isinstance(ent_val, dict):
+                clean_ent = {}
+                
+                # Helper to enforce bounded spatial vectors (dict of numeric values)
+                def _safe_vector(v):
+                    if not isinstance(v, dict): return None
+                    clean_vec = {}
+                    for axis, val in v.items():
+                        if isinstance(axis, str) and isinstance(val, (int, float)) and not isinstance(val, bool):
+                            clean_vec[axis] = val
+                    return clean_vec if clean_vec else None
+                
+                if "position" in ent_val:
+                    pos = _safe_vector(ent_val["position"])
+                    if pos: clean_ent["position"] = pos
+                
+                if "velocity" in ent_val:
+                    vel = _safe_vector(ent_val["velocity"])
+                    if vel: clean_ent["velocity"] = vel
+                    
+                if "orientation" in ent_val:
+                    ori = _safe_vector(ent_val["orientation"])
+                    if ori: clean_ent["orientation"] = ori
+                    
+                if "bounds" in ent_val:
+                    bnd = _safe_vector(ent_val["bounds"])
+                    if bnd: clean_ent["bounds"] = bnd
+
+                if clean_ent:
+                    entities[ent_id] = clean_ent
+                    
+        if entities:
+            c_safe["entities"] = entities
+
+    # 7. rel
+    # Requires strict adherence to: rel[op_name_str][subject_id_str][target_id_str] = bool
+    # Legacy 'relations' alias is merged into 'rel' if present.
+    rel_raw = C_rich.get("rel", {})
+    if not rel_raw and "relations" in C_rich:
+        rel_raw = C_rich["relations"]
+        
+    if isinstance(rel_raw, dict) and rel_raw:
+        safe_rel = {}
+        for op_name, subj_map in rel_raw.items():
+            if isinstance(op_name, str) and isinstance(subj_map, dict):
+                safe_subj_map = {}
+                for subj_id, target_map in subj_map.items():
+                    if isinstance(subj_id, str) and isinstance(target_map, dict):
+                        safe_target_map = {}
+                        for target_id, rel_bool in target_map.items():
+                            if isinstance(target_id, str) and isinstance(rel_bool, bool):
+                                safe_target_map[target_id] = rel_bool
+                        if safe_target_map:
+                            safe_subj_map[subj_id] = safe_target_map
+                if safe_subj_map:
+                    safe_rel[op_name] = safe_subj_map
+        if safe_rel:
+            c_safe["rel"] = safe_rel
+
+    # 8. audit
+    if "audit" in C_rich and isinstance(C_rich["audit"], dict):
+        c_safe["audit"] = {} # Only empty audit structure is passed directly, no raw payload
+
+    # 9. delivery
+    if "delivery" in C_rich and isinstance(C_rich["delivery"], dict):
+        delivery = {}
+        rich_delivery = C_rich["delivery"]
+        
+        # 9a. restrict delivery.status to simple string maps
+        if "status" in rich_delivery and isinstance(rich_delivery["status"], dict):
+            status = {}
+            for k, v in rich_delivery["status"].items():
+                if isinstance(k, str) and isinstance(v, str):
+                    status[k] = v
+            delivery["status"] = status
+            
+        # 9b. restrict delivery.items to exact known fields
+        if "items" in rich_delivery and isinstance(rich_delivery["items"], dict):
+            items = {}
+            for k, v in rich_delivery["items"].items():
+                if isinstance(v, dict):
+                    clean_item = {}
+                    is_valid = True
+                    if "status" in v and isinstance(v["status"], str):
+                        clean_item["status"] = v["status"]
+                    if "verified" in v and isinstance(v["verified"], bool):
+                        clean_item["verified"] = v["verified"]
+                    # Timestamps must be strict int, not bool
+                    if "observed_at_ms" in v:
+                        t_val = v["observed_at_ms"]
+                        if isinstance(t_val, int) and not isinstance(t_val, bool):
+                            clean_item["observed_at_ms"] = t_val
+                        else:
+                            is_valid = False
+                    if "expires_at_ms" in v:
+                        t_val = v["expires_at_ms"]
+                        if isinstance(t_val, int) and not isinstance(t_val, bool):
+                            clean_item["expires_at_ms"] = t_val
+                        else:
+                            is_valid = False
+                            
+                    if clean_item and is_valid:
+                        items[k] = clean_item
+            delivery["items"] = items
+            
+        if delivery:
+            c_safe["delivery"] = delivery
+
+    # Apply pi_safe projection literal overriding
+    projected_literals: Dict[str, Any] = {}
+    projected_knowledge: Dict[str, Any] = {}
+    for bl in safe_bare_literals:
+        projected_literals[bl.predicate] = bl.value
+        projected_knowledge[bl.predicate] = bl.value
+
+    # Merge projected literals on top of existing literals (pi_safe may widen)
+    existing_literals = c_safe.get("literals", {})
+    if not isinstance(existing_literals, dict):
+        existing_literals = {}
+    existing_literals.update(projected_literals)
+    c_safe["literals"] = existing_literals
+
+    knowledge = c_safe["modal"].get("knowledge", {})
+    if not isinstance(knowledge, dict):
+        knowledge = {}
+    knowledge.update(projected_knowledge)
+    c_safe["modal"]["knowledge"] = knowledge
+
+    # 8. H_safe = SHA-256(canonical_json(C_safe))
+    #    NOTE: We compute this BEFORE injecting meta so meta itself is not
+    #    included in the hash (meta is informational, not part of eval input).
+    h_safe_bytes = hashlib.sha256(_canonical_json(c_safe)).digest()
+    h_safe = h_safe_bytes.hex()
+
+    # 9. Inject meta (informational; not included in H_safe)
+    c_safe["meta"] = {
+        "h_root":   h_root,
+        "h_domain": h_domain,
+        "h_local":  h_local,
+        "h_safe":   h_safe,
+    }
+
+    return {
+        "c_safe":  c_safe,
+        "hashes":  {"root": h_root, "domain": h_domain, "local": h_local, "safe": h_safe},
+        "stale":   stale,
+        "error":   None,
+    }
+
 from .operator_lexicon import (
     ACTION_OPS,
     LOGIC_OPS,
@@ -259,6 +630,9 @@ def compute_stale_flag(C_total):
     now = temp.get("now")
     skew = temp.get("max_skew_ms")
     ts = temp.get("timestamp") # Populated by merge logic in strict mode
+    
+    if ts is None:
+        ts = C_total.get("timestamp")
     
     if now is None or skew is None or ts is None:
         # Cannot determine staleness if fields missing.
@@ -313,37 +687,42 @@ def _validate_delivery_strict(C_total: Mapping) -> Optional[Dict[str, str]]:
     
     return None
 
-def validate_context_strict(C_total: dict, tokens: List[str] = None) -> (Optional[str], bool):
+def validate_context_strict(C_total: dict, tokens: List[str] = None) -> tuple[bool, Optional[str], bool]:
     """
-    Validates the context against strict NIP-009 requirements using Shape-First logic.
+    Validates the flat, merged context (C_merged) against strict NIP-009 shape requirements.
     
-    Returns (error_code, is_stale).
-    If valid, returns (None, False).
+    NOTE: This function handles shape and staleness validation only.
+    It does NOT perform π_safe projection. NIP-009 separation dictates that
+    the caller must subsequently pass the unmerged layers to build_safe_context()
+    for structural elimination of adapters, probabilities, and evidence.
+    
+    Returns (is_valid, error_code, is_stale).
+    If valid, returns (True, None, is_stale).
     """
     if not isinstance(C_total, Mapping):
-        return "ERR_BAD_CONTEXT", False
+        return False, "ERR_BAD_CONTEXT", False
 
     # 1. Check Required Top-Level Shards (Shape Only)
     # Literals
     if "literals" not in C_total:
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
     if not isinstance(C_total["literals"], Mapping):
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
 
     # Spatial (NOT required top-level - only validated when spatial operators used)
     # This was causing ERR_SPATIAL_UNGROUNDABLE even for pure epistemic chains
     # Spatial validation moved to operator-specific checks (nel, tel, xel, etc.)
     # if "spatial" not in C_total:
-    #      return "ERR_CONTEXT_INCOMPLETE", False
+    #      return False, "ERR_CONTEXT_INCOMPLETE", False
     # if not isinstance(C_total["spatial"], Mapping):
-    #      return "ERR_CONTEXT_INCOMPLETE", False
+    #      return False, "ERR_CONTEXT_INCOMPLETE", False
 
 
     # Temporal
     if "temporal" not in C_total:
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
     if not isinstance(C_total["temporal"], Mapping):
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
     
     # Strict: Temporal must contain time fields
     # Accept EITHER legacy (now, max_skew_ms) OR v1.0 int64 (now_us, max_staleness_us)
@@ -352,23 +731,23 @@ def validate_context_strict(C_total: dict, tokens: List[str] = None) -> (Optiona
     has_v1 = temp.get("now_us") is not None
     
     if not (has_legacy or has_v1):
-        return "ERR_CONTEXT_INCOMPLETE", False
+        return False, "ERR_CONTEXT_INCOMPLETE", False
          
     # Modal
     if "modal" not in C_total:
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
     if not isinstance(C_total["modal"], Mapping):
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
          
     # Axioms
     if "axioms" not in C_total:
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
     if not isinstance(C_total["axioms"], Mapping):
-         return "ERR_CONTEXT_INCOMPLETE", False
+         return False, "ERR_CONTEXT_INCOMPLETE", False
 
     stale, _ = compute_stale_flag(C_total)
     
-    return None, stale
+    return True, None, stale
 
 
 # ==========================================
@@ -376,31 +755,35 @@ def validate_context_strict(C_total: dict, tokens: List[str] = None) -> (Optiona
 # ==========================================
 # Ensures stable error reporting regardless of check order
 ERROR_PRIORITY = {
-    # Hard malformed / safety
+    # 0. Hard malformed / safety
     "ERR_BAD_CONTEXT": 0,
     "ERR_CONTEXT_TOO_DEEP": 0,
     "ERR_CONTEXT_UNSERIALIZABLE": 0,
 
-    # Strict shape / staleness / completeness
-    "ERR_CONTEXT_STALE": 1,
+    # 1. Completeness (Base structure is missing mandatory subsystems)
     "ERR_CONTEXT_INCOMPLETE": 1,
 
-    # Action safety boundary
-    "ERR_ACTION_MISUSE": 2,
-    "ERR_ACTION_CYCLE": 2,
+    # 2. Staleness (Structure is completely valid, but data is too old)
+    "ERR_CONTEXT_STALE": 2,
 
-    # Subsystem grounding
-    "ERR_DELIVERY_MISMATCH": 3,
-    "ERR_EPISTEMIC_MISMATCH": 3,
-    "ERR_SPATIAL_UNGROUNDABLE": 3,
-    "ERR_DEMONSTRATIVE_UNGROUNDED": 3,
+    # 3. Action safety boundary
+    "ERR_ACTION_MISUSE": 3,
+    "ERR_ACTION_CYCLE": 3,
 
-    # Dependency resolution
-    "ERR_LITERAL_MISSING": 4,
-    "ERR_INVALID_LITERAL": 4,
+    # 4. Subsystem grounding
+    "ERR_DELIVERY_MISMATCH": 4,
+    "ERR_EPISTEMIC_MISMATCH": 4,
+    "ERR_SPATIAL_UNGROUNDABLE": 4,
+    "ERR_DEMONSTRATIVE_UNGROUNDED": 4,
+
+    # 5. Dependency resolution
+    "ERR_LITERAL_MISSING": 5,
+    "ERR_INVALID_LITERAL": 5,
     
-    # Parse failures
-    "ERR_PARSE_FAILED": 5,
+    # 6. Fallback
+    # Parse failures should technically fast-fail, but if they reach sorting, 
+    # they represent a fundamental inability to read the payload, so they take absolute 0.
+    "ERR_PARSE_FAILED": 0,
 }
 
 def _sort_errors(errors: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -422,6 +805,7 @@ def validate_chain(
     mode: str = "strict",
     context_hashes: Optional[Dict[str, str]] = None,
     explain: bool = False,
+    context_layers: Optional[Dict[str, Any]] = None,
 ) -> ValidationResult:
     # 0. Canonicalize
     chain_text = canonicalize_chain(chain_text)
@@ -430,19 +814,71 @@ def validate_chain(
     if _DEBUG_ENABLED: print(f"DEBUG: validate_chain called. Length={len(chain_text)}. Text='{chain_text}'")
     """
     Validate a Noe chain against a given context C before interpretation.
-    
+
+    Args:
+        context_layers: Optional {"root": dict, "domain": dict, "local": dict}.
+            When provided, build_safe_context is called to produce c_safe and
+            h_safe (validator-owned projection, NIP-009/015).  The flat
+            context_object is still used for all flag/error checks so that
+            legacy callers remain compatible.
+
     Returns a ValidationResult dict with:
     - ok (bool): True if validation passed, False if critical errors found
-    - context_hashes: Provenance hashes (empty if ok=False)
+    - context_hashes: Raw shard hashes (root, domain, local, total)
+    - c_safe (dict | None): Projected safe context.  None when ok=False or no layers.
+    - h_safe (str | None): H_safe = SHA-256(canonical_json(c_safe)), normative
+      hash for provenance.  None when ok=False or no layers.
     - errors: List of error dicts with code/detail
-    
+
     Runtime Contract (v1.0 Strict):
     - If ok=False: Runtime MUST return domain="error" with validator error code.
       Never evaluate the chain. Never return undefined for validation failures.
-    - If ok=True: Runtime MAY evaluate. Semantic uncertainty returns domain="undefined".
+    - If ok=True: Runtime MAY evaluate.  Evaluator MUST consume c_safe, not raw context.
     """
     global ACTION_OPS, LOGIC_OPS, COMP_OPS
-    
+
+    # ---- pre-run: build C_safe from structured layers if provided ----
+    _c_safe_result: Optional[Dict[str, Any]] = None
+    _c_safe: Optional[Dict[str, Any]] = None
+    _h_safe: Optional[str] = None
+
+    if context_layers is not None:
+        _C_root   = context_layers.get("root")   or {}
+        _C_domain = context_layers.get("domain") or {}
+        _C_local  = context_layers.get("local")  or {}
+        # Determine now_ms from temporal.now in the context_object (merged flat)
+        _now_ms = 0
+        if isinstance(context_object, dict):
+            _temp = context_object.get("temporal", {})
+            if isinstance(_temp, dict):
+                try:
+                    _now_ms = int(_temp.get("now", 0))
+                except (TypeError, ValueError):
+                    _now_ms = 0
+        _c_safe_result = build_safe_context(
+            _C_root, _C_domain, _C_local,
+            mode=mode,
+            now_ms=_now_ms,
+        )
+        if _c_safe_result.get("error"):
+            # Staleness or other safe-build failure → treat as validation error
+            _err = _c_safe_result["error"]
+            return {
+                "ok": False,
+                "context_hashes": _c_safe_result.get("hashes", {}),
+                "context_error": _err["code"],
+                "flags": {"context_stale": True},
+                "reasons": [_err["detail"]],
+                "errors": [_err],
+                "warnings": [],
+                "provenance": None,
+                "explained_literals": [],
+                "c_safe": None,
+                "h_safe": None,
+            }
+        _c_safe = _c_safe_result["c_safe"]
+        _h_safe = _c_safe_result["hashes"]["safe"]
+
     # 0. Recursion Guard (Defense against Allocation Bomb/Crash)
     if not _check_depth(context_object):
         return {
@@ -674,7 +1110,7 @@ def validate_chain(
     
     # 3. Shape Validation & Staleness
     if mode == "strict":
-        shape_err, is_stale = validate_context_strict(C_total)
+        is_valid, shape_err, is_stale = validate_context_strict(C_total)
         
         if is_stale:
             flags["context_stale"] = True
@@ -756,7 +1192,7 @@ def validate_chain(
     # LEGACY / DETAILED CHECKS (Token Based) - Kept for complex Logic/Actions
     # -------------------------------------------------------------------------
     # Use robust extraction instead of naive split
-    tokens = extract_ops(chain_text)
+    tokens = ops
 
     # --- Action-class static rejection (strict only) ---
     if mode == "strict":
@@ -792,18 +1228,21 @@ def validate_chain(
                     if any(i < k_idx for i in action_positions):
                         flags["action_misuse"] = True
                         reasons.append("Action operators cannot appear in the condition of khi")
+                        errors.append({"code": "ERR_ACTION_MISUSE", "detail": "Action operators cannot appear in the condition of khi"})
                     else:
                         clause_nonempty = [t for t in clause_tokens if t not in {"nek"}]
                         valid_starts = ACTION_OPS | {"sek"}
                         if not clause_nonempty or clause_nonempty[0] not in valid_starts:
                             flags["action_misuse"] = True
                             reasons.append("Binary khi requires an action clause")
+                            errors.append({"code": "ERR_ACTION_MISUSE", "detail": "Binary khi requires an action clause"})
                         else:
                             first_action_idx = k_idx + 1 + clause_tokens.index(clause_nonempty[0])
                             for i, t in enumerate(tokens[first_action_idx + 1 :], start=first_action_idx + 1):
                                 if (t in LOGIC_OPS and t not in {"khi", "sek", "nek"}) or t in COMP_OPS:
                                     flags["action_misuse"] = True
                                     reasons.append("Action clause under khi cannot contain logical/comparison operators")
+                                    errors.append({"code": "ERR_ACTION_MISUSE", "detail": "Action clause under khi cannot contain logical/comparison operators"})
                                     break
                 
                 elif tokens[0] == "khi" and tokens.count("sek") >= 2:
@@ -814,6 +1253,7 @@ def validate_chain(
                 else:
                     flags["action_misuse"] = True
                     reasons.append("Action operators cannot be mixed with logic without guard")
+                    errors.append({"code": "ERR_ACTION_MISUSE", "detail": "Action operators cannot be mixed with logic without guard"})
 
     
     if context_hashes is not None and "total" in context_hashes:
@@ -839,55 +1279,44 @@ def validate_chain(
     # FINAL ERROR RESOLUTION (Priority)
     # -------------------------------------------------------------------------
     
-    # Consolidate flags into main_error
+    # The determinism contract (Phase 3D-3) requires that if multiple violations 
+    # exist, the top-level `context_error` reported to the runtime must strictly 
+    # obey `ERROR_PRIORITY`, effectively masking lower-order logic panics with 
+    # higher-order architectural crashes (like Stale or Incomplete).
     context_error = None
-    
-    if flags["invalid_literal"]:
-        context_error = "ERR_INVALID_LITERAL"
-    elif flags["action_misuse"]:
-         context_error = "ERR_ACTION_MISUSE"
-    elif flags["literal_mismatch"]:
-        context_error = "ERR_LITERAL_MISSING"
-    elif flags["demonstrative_ungrounded"]:
-        context_error = "ERR_DEMONSTRATIVE_UNGROUNDED"
-    elif flags["spatial_mismatch"]:
-         context_error = "ERR_SPATIAL_UNGROUNDABLE"
-    elif flags["epistemic_mismatch"]:
-         context_error = "ERR_EPISTEMIC_MISMATCH"
-    elif flags["audit_mismatch"]:
-         context_error = "ERR_CONTEXT_INCOMPLETE"
-    elif flags["schema_invalid"]:
-         context_error = "ERR_CONTEXT_INCOMPLETE"
-    elif flags["context_stale"]:
-        context_error = "ERR_CONTEXT_STALE"
-
-
-    # Strict mode: Any critical flag (excluding warnings or stale if not prioritized) is fatal.
-    # But priority resolution handles choosing the ONE code.
-    ok = (context_error is None) and (len(errors) == 0)  
+    ok = len(errors) == 0  
 
     if not ok:
-        # Sort errors by priority for determinism (Constraint 2)
+        # Sort errors strictly by predefined priority map
         errors = _sort_errors(errors)
         
-        # Derive top error code from sorted list if consistent
-        # This overrides the flag-based derivation above in case of conflict,
-        # ensuring the reported code matches the first error object in the list.
+        # Derive top error code from perfectly sorted list
         if errors and errors[0].get("code"):
             context_error = errors[0]["code"]
 
     
     provenance = {}
     explanations = []
-    
+
+    # Attach c_safe / h_safe - only when ok and structured layers were provided
+    if ok and _c_safe is not None:
+        c_safe_out = _c_safe
+        h_safe_out = _h_safe
+    else:
+        c_safe_out = None
+        h_safe_out = None
+
     return {
         "ok": ok,
-        "context_hashes": context_hashes or {},
-        "context_error": context_error,  
+        "context_hashes": hashes,
+        "context_error": context_error,
         "flags": flags,
         "reasons": reasons,
         "errors": errors,
         "warnings": warnings,
         "provenance": provenance,
         "explained_literals": explanations,
+        # NIP-009/015 additions (None when ok=False or no context_layers)
+        "c_safe": c_safe_out,
+        "h_safe": h_safe_out,
     }
