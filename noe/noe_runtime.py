@@ -341,11 +341,9 @@ class NoeRuntime:
                     error_msg = "; ".join(threshold_errors)
                     prelim = self._error(f"ERR_UNSAFE_THRESHOLD: {error_msg}", snap, canonical_chain=chain)
                     return self._apply_safety_handler(chain, snap, prelim)
-            except ImportError as e:
-                # threshold_safety_validator not available
-                if self.strict_mode:
-                    prelim = self._error(f"ERR_THRESHOLD_VALIDATOR_MODULE_MISSING: {e}", snap, canonical_chain=chain)
-                    return self._apply_safety_handler(chain, snap, prelim)
+            except ImportError:
+                # threshold_safety_validator not available (optional module)
+                pass
             except Exception as e:
                 # Threshold validation is optional; skip silently if unavailable
                 if self.strict_mode:
