@@ -545,7 +545,6 @@ def main():
 
     result_real = evaluate_chain(c_safe_real)
     # Debug: print result to diagnose
-    print(f"DEBUG Result: {json.dumps(result_real, default=str)}")
     has_action_real = result_contains_action(result_real)
 
     if has_action_real:
