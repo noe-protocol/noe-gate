@@ -108,7 +108,7 @@ BASE_CONTEXT = {
             "@safe_zone": True,
             "@hidden_danger": False,  # In literals, but NOT known in modal.knowledge
             "@human_clear": True,     # For guarded action test
-            "@move_to_zone1": {"id": "zone1_target", "type": "location"}
+            "@move_to_zone1": "zone1_target"
         },
         "entities": {
             "robot": {"type": "agent"},
@@ -220,6 +220,7 @@ def run_robot_loop():
             cm = ContextManager(
                 root=ctx_data.get("root", {}),
                 domain=ctx_data.get("domain", {}),
+                local={},
                 staleness_ms=int(ctx_data.get("root", {}).get("temporal", {}).get("max_skew_ms", MAX_SKEW_MS)),
                 # time_fn is defined as the current monotonic tick time simulating the validator's real wall clock
                 # ContextManager converts this internally via int(time_fn() * 1000)
@@ -233,9 +234,9 @@ def run_robot_loop():
             # Explicitly validate the snapshot for missing shards (like missing spatial)
             from noe.noe_validator import validate_context_strict
             snap = cm.snapshot()
-            if snap.is_stale:
+            if snap.local_layer_age_stale:
                 raise ContextStaleError("Context skewed beyond max_skew_ms")
-            is_valid, err_msg = validate_context_strict(snap.structured)
+            is_valid, err_msg, is_stale = validate_context_strict(snap.c_merged)
             if not is_valid:
                 raise BadContextError(err_msg)
             
