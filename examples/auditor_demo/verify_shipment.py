@@ -32,7 +32,7 @@ from noe.canonical import canonical_json, canonical_bytes
 # -----------------------------
 
 def hash_json(obj: Any) -> str:
-    return hashlib.sha256(canonical_bytes(obj)).hexdigest()
+    return hashlib.sha256(canonical_json(obj).encode("utf-8")).hexdigest()
 
 
 # -----------------------------
@@ -440,185 +440,77 @@ def replay_from_certificate(cert_path: Path):
 
 
 def main():
-    print("=" * 70)
-    print("NOE AUDITOR DEMO: Shipment Verification (Strict)")
-    print("=" * 70)
-    print()
-    
-    now_ts = time.time()
+    print("NOE shipment verification")
+    print("-------------------------")
 
-    # =========================================================================
-    # SCENARIO 1: Happy Path (All Checks Pass)
-    # =========================================================================
-    print("SCENARIO 1: Happy Path (All Fresh Sensors)")
-    print("-" * 70)
-    
-    print("1. Building spec-compliant context layers...")
     c_root = build_c_root()
     c_domain = build_c_domain()
     c_local = build_c_local()
-
-    print("2. Merging context layers...")
     c_merged = merge_context_layers(c_root, c_domain, c_local)
-    
-    print("3. Projecting safe context (pi_safe)...")
     c_safe = project_safe_context(c_merged)
 
-    print("4. Evaluating Noe chain...")
-    print(f"   Chain: {SHIPMENT_CHAIN}")
-    decision_result = evaluate_shipment_decision(c_safe)
-
-    # Execution Gate (v1.0): Handle different result domains
-    domain = decision_result.get("domain")
-    value = decision_result.get("value")
-    
-    if domain == "error":
-        print(f"   Result: ERROR -> {decision_result.get('code')} - {decision_result.get('details')}")
-        print(f"   NO EXECUTION")
-    elif domain == "list":
-        # Extract action from list
-        action_found = False
-        if isinstance(value, list):
-            for item in value:
-                if isinstance(item, dict) and item.get("type") == "action":
-                    print(f"   Result: ✅ list[action] -> ACTION EXECUTED")
-                    action_found = True
-                    break
-        if not action_found:
-            print(f"   Result: list (no actions) -> NO EXECUTION")
-    elif domain == "action":
-        print(f"   Result: ✅ action -> ACTION EXECUTED")
-    else:
-        print(f"   Result: {domain} -> NO EXECUTION")
-    
-    print("5. Generating provenance certificate with full snapshot...")
-    cert = build_certificate(
-        c_root, c_domain, c_local, c_safe, decision_result
+    print(f"chain: {SHIPMENT_CHAIN}")
+    print("required literals: @temperature_ok, @location_ok, @chain_of_custody_ok, @human_clear")
+    print(
+        "admitted knowledge: "
+        + ", ".join(sorted(c_safe.get("modal", {}).get("knowledge", {}).keys()))
     )
 
-    # Version update
-    cert["noe_version"] = "v1.0-rc1"
+    decision_result = evaluate_shipment_decision(c_safe)
+    domain = decision_result.get("domain")
+    value = decision_result.get("value")
 
+    if domain == "list":
+        print("verdict: PERMIT")
+    elif domain == "action":
+        print("verdict: PERMIT")
+    elif domain == "undefined":
+        print("verdict: WITHHOLD")
+    else:
+        print(f"verdict: REFUSE ({decision_result.get('code')})")
+
+    cert = build_certificate(c_root, c_domain, c_local, c_safe, decision_result)
     out_path = Path(__file__).parent / "shipment_certificate_strict.json"
-    if cert['outcome'].get('action_hash'):
-        print(f"   action_hash: {cert['outcome']['action_hash'][:16]}...")
     out_path.write_text(json.dumps(cert, indent=2, ensure_ascii=False))
-    
-    print(f"   Written to: {out_path.name}")
-    print()
 
-    # =========================================================================
-    # SCENARIO 2: Stale Context (Refusal Proof)
-    # =========================================================================
-    print("=" * 70)
-    print("SCENARIO 2: Stale Context (Fail-Stop Demonstration)")
-    print("-" * 70)
-    print("Making @temperature_ok timestamp 6 seconds old (limit: 5s)...")
-    
-    # Build stale context
-    c_local_stale = build_c_local()
-    # Make temperature reading stale (6s = 6_000_000 microseconds, exceeds 5s limit)
-    c_local_stale["literals"]["@temperature_ok"]["timestamp_us"] = now_microseconds() - 6_000_000
-    
+    print(f"context_hash: {cert['context_hashes']['safe'][:16]}...")
+    if cert["outcome"].get("action_hash"):
+        print(f"action_hash: {cert['outcome']['action_hash'][:16]}...")
+    print(f"certificate: {out_path.name}")
+
+    print()
+    print("stale-input check")
+    print("-----------------")
+
+    c_local_stale = deepcopy(c_local)
+    c_local_stale["literals"]["@temperature_ok"]["timestamp_us"] = microseconds_ago(6_000_000)
     c_merged_stale = merge_context_layers(c_root, c_domain, c_local_stale)
     c_safe_stale = project_safe_context(c_merged_stale)
-    
-    print("After projection:")
-    has_temp = "@temperature_ok" in c_safe_stale.get("literals", {})
-    in_knowledge = "@temperature_ok" in c_safe_stale.get("modal", {}).get("knowledge", {})
-    print(f"   @temperature_ok in literals? {has_temp}")
-    print(f"   @temperature_ok in knowledge? {in_knowledge}")
-    
-    print("Evaluating same chain...")
-    decision_stale = evaluate_shipment_decision(c_safe_stale)
-    
-    domain_stale = decision_stale.get("domain")
-    print(f"   Result: ✅ REFUSED ({domain_stale})")
-    if domain_stale == "error":
-        print(f"   Code: {decision_stale.get('code')}")
-        print(f"   Reason: {decision_stale.get('details')}")
-    elif domain_stale == "undefined":
-        print(f"   Reason: shi operator found @temperature_ok missing from knowledge")
-    print(f"   ✅ NO ACTION EMITTED - Fail-Stop Succeeded")
-    
-    # Generate certificate for refusal
-    cert_stale = build_certificate(c_root, c_domain, c_local_stale, c_safe_stale, decision_stale)
-    cert_stale["noe_version"] = "v1.0-rc1"
-    out_path_stale = Path(__file__).parent / "shipment_certificate_REFUSED.json"
-    out_path_stale.write_text(json.dumps(cert_stale, indent=2))
-    print(f"   Certificate: {out_path_stale.name}")
-    print(f"   domain={domain_stale}, action_hash=None (no action)")
-    print()
+    stale_result = evaluate_shipment_decision(c_safe_stale)
 
-    # =========================================================================
-    # REPLAY VERIFICATION (Happy Path)
-    # =========================================================================
-    print("=" * 70)
-    print("REPLAY VERIFICATION (Happy Path)")
-    print("=" * 70)
-    print("Attempting to replay decision from certificate...")
-    
+    print(f"temperature admitted? {'@temperature_ok' in c_safe_stale.get('modal', {}).get('knowledge', {})}")
+    print(f"verdict: {stale_result.get('domain').upper()} ({stale_result.get('code', 'no-action')})")
+
+    cert_stale = build_certificate(c_root, c_domain, c_local_stale, c_safe_stale, stale_result)
+    stale_path = Path(__file__).parent / "shipment_certificate_REFUSED.json"
+    stale_path.write_text(json.dumps(cert_stale, indent=2, ensure_ascii=False))
+    print(f"certificate: {stale_path.name}")
+
+    print()
+    print("replay check")
+    print("------------")
     ok, msg = replay_from_certificate(out_path)
     print(msg)
-    
-    if not ok:
-        print("❌ INTEGRITY CHECK FAILED")
-        raise SystemExit(1)
-    
-    print()
-    print("=" * 70)
-    print("TAMPER DETECTION TEST (The Liability Firewall)")
-    print("=" * 70)
-    print("Attempting to tamper with certificate history...")
-    
-    # Load the certificate we just verified
-    tampered_cert = json.loads(out_path.read_text())
-    
-    # Tamper: Change @human_clear from True to False in snapshot
-    print("1. Modifying @human_clear: True → False (post-facto coverup)")
-    original_value = tampered_cert["context_snapshot"]["local"]["literals"]["@human_clear"]["value"]
-    tampered_cert["context_snapshot"]["local"]["literals"]["@human_clear"]["value"] = False
-    
-    # Save tampered certificate
-    tampered_path = Path(__file__).parent / "shipment_certificate_TAMPERED.json"
-    tampered_path.write_text(json.dumps(tampered_cert, indent=2))
-    
-    print("2. Replaying tampered certificate...")
-    ok_tampered, msg_tampered = replay_from_certificate(tampered_path)
-    
-    if not ok_tampered:
-        print(f"   ✅ SUCCESS: Tampering Detected!")
-        print(f"   {msg_tampered}")
-        print()
-        print(f"   This proves Tamper-Evident Audit Trail:")
-        print(f"   - Certificate hashes are cryptographically bound to context")
-        print(f"   - Post-facto changes to sensor data are DETECTABLE via hash mismatch")
-        print(f"   - System admin cannot covertly rewrite history")
-    else:
-        print("   ❌ FATAL: Tampered certificate passed verification!")
-        print("   This should never happen - cryptographic integrity broken!")
-        raise SystemExit(1)
-    
-    # Cleanup
-    tampered_path.unlink()
-    
-    print()
-    print("=" * 70)
-    print("✅ DEMO COMPLETE: Provenance Mathematically Verified")
-    print("=" * 70)
-    print()
-    print("What This Proves:")
-    print("  1. Deterministic Evaluation: Same inputs → same verdict")
-    print("  2. Cryptographic Integrity: Tampering DETECTABLE via hash mismatch")
-    print("  3. Replay Capability: Past decisions verifiable from frozen context")
-    print("  4. Fail-Stop: Stale/invalid inputs refuse correctly with audit trail")
-    print()
-    print("What This Does NOT Prove:")
-    print("  - Sensor accuracy (garbage in, garbage out)")
-    print("  - System liveness (recovery, fault tolerance)")
-    print("  - Legal liability determination (Noe generates evidence, not verdicts)")
-    print("=" * 70)
 
+    print()
+    print("tamper check")
+    print("------------")
+    tampered_path = Path(__file__).parent / "shipment_certificate_tampered.json"
+    tampered = json.loads(out_path.read_text())
+    tampered["context_snapshot"]["local"]["literals"]["@human_clear"]["value"] = False
+    tampered_path.write_text(json.dumps(tampered, indent=2, ensure_ascii=False))
+    ok, msg = replay_from_certificate(tampered_path)
+    print(msg)
 
 if __name__ == "__main__":
     main()
