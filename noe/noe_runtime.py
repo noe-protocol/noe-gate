@@ -27,9 +27,8 @@ from __future__ import annotations
 import traceback
 import copy
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, Callable, Tuple
+from typing import Optional, Dict, Any, Callable, Set
 import hashlib
-import json
 import sys
 
 
@@ -39,7 +38,6 @@ from .context_manager import (
     ContextManager,
     ContextStaleError,
     BadContextError,
-    ContextConflictError,
 )
 from .context_projection import (
     compile_path,
@@ -71,24 +69,24 @@ SafetyHandler = Callable[
 ]
 
 # Your modules (import paths as in your repo)
-from arpeggio import ParserPython, NoMatch
-from .noe_parser import chain, NoeEvaluator, visit_parse_tree, wrap_domain
 
 class ParseError(Exception):
     pass
 
 class NoeParser:
     def __init__(self):
+        from arpeggio import ParserPython
+        from .noe_parser import chain
         self.parser = ParserPython(chain, reduce_tree=False)
 
     def parse(self, text):
+        from arpeggio import NoMatch
         try:
             return self.parser.parse(text)
         except NoMatch as e:
             raise ParseError(str(e))
 
-class EvaluationError(Exception):
-    pass
+
 
 
 # -------------------------------------------------------------------------
@@ -117,6 +115,7 @@ class RuntimeResult:
     canonical_chain: Optional[str] = None
     provenance: Optional[Dict[str, Any]] = None
     explained_literals: Optional[Dict[str, Any]] = None
+    missing: Optional[list[str]] = None
 
 
 # -------------------------------------------------------------------------
@@ -160,9 +159,10 @@ class NoeRuntime:
         # If a domain pack is provided, we compute its hash to enforce consistency
         # during evaluation. This prevents "Config Drift" where the runtime thinks
         # it's running one config but the context manager has another.
-        self._expected_domain_hash: Optional[str] = None
+        # We explicitly verify that the ContextManager's domain shard matches this track.
+        self._expected_domain_pack_hash: Optional[str] = None
         if domain_pack is not None:
-            self._expected_domain_hash = _hash_json(domain_pack)
+            self._expected_domain_pack_hash = _hash_json(domain_pack)
             # Ensure the context manager actually has this domain loaded?
             # We can't easily check here without snapshotting, but we will check in evaluate().
 
@@ -209,7 +209,7 @@ class NoeRuntime:
                     domain="error",
                     value=None,
                     error=new_err,
-                    context_hash=snap.context_hash,
+                    context_hash=snap.composite_hash,
                     snapshot_ts=getattr(snap, 'timestamp_ms', 0),
                     raw_ast=None,
                     canonical_chain=chain,
@@ -272,17 +272,17 @@ class NoeRuntime:
                 return self._apply_safety_handler(chain, snap, prelim)
 
             # 2. Config Consistency Check (New Safety Guard)
-            if self._expected_domain_hash is not None:
-                if snap.domain_hash != self._expected_domain_hash:
+            if self._expected_domain_pack_hash is not None:
+                if snap.domain_hash != self._expected_domain_pack_hash:
                     msg = (
-                        f"CONFIG_MISMATCH: Runtime expected domain hash {self._expected_domain_hash[:8]}... "
-                        f"but ContextManager has {snap.domain_hash[:8]}..."
+                        f"ERR_CONFIG_MISMATCH: Runtime expected domain pack hash {self._expected_domain_pack_hash[:8]}... "
+                        f"but ContextManager domain shard has {snap.domain_hash[:8]}..."
                     )
                     prelim = self._error(msg, snap, canonical_chain=chain)
                     return self._apply_safety_handler(chain, snap, prelim)
             
             # Stale context handling (strict mode)
-            if getattr(snap, 'is_stale', False) and self.strict_mode:
+            if getattr(snap, 'local_layer_age_stale', False) and self.strict_mode:
                 prelim = self._error("ERR_CONTEXT_STALE", snap)
                 prelim.canonical_chain = chain
                 return self._apply_safety_handler(chain, snap, prelim)
@@ -290,7 +290,7 @@ class NoeRuntime:
             # Strict mode structural validation
             if self.strict_mode:
                 from .noe_validator import validate_context_strict
-                is_valid, err_msg = validate_context_strict(snap.structured)
+                is_valid, err_msg, is_stale = validate_context_strict(snap.c_merged)
                 if not is_valid:
                     prelim = self._bad_context(snap, chain, err_msg)
                     return self._apply_safety_handler(chain, snap, prelim)
@@ -321,25 +321,39 @@ class NoeRuntime:
                 prelim = self._error(f"ERR_PARSE: {e}", snap, canonical_chain=chain)
                 return self._apply_safety_handler(chain, snap, prelim)
 
+            # Strict merged check
+            if not hasattr(snap, "c_merged") or not isinstance(snap.c_merged, dict):
+                prelim = self._error("ERR_RUNTIME_INTERNAL: snapshot missing merged context", snap, canonical_chain=chain)
+                return self._apply_safety_handler(chain, snap, prelim)
+            
+            flat_ctx = snap.c_merged
+
             # 4. Threshold Safety Validation (NIP-016)
             #    Enforce epistemic threshold safety floors before any execution
             try:
-                from threshold_safety_validator import validate_threshold_safety
+                from .threshold_safety_validator import validate_threshold_safety
                 
                 # Validate threshold safety against NIP-016 floors
-                is_safe, threshold_errors = validate_threshold_safety(getattr(snap, 'merged', snap.structured))
+                is_safe, threshold_errors = validate_threshold_safety(flat_ctx)
                 
                 if not is_safe and self.strict_mode:
                     # In strict mode, unsafe thresholds are a hard error
                     error_msg = "; ".join(threshold_errors)
                     prelim = self._error(f"ERR_UNSAFE_THRESHOLD: {error_msg}", snap, canonical_chain=chain)
                     return self._apply_safety_handler(chain, snap, prelim)
-            except ImportError:
-                # threshold_safety_validator not available - skip check
-                pass
+            except ImportError as e:
+                # threshold_safety_validator not available
+                if self.strict_mode:
+                    prelim = self._error(f"ERR_THRESHOLD_VALIDATOR_MODULE_MISSING: {e}", snap, canonical_chain=chain)
+                    return self._apply_safety_handler(chain, snap, prelim)
             except Exception as e:
                 # Threshold validation is optional; skip silently if unavailable
-                pass
+                if self.strict_mode:
+                    prelim = self._error(f"ERR_THRESHOLD_VALIDATOR_FAILED: {e}", snap, canonical_chain=chain)
+                    return self._apply_safety_handler(chain, snap, prelim)
+                elif self.debug:
+                    import sys
+                    sys.stderr.write(f"Threshold validation failed: {e}\n")
 
             
             # 5. Validation (NIP-005 Safety Constraints)
@@ -348,19 +362,51 @@ class NoeRuntime:
             from .noe_validator import validate_ast_safety
 
             
-            flat_ctx = getattr(snap, 'merged', snap.structured)
-            val_res = validate_chain(chain, flat_ctx, mode="strict" if self.strict_mode else "partial")
-            
+            val_res = validate_chain(
+                chain_text=chain,
+                context_object=snap.c_merged,
+                mode="strict" if self.strict_mode else "partial",
+                context_hashes={
+                    "root": getattr(snap, 'root_hash', ''),
+                    "domain": getattr(snap, 'domain_hash', ''),
+                    "local": getattr(snap, 'local_hash', ''),
+                    "total": getattr(snap, 'composite_hash', '')
+                },
+                context_layers=snap.structured,
+            )
+
             if not val_res["ok"]:
                 if val_res.get("domain") == "error":
                     code = val_res.get("code", "ERR_VALIDATION")
                     msg = val_res.get("value", "Validation failed")
                     prelim = self._error(f"{code}: {msg}", snap, canonical_chain=chain)
                     return self._apply_safety_handler(chain, snap, prelim)
-                
+
                 reasons = "; ".join(val_res.get("reasons", []))
                 prelim = self._undefined(f"Validation failed: {reasons}", snap, canonical_chain=chain)
                 return self._apply_safety_handler(chain, snap, prelim)
+
+            # C_safe and H_safe come exclusively from the validator (NIP-009/015).
+            # The runtime MUST NOT evaluate against raw c_merged.
+            c_safe = val_res.get("c_safe")
+            h_safe = val_res.get("h_safe")
+
+            # Fallback: if no context_layers were available (legacy flat path),
+            # c_safe will be None.  Use c_merged as a best-effort fallback so
+            # the runtime remains functional, but flag in debug mode.
+            if c_safe is None:
+                if self.strict_mode:
+                    prelim = self._error("ERR_RUNTIME_INTERNAL: c_safe unavailable from validator in strict mode", snap, canonical_chain=chain)
+                    return self._apply_safety_handler(chain, snap, prelim)
+
+                if self.debug:
+                    import sys as _sys
+                    _sys.stderr.write(
+                        "[NoeRuntime] WARNING: c_safe unavailable from validator; "
+                        "falling back to c_merged (legacy mode).\n"
+                    )
+                c_safe = snap.c_merged
+                h_safe = snap.composite_hash  # fallback — not H_safe
 
             # AST-based Safety Validation (Normative Guard Check + Epistemic Nesting)
             is_safe = validate_ast_safety(ast)
@@ -381,17 +427,17 @@ class NoeRuntime:
                 prelim = self._error(f"ERR_RECURSION_LIMIT: {msg}", snap, canonical_chain=chain)
                 return self._apply_safety_handler(chain, snap, prelim)
 
-            # 6. Evaluate
+            # 6. Evaluate — against C_safe only (NIP-015)
             try:
-                # Apply Safe Projection (pi_safe) using the flattened context
-                C_eval, explanations = self._apply_safe_projection(flat_ctx)
-                
+                from .noe_parser import NoeEvaluator, visit_parse_tree
+
                 evaluator = NoeEvaluator(
-                    C_eval,
+                    c_safe,
                     mode="strict" if self.strict_mode else "partial",
                     debug=self.debug,
                 )
                 result = visit_parse_tree(ast, evaluator)
+                explanations = {}  # explanations now come from build_safe_context / val_res
 
                 if isinstance(result, dict) and "domain" in result:
                     domain = result["domain"]
@@ -420,7 +466,7 @@ class NoeRuntime:
                     domain="undefined",
                     value=None,
                     error=None,
-                    context_hash=snap.context_hash,
+                    context_hash=snap.composite_hash,
                     snapshot_ts=getattr(snap, 'timestamp_ms', 0),
                     raw_ast=ast if self.debug else None,
                     canonical_chain=chain,
@@ -429,62 +475,50 @@ class NoeRuntime:
                 return self._apply_safety_handler(chain, snap, prelim)
 
             # 4. Normal successful path (truth / numeric / action / list-of-actions)
-            
-            # Compute Provenance Hashes
-            # action_hash = H("noe.action.v1" || chain || H_total || H_domain)
-            # child_action_hash = H("noe.child_action.v1" || parent || chain || H_total || H_domain)
-            
 
-            
-            # Compute execution request provenance hash (Renamed var)
-            # Moved inside domain=="action" block for efficiency and hygiene
+            domain_pack_hash = self._expected_domain_pack_hash or snap.domain_hash
 
-                
-
-
+            # Provenance: normative hash is H_safe (post-projection); raw shard
+            # hashes are also included per NIP-009 requirement.
             prov_data = {
                 "parent_action_hash": parent_action_hash,
-                "domain_pack_hash": snap.domain_hash,
-                "context_hash": snap.context_hash
+                "domain_pack_hash": domain_pack_hash,
+                "context_hash": h_safe,       # H_safe is the normative id (NIP-009)
+                "h_root":   snap.root_hash,   # raw shard hashes retained for audit
+                "h_domain": snap.domain_hash,
+                "h_local":  snap.local_hash,
+                "h_composite": snap.composite_hash,  # raw pre-projection composite
             }
 
-            # Only expose action_hash if domain is action (avoid leaking undefined/error hashes)
-            # Otherwise it's just a decision/request hash (internal).
             if domain == "action":
-                # Action Domain: compute execution request hash (prefixnoe.action.v1)
                 exec_req_hash = compute_execution_request_hash(
                     chain_str=chain,
-                    h_total=snap.context_hash,
-                    domain_pack_hash=snap.domain_hash
+                    h_total=h_safe,
+                    domain_pack_hash=domain_pack_hash
                 )
-                
-                # Compute child action hash only for actions
                 child_action_hash = None
                 if parent_action_hash:
                     child_action_hash = compute_child_action_hash(
                         parent_action_hash=parent_action_hash,
                         chain_str=chain,
-                        h_total=snap.context_hash,
-                        domain_pack_hash=snap.domain_hash
+                        h_total=h_safe,
+                        domain_pack_hash=domain_pack_hash
                     )
-                
                 prov_data["action_hash"] = exec_req_hash
                 prov_data["child_action_hash"] = child_action_hash
             else:
-                 # Decision Domain (truth/numeric): compute decision hash (prefix noe.decision.v1)
-                 # This separates the cryptographic namespace.
-                 decision_hash = compute_decision_hash(
+                decision_hash = compute_decision_hash(
                     chain_str=chain,
-                    h_total=snap.context_hash,
-                    domain_pack_hash=snap.domain_hash
-                 )
-                 prov_data["decision_hash"] = decision_hash
+                    h_total=h_safe,
+                    domain_pack_hash=domain_pack_hash
+                )
+                prov_data["decision_hash"] = decision_hash
 
             rr = RuntimeResult(
                 domain=domain,
                 value=value,
                 error=None,
-                context_hash=snap.context_hash,
+                context_hash=h_safe,          # normative H_safe (NIP-009/015)
                 snapshot_ts=getattr(snap, 'timestamp_ms', 0),
                 raw_ast=ast if self.debug else None,
                 canonical_chain=chain,
@@ -522,11 +556,7 @@ class NoeRuntime:
                 sys.stderr.write(f"BadContextError: {e}\n")
             prelim = self._error(f"ERR_BAD_CONTEXT: {e}", snap, canonical_chain=chain)
             return self._apply_safety_handler(chain, snap, prelim)
-        except ContextConflictError as e:
-            if self.debug:
-                sys.stderr.write(f"ContextConflictError: {e}\n")
-            prelim = self._error(f"ERR_CONTEXT_CONFLICT: {e}", snap, canonical_chain=chain)
-            return self._apply_safety_handler(chain, snap, prelim)
+
         except ContextStaleError as e:
             if self.debug:
                 sys.stderr.write(f"ContextStaleError: {e}\n")
@@ -551,7 +581,7 @@ class NoeRuntime:
 
     def _undefined(self, msg: str, snap: Optional[ContextSnapshot], canonical_chain: Optional[str]=None) -> RuntimeResult:
         """Return undefined-domain result."""
-        ctx_hash = snap.context_hash if snap else "UNKNOWN"
+        ctx_hash = snap.composite_hash if snap else "UNKNOWN"
         ts = getattr(snap, 'timestamp_ms', 0) if snap else 0
         return RuntimeResult(
             domain="undefined",
@@ -566,7 +596,7 @@ class NoeRuntime:
 
     def _error(self, msg: str, snap: Optional[ContextSnapshot], canonical_chain: Optional[str]=None) -> RuntimeResult:
         """Return error-domain result."""
-        ctx_hash = snap.context_hash if snap else "UNKNOWN"
+        ctx_hash = snap.composite_hash if snap else "UNKNOWN"
         ts = getattr(snap, 'timestamp_ms', 0) if snap else 0
         return RuntimeResult(
             domain="error",
@@ -662,111 +692,8 @@ class NoeRuntime:
         return rr, prov
 
     # ------------------------------------------------------------------
-    # Safe Projection Integration
+    # (Note: _apply_safe_projection and _get_explainable_predicates have been
+    # removed. C_safe construction is now exclusively owned by the validator
+    # via build_safe_context (noe_validator.py).  See NIP-009 §π_safe and
+    # NIP-015 §evaluation-semantics.)
     # ------------------------------------------------------------------
-
-    def _get_explainable_predicates(self, C_rich: Dict[str, Any]) -> Optional[Set[str]]:
-        """
-        Determine which predicates in C_rich are explainable based on the domain pack.
-        """
-        if self.domain_pack is None:
-            return None # Default to all explainable if no registry
-            
-        explainable_preds = set()
-        
-        # Build glyph map: id -> explainable
-        glyph_map = {}
-        if "glyphs" in self.domain_pack:
-            for g in self.domain_pack["glyphs"]:
-                glyph_map[g["id"]] = g.get("explainable", True)
-        
-        # USER HARDENING: Use extract_evidence_from_context to get robust predicates
-        annotated = extract_evidence_from_context(C_rich)
-        for lit in annotated:
-            pred = lit.predicate
-            # Check glyph map (by ID)
-            if pred in glyph_map:
-                if glyph_map[pred]:
-                    explainable_preds.add(pred)
-            else:
-                # Default to explainable if not explicitly defined
-                explainable_preds.add(pred)
-                
-        return explainable_preds
-
-    def _apply_safe_projection(self, C_rich: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """
-        Derive C_safe from C_rich using pi_safe.
-        """
-        # 1. Extract Evidence (Shared logic)
-        if self.debug: print(f"DEBUG PROJ: literals in C_rich: keys={list(C_rich.get('literals', {}).keys())}")
-        annotated_list = extract_evidence_from_context(C_rich)
-        
-        # 2. Get Config
-        config = ProjectionConfig()
-        
-        # 3. Compute now_ms (Strict int ms)
-        # Priority: temporal.now (sim) > timestamp (system/local)
-        # Anti-Axiom Security: Do NOT use `or {}` double fallback
-        # None temporal should remain None, not become {}
-        temporal = C_rich.get("temporal")
-        if temporal is None:
-            temporal = {}
-        elif not isinstance(temporal, dict):
-            # Invalid temporal type
-            temporal = {}
-        
-        now_ms = temporal.get("now")
-        if now_ms is None:
-             now_ms = C_rich.get("timestamp", 0)
-        
-        try:
-             now_ms = int(now_ms)
-        except (ValueError, TypeError):
-             now_ms = 0
-        
-        # 4. Explainable Predicates
-        explainable_preds = self._get_explainable_predicates(C_rich)
-        
-        # 5. Extract Rules
-        required_context_map = {}
-        independence_groups = {}
-        if self.domain_pack:
-             literals_def = self.domain_pack.get("literals", {})
-             if isinstance(literals_def, dict):
-                 for k, v in literals_def.items():
-                     if isinstance(v, dict) and "required_context" in v:
-                         required_context_map[k] = v["required_context"]
-             independence_groups = self.domain_pack.get("independence_groups", {})
-
-        # 6. Run pi_safe
-        safe_bare_literals, explanations = pi_safe(
-             annotated_list, config, now_ms,
-             with_explanations=True,
-             explainable_predicates=explainable_preds,
-             full_context=C_rich,
-             required_context_map=required_context_map,
-             independence_groups=independence_groups,
-             compiled_requirements=self._compiled_requirements
-        )
-        
-        # 7. Merge into C_eval
-        C_eval = copy.deepcopy(C_rich)
-        # Update flat 'literals' and 'modal.knowledge'
-        literals = C_eval.get("literals", {})
-        if not isinstance(literals, dict): literals = {}
-        
-        modal = C_eval.get("modal", {})
-        if not isinstance(modal, dict): modal = {}
-        knowledge = modal.get("knowledge", {})
-        if not isinstance(knowledge, dict): knowledge = {}
-        
-        for bl in safe_bare_literals:
-            literals[bl.predicate] = bl.value
-            knowledge[bl.predicate] = bl.value # Infer knowledge from safe literal
-            
-        C_eval["literals"] = literals
-        modal["knowledge"] = knowledge
-        C_eval["modal"] = modal
-        
-        return C_eval, explanations
