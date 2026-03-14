@@ -5,8 +5,7 @@
 
 # ─── Core Test Suites ────────────────────────────────────────────────
 
-test:
-	pip install ".[dev]"
+test:                          ## Run all unit tests
 	python3 -m unittest discover tests
 
 conformance:                   ## Run NIP-011 conformance suite (60 vectors)
@@ -14,8 +13,11 @@ conformance:                   ## Run NIP-011 conformance suite (60 vectors)
 
 # ─── Demos ───────────────────────────────────────────────────────────
 
-demo:                          ## Run full auditor demo (shipment + epistemic + hallucination + multi-agent)
+demo:                          ## Run flagship shipment demo
 	bash examples/auditor_demo/run_demo.sh
+
+demo-full:                     ## Run full auditor demo set
+	bash examples/auditor_demo/run_demo_full.sh
 
 guard:                         ## Run robot guard golden-vector demo (7 ticks)
 	python3 examples/robot_guard_demo.py
