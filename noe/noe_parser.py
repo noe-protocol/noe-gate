@@ -5,10 +5,10 @@ import traceback
 import copy
 import os
 import threading  # Thread safety for AST cache
-from typing import Dict, Any
-from collections import ChainMap, OrderedDict
+from typing import Dict, Any, Union, Optional
+from collections import OrderedDict
 from collections.abc import Mapping
-from arpeggio import ParserPython, PTNodeVisitor, visit_parse_tree, ZeroOrMore, Optional, EOF
+from arpeggio import ParserPython, PTNodeVisitor, visit_parse_tree, ZeroOrMore, Optional as PEGOptional, EOF
 from arpeggio import RegExMatch as _
 # Note: Import loop resolution.
 # noe_validator imports pi_safe (context_projection)
@@ -55,8 +55,23 @@ def _get_or_create_parser():
             # Direct reference to chain() function (defined later in this module)
             # No self-import needed - Python allows forward references
             _GLOBAL_PARSER = ParserPython(chain, ignore_case=False)
-            # Compute grammar hash for cache key
-            _GRAMMAR_HASH = hashlib.sha256(GRAMMAR_VERSION.encode()).hexdigest()[:8]
+            
+            # Compute grammar hash for cache key combining version and file contents
+            # This ensures any changes to grammar functions automatically invalidate cache
+            try:
+                with open(__file__, "rb") as f:
+                    file_content = f.read()
+            except Exception:
+                try:
+                    import inspect
+                    # Hash the actual parser logic instead of the whole file if __file__ is unavailable or zipped
+                    file_content = inspect.getsource(chain).encode('utf-8')
+                except Exception:
+                    file_content = b""
+            
+            hasher = hashlib.sha256(GRAMMAR_VERSION.encode())
+            hasher.update(file_content)
+            _GRAMMAR_HASH = hasher.hexdigest()[:8]
     return _GLOBAL_PARSER
 
 def _get_cached_ast(parser, chain_text):
@@ -65,6 +80,14 @@ def _get_cached_ast(parser, chain_text):
     # Fail-fast if grammar hash unset
     if _GRAMMAR_HASH is None:
         raise RuntimeError("Grammar hash not initialized. Call _get_or_create_parser() first.")
+    
+    # Do not cache pathologically large chains to prevent memory exhaustion DoS
+    # Also drop extremely long generated chains that could thrash the LRU
+    if len(chain_text) > 2048:
+        with _PARSER_LOCK:
+            return parser.parse(chain_text)
+    
+    # Cache key only includes grammar hash and chain_text (ignore_case invariant is False)
     cache_key = f"{_GRAMMAR_HASH}:{chain_text}"
     
     # Check cache first with lock
@@ -72,7 +95,8 @@ def _get_cached_ast(parser, chain_text):
         if cache_key in _AST_CACHE:
             # Deterministic LRU: move to end on access
             _AST_CACHE.move_to_end(cache_key)
-            return copy.deepcopy(_AST_CACHE[cache_key])
+            # FIX: AST nodes are treated as immutable, no need for expensive deepcopy
+            return _AST_CACHE[cache_key]
             
     # Parse INSIDE the lock (Arpeggio state safety)
     # Even if parser object is reused, we must serialize access
@@ -83,15 +107,15 @@ def _get_cached_ast(parser, chain_text):
     with _AST_CACHE_LOCK:
         if cache_key in _AST_CACHE:
              _AST_CACHE.move_to_end(cache_key)
-             return copy.deepcopy(_AST_CACHE[cache_key])
+             return _AST_CACHE[cache_key]
              
         if len(_AST_CACHE) >= _AST_CACHE_MAX_SIZE:
              # FIFO/LRU eviction: pop first item (last=False)
              _AST_CACHE.popitem(last=False)
              
         _AST_CACHE[cache_key] = ast
-        # Return DEEPCOPY so thread doesn't mutate shared AST
-        return copy.deepcopy(ast)
+        # Return directly - visitor must not mutate the AST
+        return ast
 
 # ==========================================
 # DEBUGGING INSTRUMENTATION
@@ -169,25 +193,25 @@ def merge_layers_for_validation(ctx: Dict[str, Any]) -> Dict[str, Any]:
     if "root" not in ctx and "domain" not in ctx and "local" not in ctx:
         return ctx
     
-    # Anti-Axiom Security: Do NOT mask None or invalid layers with {}
-    # This would allow silent passage of incomplete context in strict mode
-    c_root = ctx.get("root")
-    c_domain = ctx.get("domain")
-    c_local = ctx.get("local")
+    # FIX: Reject explicitly passed None values instead of silently masking them with {}
+    # If the user passed None, it means the layer is invalid/missing, and we shouldn't "fix" it for them
+    # Because this function returns the merged context, we signify invalid structured contexts
+    # by returning the unmerged original context, letting downstream strict validators fail it.
     
-    # Validate layer types - None or non-dict is invalid structured context
-    if c_root is not None and not isinstance(c_root, dict):
-        # Invalid root layer type
-        return ctx  # Return unmerged to let validator handle error
-    if c_domain is not None and not isinstance(c_domain, dict):
-        return ctx  # Invalid domain layer type
-    if c_local is not None and not isinstance(c_local, dict):
-        return ctx  # Invalid local layer type
+    if "root" in ctx and ctx["root"] is None:
+        return ctx
+    if "domain" in ctx and ctx["domain"] is None:
+        return ctx
+    if "local" in ctx and ctx["local"] is None:
+        return ctx
+        
+    c_root = ctx.get("root", {})
+    c_domain = ctx.get("domain", {})
+    c_local = ctx.get("local", {})
     
-    # Use empty dict only for explicitly absent layers, not None
-    c_root = c_root if c_root is not None else {}
-    c_domain = c_domain if c_domain is not None else {}
-    c_local = c_local if c_local is not None else {}
+    if not isinstance(c_root, dict): return ctx
+    if not isinstance(c_domain, dict): return ctx
+    if not isinstance(c_local, dict): return ctx
 
     # Recursive deep merge with strict precedence: local > domain > root
     merged = {}
@@ -537,7 +561,7 @@ def morphology():
 
 def atom():
     # base + (fusion | inversion | suffix)*
-    return [literal, bool_literal, number, demonstrative, glyph], ZeroOrMore([fusion, inversion, morph_suffix]), Optional(intensity)
+    return [literal, bool_literal, number, demonstrative, glyph], ZeroOrMore([fusion, inversion, morph_suffix]), PEGOptional(intensity)
 
 
 def scoped():
@@ -596,7 +620,7 @@ def sek_scope():
 def conditional():
     # OrExpr ('khi' SekScope)?
     # Strict grammar: khi must be followed by sek ... sek
-    return disjunction, Optional(_(r'khi\b'), sek_scope)
+    return disjunction, PEGOptional((_(r'khi\b'), sek_scope))
 
 
 def expression():
@@ -615,7 +639,7 @@ def question_type():
 
 def question_body():
     # QuestionType? Expr
-    return Optional(question_type), expression
+    return PEGOptional(question_type), expression
 
 
 def question_chain():
@@ -625,7 +649,7 @@ def question_chain():
 
 def chain():
     # question_chain / (Expr nek?)
-    return [question_chain, (expression, Optional(termination), EOF)]
+    return [question_chain, (expression, PEGOptional(termination), EOF)]
 
 # ==========================================
 # 4. DOMAIN HELPERS
@@ -674,52 +698,6 @@ def wrap_domain(value):
     # Structural or future domains
     return {"domain": "structural", "value": value}
 
-# ==========================================
-# 4. CONTEXT MANAGEMENT
-# ==========================================
-
-@dataclass
-class ContextSnapshot:
-    """Snapshot of a context state with Merkle hashes."""
-    structured: Dict[str, Any]
-    root_hash: str
-    domain_hash: str
-    local_hash: str
-    context_hash: str
-
-
-class ContextManager:
-    """
-    Manages structured context layers (root, domain, local) for Noe evaluation.
-    Computes cryptographic snapshots for provenance.
-    """
-    def __init__(self, root: Dict[str, Any], domain: Dict[str, Any], local: Dict[str, Any]):
-        self.root = root or {}
-        self.domain = domain or {}
-        self.local = local or {}
-
-    def snapshot(self) -> ContextSnapshot:
-        """
-        Create a cryptographic snapshot of the current context state.
-        Computes hashes for all layers and the total context.
-        """
-        # Construct the structured dictionary
-        structured = {
-            "root": self.root,
-            "domain": self.domain,
-            "local": self.local
-        }
-        
-        # Compute hashes using validator logic (Single Source of Truth)
-        hashes = compute_context_hashes(structured)
-        
-        return ContextSnapshot(
-            structured=structured,
-            root_hash=hashes["root"],
-            domain_hash=hashes["domain"],
-            local_hash=hashes["local"],
-            context_hash=hashes["total"]
-        )
 
 # ==========================================
 # 5. SEMANTIC EVALUATOR (NIP-005 + numeric slice of NIP-007)
@@ -738,6 +716,7 @@ class NoeEvaluator(PTNodeVisitor):
         self.mode = mode
         self.debug = debug
         self.source = source
+        self._action_dag = {}  # Isolate DAG state to evaluator instance
         
         # Use passed context_hash instead of recomputing
         # Ensures provenance hash matches meta.context_hash returned to caller
@@ -1366,7 +1345,19 @@ class NoeEvaluator(PTNodeVisitor):
                 return "undefined"
                 
             certainty_map = modal.get("certainty", {})
-            threshold = modal.get("certainty_threshold", 0.8)  # Default 0.8
+            
+            # FIX: No implicit default for certainty_threshold in strict mode
+            # If the user doesn't define it, we shouldn't supply a hidden policy that affects outcomes
+            if "certainty_threshold" not in modal:
+                 if self.mode == "strict":
+                      return {
+                          "domain": "error",
+                          "code": "ERR_EPISTEMIC_MISMATCH",
+                          "value": f"Cannot evaluate sha '{key}': certainty_threshold is not defined in modal subsystem (strict mode)"
+                      }
+                 threshold = 0.8  # Legacy fallback for non-strict
+            else:
+                 threshold = modal.get("certainty_threshold")
             
             # Fallback lookup for legacy contexts
             cert_level = certainty_map.get(key)
@@ -1661,12 +1652,13 @@ class NoeEvaluator(PTNodeVisitor):
         # Delivery semantics (NIP-008 v1.0 structured events + DAG integration)
         if op in ("vus", "vel"):
             # val must be a literal like @pkg, OR we have extra_key from visit_unary
-            if extra_key and extra_key.startswith("@"):
-                literal_key = extra_key
+            if extra_key and isinstance(extra_key, str):
+                literal_key = extra_key if extra_key.startswith("@") else "@" + extra_key
             elif isinstance(val, str) and val.startswith("@"):
                 literal_key = val
-            elif isinstance(val, dict) and val.get("domain") == "literal" and isinstance(val.get("key"), str) and val["key"].startswith("@"):
-                literal_key = val["key"]
+            elif isinstance(val, dict) and val.get("domain") == "literal" and isinstance(val.get("key"), str):
+                k = val["key"]
+                literal_key = k if k.startswith("@") else "@" + k
             else:
                 # Anything else (undefined, glyph, numeric) => undefined
                 return "undefined"
@@ -1932,12 +1924,11 @@ class NoeEvaluator(PTNodeVisitor):
     
     def _finalize_action(self, action_obj, now_ms=None):
         """Instance method wrapper for _finalize_action_static."""
-        dag = self.ctx.setdefault("_action_dag", {})
         return _finalize_action_static(
             action_obj,
             ctx_hash=self._ctx_hash,
             source=self.source or "",
-            dag=dag,
+            dag=self._action_dag,
             mode=self.mode,
             now_ms=now_ms
         )
@@ -2021,7 +2012,7 @@ class NoeEvaluator(PTNodeVisitor):
             # Both are True
             return True
 
-        # Logical OR (ur) - Kleene Strong OR (Patched)
+        # Logical OR (ur) - Kleene Strong OR
         if op == "ur":
             tL = self._to_trit(left_val)
             tR = self._to_trit(right_val)
@@ -2587,12 +2578,16 @@ class NoeEvaluator(PTNodeVisitor):
                     return "undefined"
                 if t:
                     # Guard holds → return the action clause
-                    # Strict mode check: action_block MUST be an action or list of actions
                     if self.mode == "strict":
                         # Recursive check for action lists (to support nested sek scopes)
                         def is_valid_action_structure(obj):
-                            if isinstance(obj, dict) and obj.get("type") == "action":
-                                return True
+                            if isinstance(obj, dict):
+                                if obj.get("domain") == "error":
+                                    return True # Allow inner errors to bubble up
+                                if obj.get("type") == "action" or obj.get("domain") == "action":
+                                    return True
+                                if obj.get("domain") == "list" and isinstance(obj.get("value"), list):
+                                    return all(is_valid_action_structure(x) for x in obj["value"])
                             if isinstance(obj, list):
                                 return all(is_valid_action_structure(x) for x in obj)
                             return False
@@ -2699,17 +2694,10 @@ def run_noe_logic(chain_text, context_object, mode="strict", audience=None, to=N
     
     # Hashing (ContextManager) sees the HASH CONTEXT (layered if possible)
     ctx = hash_ctx
-    
     # Initialize hash variables (CRITICAL for non-dict contexts)
     snap = None
-    hashes = {}
-    # Initialize hash variables (CRITICAL for non-dict contexts)
-    snap = None
-    hashes = {}
+    hashes = {"root": "", "domain": "", "local": "", "total": ""}
     ctx_hash = ""
-    # Default val_ctx to original context in case ContextManager fails
-    val_ctx = context_object 
-    eval_ctx = context_object
     
     if isinstance(ctx, dict):
         # 1. Detect if context is Layered or Flat
