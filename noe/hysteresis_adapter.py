@@ -1,8 +1,7 @@
 
 """
 noe/hysteresis_adapter.py - Input Stabilization Adapter
-
-NIP-017 Reference Implementation: Deterministic Hysteresis Filter
+NIP-017 Upstream Integration: Deterministic Hysteresis Filter
 
 Purpose:
     Prevent sensor flicker (e.g., 0.91 ↔ 0.89 oscillations) from causing 
@@ -18,8 +17,16 @@ Design Principles:
 
 Integration:
     Raw Sensors → Hysteresis → ContextManager.update_local() → π_safe → C_safe
+    
+    *Namespace Note*: The adapter outputs to `C_local["adapters"]["hysteresis"]["outputs"]`.
+    It does NOT write directly to `C_local["modal"]["knowledge"]`. It is the job of the
+    epistemic mapping/validator layer to inspect these adapter outputs and formally map
+    them into epistemic sets.
 
-See NIP-017 for policy schema (enter_threshold, exit_threshold, ttl_ticks, etc.)
+    *Key Convention*: All keys processed by the adapter are converted to and stored using
+    the canonical `@` prefix (e.g. `@door_open`), matching NIP-009 structures.
+
+See epitemic mapping specs for policy schema (enter_threshold, exit_threshold, ttl_ticks, etc.)
 """
 
 import math
@@ -27,7 +34,6 @@ from typing import Dict, Any, Optional, Tuple, NamedTuple
 from dataclasses import dataclass, field
 from copy import copy # Use shallow copy
 
-from .canonical import canonical_literal_key
 
 # ==========================================
 # Data Structures
@@ -185,8 +191,7 @@ def apply_hysteresis_adapter(
     # For optimization, we could use copy() and only modify keys we touch.
     adapter_state_next = adapter_state.copy() 
     
-    delta_modal_knowledge = {}
-    delta_modal_certainty = {}
+    delta_adapter_outputs = {}
     delta_state = {}
 
     # Define the set of keys to process:
@@ -207,11 +212,11 @@ def apply_hysteresis_adapter(
     
     candidate_keys = raw_inputs.keys()
     
-    # Canonicalize raw inputs first to handle " @foo " -> "@foo"
+    # Canonicalize raw inputs first to enforce "@" prefix convention
     canonical_inputs = {}
     for rk, val in raw_inputs.items():
         rk_clean = rk.strip() 
-        ck = canonical_literal_key(rk_clean)
+        ck = rk_clean if rk_clean.startswith("@") else "@" + rk_clean
         canonical_inputs[ck] = val
         
     keys_to_process = set(canonical_inputs.keys())
@@ -257,21 +262,31 @@ def apply_hysteresis_adapter(
             changed = (stable != prev_stable)
 
         if (not pol.emit_on_change_only) or changed:
+            if key not in delta_adapter_outputs:
+                delta_adapter_outputs[key] = {}
             if stable is not None:
-                delta_modal_knowledge[key] = stable
+                delta_adapter_outputs[key]["stable"] = stable
+                delta_adapter_outputs[key]["tick"] = tick
             elif pol.missing_mode == "undefined" and changed:
                 # Explicitly clear stale knowledge if we transitioned to undefined
                 # Only if it CHANGED (i.e. was previously True/False/None? If prev None and curr None, changed is False)
-                # USER HARDENING: Omitting key instead of writing None.
-                pass
+                # Enforce explicit None output to override inherited lower layers
+                delta_adapter_outputs[key]["stable"] = None
+                delta_adapter_outputs[key]["tick"] = tick
 
         if pol.keep_certainty:
             if is_finite(raw_conf):
-                delta_modal_certainty[key] = float(raw_conf)
+                if key not in delta_adapter_outputs:
+                    delta_adapter_outputs[key] = {}
+                delta_adapter_outputs[key]["raw_confidence"] = float(raw_conf)
+                delta_adapter_outputs[key]["tick"] = tick
             elif pol.missing_mode == "undefined" and changed:
                 # Also clear certainty if we are undefining the signal
-                # USER HARDENING: Omitting key.
-                pass
+                # Enforce explicit None
+                if key not in delta_adapter_outputs:
+                    delta_adapter_outputs[key] = {}
+                delta_adapter_outputs[key]["raw_confidence"] = None
+                delta_adapter_outputs[key]["tick"] = tick
 
         if emit_full_state:
             delta_state[key] = next_entry_dict
@@ -282,12 +297,14 @@ def apply_hysteresis_adapter(
     # Build Context Delta
     context_delta: Dict[str, Any] = {}
     
-    if delta_modal_knowledge or delta_modal_certainty:
-        context_delta["modal"] = {}
-        if delta_modal_knowledge:
-            context_delta["modal"]["knowledge"] = delta_modal_knowledge
-        if delta_modal_certainty:
-            context_delta["modal"]["certainty"] = delta_modal_certainty
+    if delta_adapter_outputs or delta_state:
+        if "adapters" not in context_delta:
+            context_delta["adapters"] = {}
+        if "hysteresis" not in context_delta["adapters"]:
+            context_delta["adapters"]["hysteresis"] = {}
+            
+    if delta_adapter_outputs:
+        context_delta["adapters"]["hysteresis"]["outputs"] = delta_adapter_outputs
 
     if delta_state:
         # Place adapter state in a dedicated namespace
