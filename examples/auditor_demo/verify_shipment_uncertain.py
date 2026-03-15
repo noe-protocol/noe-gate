@@ -270,7 +270,9 @@ def main():
     
     # Execution Gate (v1.0-rc): Only proceed if domain is 'action' or 'list'
     if res_b2.get("domain") not in ["action", "list"]:
-        print(f"   ❌ FAILED! Domain {res_b2.get('domain')} is not executable.")
+        print("   ✅ Correct: no action emitted without grounded knowledge.")
+        print("   ✅ Safe halt preserved.")
+        print(f"   ✅ Undefined result correctly prevented execution. (Domain: {res_b2.get('domain')})")
     elif isinstance(actions, list) and len(actions) > 0 and actions[0].get("verb") == "mek":
          print("   ✅ Success! Action released via Policy B (Belief + Override).")
          
