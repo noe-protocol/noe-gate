@@ -61,13 +61,11 @@ class TestSafetyKernelInvariants(unittest.TestCase):
         """Verify vus/vel are BLOCKED in strict mode if undefined."""
         # 1. vus @pkg -> Returns a valid action because @pkg maps to pkg_123 which is in delivery.items
         res_valid = self._run("vus @pkg")
-        print(f"DEBUG vus valid result: {res_valid}")
         self.assertEqual(res_valid.get("domain"), "action")
         self.assertEqual(res_valid.get("value", {}).get("status"), "delivered")
 
         # 2. vus @agent -> Returns undefined because agent_007 is not in delivery items
         res_missing = self._run("vus @agent")
-        print(f"DEBUG vus missing result: {res_missing}")
         self.assertEqual(res_missing.get("domain"), "undefined")
         self.assertEqual(res_missing.get("value"), "undefined")
 
@@ -76,7 +74,6 @@ class TestSafetyKernelInvariants(unittest.TestCase):
         # @agent noq mek @target nek
         chain = "@agent noq mek @target nek"
         res = self._run(chain)
-        print(f"DEBUG noq result: {res}")
         
         self.assertEqual(res.get("domain"), "error")
         self.assertEqual(res.get("code"), "ERR_ACTION_MISUSE")
