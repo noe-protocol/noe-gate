@@ -29,11 +29,28 @@ bench:                         ## Run ROS bridge overhead benchmark
 
 # ─── Aggregate ───────────────────────────────────────────────────────
 
-all: test conformance guard demo bench   ## Run everything
+all: ## Run everything
 	@echo ""
-	@echo "════════════════════════════════════════════"
+	@echo "── UNIT TESTS ────────────────────────────────────────────"
+	python3 -m unittest discover tests
+	@echo ""
+	@echo "── CONFORMANCE ───────────────────────────────────────────"
+	python3 tests/nip011/run_conformance.py
+	@echo ""
+	@echo "── SAFETY DEMO ───────────────────────────────────────────"
+	python3 examples/robot_guard_demo.py
+	@echo ""
+	@echo "── AUDIT DEMO ────────────────────────────────────────────"
+	python3 examples/auditor_demo/verify_shipment.py
+	@echo ""
+	@echo "── PERFORMANCE ───────────────────────────────────────────"
+	python3 benchmarks/bridge_overhead.py
+	@echo ""
+	@echo "════════════════════════════════════════════════════════════"
 	@echo "  ✅  ALL SUITES PASSED"
-	@echo "════════════════════════════════════════════"
+	@echo "  same rule + same grounded context → same verdict"
+	@echo "  stale / conflicting / missing context → non-execution"
+	@echo "════════════════════════════════════════════════════════════"
 
 # ─── Housekeeping ────────────────────────────────────────────────────
 
