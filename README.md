@@ -16,6 +16,159 @@ Only an emitted action is eligible for downstream execution. Both **`undefined`*
 
 <br />
 
+## Quick Start
+
+**Requirements**
+
+- Python 3.11 recommended (3.10 supported)
+- macOS, Linux, or Windows (via WSL2 recommended)
+- `make` installed
+- On Windows, use WSL2 for a Linux-native development environment
+
+Start with `make demo` for the flagship shipment gate demo.  
+Run `make demo-full` for the broader auditor walkthrough.
+
+```bash
+git clone https://github.com/noe-protocol/noe.git
+cd noe
+
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+python -m pip install ".[dev]"
+
+make demo
+make conformance
+```
+<br />
+
+### Run the conformance suite
+Executes the locked NIP-011 conformance vectors.
+
+```bash
+make conformance
+```
+<br />
+
+### Run the full suite
+Runs the full verification path: unit tests, conformance, demos, and benchmark.
+
+```bash
+make all
+```
+<br />
+
+### Optional: run the full demo set
+Runs the broader auditor demo set, including epistemic, hallucination, and multi-agent scenarios.
+
+```bash
+make demo-full
+```
+<br />
+
+### Windows (recommended): WSL2 / Ubuntu
+
+```bash
+# 1) Install WSL2 + Ubuntu, then open an Ubuntu terminal
+# 2) Install build tools
+sudo apt update
+sudo apt install -y make git python3.11 python3.11-venv python3-pip
+
+git clone https://github.com/noe-protocol/noe.git
+cd noe
+
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+python -m pip install ".[dev]"
+
+make conformance
+make demo
+make all
+```
+
+For development workflows, replace:
+
+```bash
+python -m pip install ".[dev]"
+```
+
+with:
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+<br />
+
+### One-minute example
+
+```
+shi @human_present khi sek mek @stop sek nek
+```
+
+- `shi` = evidentiary status check at the knowledge tier
+- `khi` = guard (if ... then)
+- `sek` = explicit scope boundary for guarded action blocks
+- `mek` = action verb
+- `nek` = chain terminator
+
+Identifiers such as `@human_present` and `@stop` are registry keys. See `noe/registry.json` for identifier kinds and types.
+
+Illustrative example only: sources and thresholds live in the active Domain Pack; the core registry fixes identifier kinds and types.
+
+Important: `shi @human_present` must be grounded from attested sensor evidence or a trusted adapter result. Proposer-supplied claims do not satisfy `shi` or `vek`.
+
+```json
+{
+  "@human_present":  { "kind": "literal", "shard": "modal.knowledge", "source": "vision.person_bbox", "threshold": 0.90 },
+  "@e_stop_pressed": { "kind": "literal", "shard": "modal.knowledge", "source": "hw.estop" },
+  "@stop":           { "kind": "action",  "verb": "mek", "action_class": "safety_stop" }
+}
+```
+
+- If `@human_present` is grounded true in `C_safe.modal.knowledge` → emits `mek @stop`
+- If grounded false → `undefined`
+- If missing or ungrounded in strict mode → error: `ERR_EPISTEMIC_MISMATCH`
+
+<br />
+
+### One-minute example (compound)
+
+```
+shi @human_present ur shi @e_stop_pressed khi sek mek @stop sek nek
+```
+
+- `ur` = disjunction (OR)
+- If either `shi @human_present` or `shi @e_stop_pressed` is grounded true in `C_safe` → emits `mek @stop`
+- If both are grounded false → `undefined`
+- If a required predicate is missing or ungrounded in strict mode → error
+
+Propagation rules for `ur` over `undefined` are normative in NIP-005.
+
+[Full Auditor Demo Walkthrough](examples/auditor_demo/README.md)
+
+<br />
+
+### Common Commands
+
+```bash
+make demo          # Flagship shipment demo
+make demo-full     # Full auditor demo suite
+make guard         # Robot guard golden-vector demo (7 ticks)
+make conformance   # NIP-011 conformance vectors
+make test          # Unit tests
+make bench         # ROS bridge overhead benchmark
+make all           # Run everything
+make help          # Show all available targets
+```
+
+In practice: planners and LLMs propose → Noe gates → ROS2/controllers execute.
+
+<br />
+
 ## **Contents**
 1. [Why Noe exists](#why-noe-exists)
 2. [Determinism and replay](#determinism-and-replay)
@@ -23,15 +176,14 @@ Only an emitted action is eligible for downstream execution. Both **`undefined`*
 4. [Replayable evidence, not legal verdicts](#replayable-evidence-not-legal-verdicts)
 5. [Untrusted proposers](#untrusted-proposers)
 6. [Determinism contract](#determinism-contract)
-7. [Quick Start](#quick-start)
-8. [What a certificate looks like](#what-a-certificate-looks-like)
-9. [Representative strict-mode error codes](#representative-strict-mode-error-codes)
-10. [Operator cheat sheet](#operator-cheat-sheet)
-11. [Engineering constraints and trade-offs](#engineering-constraints-and-trade-offs)
-12. [Architecture](#architecture)
-13. [Implementation status](#implementation-status)
-14. [Repository structure](#repository-structure)
-15. [Documentation](#documentation)
+7. [What a certificate looks like](#what-a-certificate-looks-like)
+8. [Representative strict-mode error codes](#representative-strict-mode-error-codes)
+9. [Operator cheat sheet](#operator-cheat-sheet)
+10. [Engineering constraints and trade-offs](#engineering-constraints-and-trade-offs)
+11. [Architecture](#architecture)
+12. [Implementation status](#implementation-status)
+13. [Repository structure](#repository-structure)
+14. [Documentation](#documentation)
 
 <br />
 
@@ -140,131 +292,6 @@ Upstream systems often produce floating-point state. Portable replay across runt
 For that reason, Noe requires an **integer-only contract** for normative decision inputs and certificate commitments. Floating-point values may exist in richer upstream context, but they must be quantized before projection into `C_safe`.
 
 This is a necessary part of cross-runtime replay portability. It reduces ambiguity across architectures and languages by excluding float representations that do not canonicalize reliably.
-
-<br />
-
-## Quick Start
-
-**Requirements**
-
-- Python 3.11 recommended (3.10 supported)
-- macOS, Linux, or Windows (via WSL2 recommended)
-- `make` installed
-- On Windows, use WSL2 for a Linux-native development environment
-
-```bash
-git clone https://github.com/noe-protocol/noe.git
-cd noe
-
-python3.11 -m venv .venv
-source .venv/bin/activate
-
-python -m pip install --upgrade pip
-python -m pip install ".[dev]"
-
-make conformance
-make demo
-make all
-```
-
-### Windows (recommended): WSL2 / Ubuntu
-
-```bash
-# 1) Install WSL2 + Ubuntu, then open an Ubuntu terminal
-# 2) Install build tools
-sudo apt update
-sudo apt install -y make git python3.11 python3.11-venv python3-pip
-
-git clone https://github.com/noe-protocol/noe.git
-cd noe
-
-python3.11 -m venv .venv
-source .venv/bin/activate
-
-python -m pip install --upgrade pip
-python -m pip install ".[dev]"
-
-make conformance
-make demo
-make all
-```
-
-For development workflows, replace:
-
-```bash
-python -m pip install ".[dev]"
-```
-
-with:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-<br />
-
-### One-minute example
-
-```
-shi @human_present khi sek mek @stop sek nek
-```
-
-- `shi` = evidentiary status check at the knowledge tier
-- `khi` = guard (if ... then)
-- `sek` = explicit scope boundary for guarded action blocks
-- `mek` = action verb
-- `nek` = chain terminator
-
-Identifiers such as `@human_present` and `@stop` are registry keys. See `noe/registry.json` for identifier kinds and types.
-
-Illustrative example only: sources and thresholds live in the active Domain Pack; the core registry fixes identifier kinds and types.
-
-Important: `shi @human_present` must be grounded from attested sensor evidence or a trusted adapter result. Proposer-supplied claims do not satisfy `shi` or `vek`.
-
-```json
-{
-  "@human_present":  { "kind": "literal", "shard": "modal.knowledge", "source": "vision.person_bbox", "threshold": 0.90 },
-  "@e_stop_pressed": { "kind": "literal", "shard": "modal.knowledge", "source": "hw.estop" },
-  "@stop":           { "kind": "action",  "verb": "mek", "action_class": "safety_stop" }
-}
-```
-
-- If `@human_present` is grounded true in `C_safe.modal.knowledge` → emits `mek @stop`
-- If grounded false → `undefined`
-- If missing or ungrounded in strict mode → error: `ERR_EPISTEMIC_MISMATCH`
-
-<br />
-
-### One-minute example (compound)
-
-```
-shi @human_present ur shi @e_stop_pressed khi sek mek @stop sek nek
-```
-
-- `ur` = disjunction (OR)
-- If either `shi @human_present` or `shi @e_stop_pressed` is grounded true in `C_safe` → emits `mek @stop`
-- If both are grounded false → `undefined`
-- If a required predicate is missing or ungrounded in strict mode → error
-
-Propagation rules for `ur` over `undefined` are normative in NIP-005.
-
-[Full Auditor Demo Walkthrough](examples/auditor_demo/README.md)
-
-<br />
-
-### Common Commands
-
-```bash
-make test          # Unit tests
-make conformance   # NIP-011 conformance vectors
-make guard         # Robot guard golden-vector demo (7 ticks)
-make demo          # Full auditor demo
-make bench         # ROS bridge overhead benchmark
-make all           # Run everything
-make help          # Show all available targets
-```
-
-In practice: planners and LLMs propose → Noe gates → ROS2/controllers execute.
 
 <br />
 
