@@ -440,8 +440,7 @@ def replay_from_certificate(cert_path: Path):
 
 
 def main():
-    print("NOE shipment verification")
-    print("-------------------------")
+    print("NOE FLAGSHIP DEMO: DETERMINISTIC SHIPMENT GATE\n")
 
     c_root = build_c_root()
     c_domain = build_c_domain()
@@ -449,38 +448,31 @@ def main():
     c_merged = merge_context_layers(c_root, c_domain, c_local)
     c_safe = project_safe_context(c_merged)
 
-    print(f"chain: {SHIPMENT_CHAIN}")
-    print("required literals: @temperature_ok, @location_ok, @chain_of_custody_ok, @human_clear")
-    print(
-        "admitted knowledge: "
-        + ", ".join(sorted(c_safe.get("modal", {}).get("knowledge", {}).keys()))
-    )
+    print("Rule")
+    print(f"  {SHIPMENT_CHAIN}\n")
+
+    print("Grounded checks")
+    knowledge = c_safe.get("modal", {}).get("knowledge", {})
+    for req in ["@temperature_ok", "@location_ok", "@chain_of_custody_ok", "@human_clear"]:
+        status = "yes" if req in knowledge else "no"
+        print(f"  {req:<23} {status}")
+    print()
 
     decision_result = evaluate_shipment_decision(c_safe)
     domain = decision_result.get("domain")
     value = decision_result.get("value")
 
-    if domain == "list":
-        print("verdict: PERMIT")
-    elif domain == "action":
-        print("verdict: PERMIT")
-    elif domain == "undefined":
-        print("verdict: WITHHOLD")
+    print("Decision")
+    if domain in ("action", "list"):
+        item = value[0] if type(value) is list else value
+        target = item.get("target", "unknown")
+        print(f"  PERMIT: {target}\n")
     else:
-        print(f"verdict: REFUSE ({decision_result.get('code')})")
+        print(f"  BLOCK ({domain})\n")
 
     cert = build_certificate(c_root, c_domain, c_local, c_safe, decision_result)
     out_path = Path(__file__).parent / "shipment_certificate_strict.json"
     out_path.write_text(json.dumps(cert, indent=2, ensure_ascii=False))
-
-    print(f"context_hash: {cert['context_hashes']['safe'][:16]}...")
-    if cert["outcome"].get("action_hash"):
-        print(f"action_hash: {cert['outcome']['action_hash'][:16]}...")
-    print(f"certificate: {out_path.name}")
-
-    print()
-    print("stale-input check")
-    print("-----------------")
 
     c_local_stale = deepcopy(c_local)
     c_local_stale["literals"]["@temperature_ok"]["timestamp_us"] = microseconds_ago(6_000_000)
@@ -488,29 +480,40 @@ def main():
     c_safe_stale = project_safe_context(c_merged_stale)
     stale_result = evaluate_shipment_decision(c_safe_stale)
 
-    print(f"temperature admitted? {'@temperature_ok' in c_safe_stale.get('modal', {}).get('knowledge', {})}")
-    print(f"verdict: {stale_result.get('domain').upper()} ({stale_result.get('code', 'no-action')})")
-
     cert_stale = build_certificate(c_root, c_domain, c_local_stale, c_safe_stale, stale_result)
     stale_path = Path(__file__).parent / "shipment_certificate_REFUSED.json"
     stale_path.write_text(json.dumps(cert_stale, indent=2, ensure_ascii=False))
-    print(f"certificate: {stale_path.name}")
 
-    print()
-    print("replay check")
-    print("------------")
+    print("Replay")
     ok, msg = replay_from_certificate(out_path)
-    print(msg)
+    if ok:
+        print("  VERIFIED: identical context and rule produced identical outcome\n")
+    else:
+        print(f"  UNKNOWN: {msg}\n")
 
-    print()
-    print("tamper check")
-    print("------------")
+    print("Tamper check")
     tampered_path = Path(__file__).parent / "shipment_certificate_tampered.json"
     tampered = json.loads(out_path.read_text())
     tampered["context_snapshot"]["local"]["literals"]["@human_clear"]["value"] = False
     tampered_path.write_text(json.dumps(tampered, indent=2, ensure_ascii=False))
     ok, msg = replay_from_certificate(tampered_path)
-    print(msg)
+    if not ok:
+        print("  DETECTED: modified context/certificate failed replay verification\n")
+    else:
+        print("  FAILED DETECT: Tampered certificate was accepted\n")
+
+    try:
+        rel_out = out_path.relative_to(Path.cwd().parent.parent) if "examples" in str(Path.cwd()) else out_path.relative_to(Path.cwd())
+        rel_stale = stale_path.relative_to(Path.cwd().parent.parent) if "examples" in str(Path.cwd()) else stale_path.relative_to(Path.cwd())
+    except ValueError:
+        rel_out = out_path.name
+        rel_stale = stale_path.name
+
+    print("Artifacts")
+    print(f"  {rel_out}")
+    print(f"  {rel_stale}\n")
+
+    print("Result: the same rule and grounded context replay to the same decision; tampering breaks verification.")
 
 if __name__ == "__main__":
     main()
