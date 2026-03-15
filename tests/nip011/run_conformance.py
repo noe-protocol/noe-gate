@@ -43,8 +43,8 @@ def compute_hashes_like_runtime(context_object):
     return {
         "root": snap.root_hash,
         "domain": snap.domain_hash,
-        "local": snap.local_hash,
-        "total": snap.context_hash,
+        "local": getattr(snap, 'local_hash', ''),
+        "total": snap.composite_hash,
     }
 
 def finalize_expected_action(action_obj, context, source, mode="strict", ctx_hash=None):
@@ -126,7 +126,7 @@ def strip_action_hashes(obj):
 
 
 def run_test_case(test: Dict[str, Any]) -> bool:
-    print(f"Running {test['id']}: {test['description']}...", end=" ")
+    test_label = f"{test['id']}: {test['description']}"
 
 
 
@@ -194,7 +194,7 @@ def run_test_case(test: Dict[str, Any]) -> bool:
                     root["temporal"] = {}
                 
                 if "now" not in root["temporal"]:
-                    root["temporal"]["now"] = float(root.get("timestamp", 1000.0))
+                    root["temporal"]["now"] = 1000.0
                 
                 if "max_skew_ms" not in root["temporal"]:
                     root["temporal"]["max_skew_ms"] = 1.0
@@ -259,7 +259,6 @@ def run_test_case(test: Dict[str, Any]) -> bool:
                  print(f"\nFAIL: Agreement mismatch. Expected {expected['agreement']}, got {is_agreement}")
                  return False
 
-        print("PASS")
         return True
     
     # Handle single-context tests
@@ -271,7 +270,6 @@ def run_test_case(test: Dict[str, Any]) -> bool:
         # These should be passed directly to run_noe_logic without pre-processing
         # to test ERR_BAD_CONTEXT handling
         if ctx is None or isinstance(ctx, (str, int, float, list)):
-            print(f"DEBUG: Test runner - taking malformed context path for {type(ctx).__name__}")
             result = run_noe_logic(chain, ctx, mode)
 
             # Compare result
@@ -347,7 +345,7 @@ def run_test_case(test: Dict[str, Any]) -> bool:
                 root["temporal"] = {}
             
             if "now" not in root["temporal"]:
-                root["temporal"]["now"] = float(root.get("timestamp", 1000.0))
+                root["temporal"]["now"] = 1000.0
             
             if "max_skew_ms" not in root["temporal"]:
                 root["temporal"]["max_skew_ms"] = 1.0
@@ -357,7 +355,7 @@ def run_test_case(test: Dict[str, Any]) -> bool:
              # Inject temporal if missing
              if "temporal" not in ctx:
                  ctx["temporal"] = {
-                     "now": float(ctx.get("timestamp", 1000.0)),
+                     "now": 1000.0,
                      "max_skew_ms": 1.0
                  }
              # Inject spatial defaults if missing
@@ -459,7 +457,6 @@ def run_test_case(test: Dict[str, Any]) -> bool:
                     print(f"Error Details: {result}")
                 return False
                 
-        print("PASS")
         return True
         
     else:
@@ -478,7 +475,7 @@ def main():
     with open(manifest_path, "r") as f:
         manifest = json.load(f)
         
-    print(f"Loaded Manifest: {len(manifest)} files tracked.")
+
     
     # 2. Validate Suite Integrity
     verified_files = []
@@ -528,7 +525,7 @@ def main():
         # print(f"Verified {filename}: {actual_count} tests, SHA OK")
         total_manifest_tests += actual_count
         verified_files.append((filename, tests))
-    print(f"Suite Integrity Verified: {total_manifest_tests} tests locked.")
+    print(f"NIP-011 Conformance Suite ({total_manifest_tests} tests locked)")
     print("-" * 40)
 
     # 3. Execution
@@ -541,10 +538,9 @@ def main():
     
     for filename, tests in verified_files:
         if "experimental" in filename or "runtime" in filename or "quantization" in filename:
-             print(f"Skipping execution of non-conformance file: {filename}")
              continue
              
-        print(f"Running {filename} ({len(tests)} tests)...")
+        # (no per-file header printed in quiet mode)
         
         for test in tests:
             t_id = test.get("id", "UNKNOWN")
