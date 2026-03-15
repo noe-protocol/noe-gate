@@ -27,9 +27,10 @@ Only an emitted action is eligible for downstream execution. Both **`undefined`*
 
 Start with `make demo` for the flagship shipment gate demo.  
 Run `make demo-full` for the broader auditor walkthrough.
+If you already have the repo locally, skip the `git clone` step and just `cd` into `noe`.
 
 ```bash
-git clone https://github.com/noe-protocol/noe.git
+git clone https://github.com/noe-protocol/noe.git || true
 cd noe
 
 python3.11 -m venv .venv
