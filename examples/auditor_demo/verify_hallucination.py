@@ -471,7 +471,7 @@ def build_certificate(scenario_name: str,
 
 def main():
     print("=" * 72)
-    print("NOE HALLUCINATION FIREWALL DEMO (Industrial Context)")
+    print("SCENARIO 3: CROSS-MODAL SENSOR CONFLICT")
     print("=" * 72)
     print()
     print("Chain:")
@@ -486,7 +486,7 @@ def main():
     # RUN 1: Hallucinated door → BLOCKED
     # ------------------------------------------------------------------
     print("-" * 72)
-    print("RUN 1: Hallucinated Door")
+    print("Run A: Vision open / LiDAR wall (85mm) — conflict expected")
     print("-" * 72)
 
     now_us = time.time_ns() // 1_000
@@ -530,7 +530,7 @@ def main():
     # RUN 2: Real door → ACTION
     # ------------------------------------------------------------------
     print("-" * 72)
-    print("RUN 2: Real Door")
+    print("Run B: Vision open / LiDAR open — agreement expected")
     print("-" * 72)
 
     now_us2 = time.time_ns() // 1_000
