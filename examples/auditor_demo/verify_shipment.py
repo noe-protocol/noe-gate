@@ -509,7 +509,11 @@ def main():
         rel_out = out_path.name
         rel_stale = stale_path.name
 
-    print("Artifacts")
+    print("Hashes & Artifacts")
+    print(f"  context_hash: {cert['context_hashes']['safe']}")
+    if cert["outcome"].get("action_hash"):
+        print(f"  action_hash:  {cert['outcome']['action_hash']}")
+    
     print(f"  {rel_out}")
     print(f"  {rel_stale}\n")
 
