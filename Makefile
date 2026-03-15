@@ -14,7 +14,7 @@ conformance:                   ## Run NIP-011 conformance suite (60 vectors)
 # ─── Demos ───────────────────────────────────────────────────────────
 
 demo:                          ## Run flagship shipment demo
-	bash examples/auditor_demo/run_demo.sh
+	python3 examples/auditor_demo/verify_shipment.py
 
 demo-full:                     ## Run full auditor demo set
 	bash examples/auditor_demo/run_demo_full.sh
