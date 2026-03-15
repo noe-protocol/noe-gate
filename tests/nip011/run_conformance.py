@@ -533,9 +533,17 @@ def main():
     failed_tests = 0
     seen_ids = {}
     
-    # Sort files for deterministic run order
-    verified_files.sort(key=lambda x: x[0])
-    
+    conformance_tests = 0
+    experimental_tests = 0
+    for filename, tests in verified_files:
+        if "experimental" in filename or "runtime" in filename or "quantization" in filename:
+             experimental_tests += len(tests)
+        else:
+             conformance_tests += len(tests)
+
+    print(f"  {conformance_tests} conformance, {experimental_tests} experimental (integrity-locked but not executed)")
+    print("-" * 40)
+
     for filename, tests in verified_files:
         if "experimental" in filename or "runtime" in filename or "quantization" in filename:
              continue
