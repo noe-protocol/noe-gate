@@ -26,8 +26,12 @@ Only an emitted action is eligible for downstream execution. Both **`undefined`*
 - On Windows, use WSL2 for a Linux-native development environment
 
 Start with `make demo` for the flagship shipment gate demo.  
+
 Run `make demo-full` for the broader auditor walkthrough.
+
 If you already have the repo locally, skip the `git clone` step and just `cd` into `noe`.
+
+<br />
 
 ```bash
 git clone https://github.com/noe-protocol/noe.git || true
