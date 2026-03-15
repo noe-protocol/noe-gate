@@ -47,7 +47,6 @@ class TestSafetyIntegration(unittest.TestCase):
         # Even if val was "undefined" (literal missing), extra_key would allow shi to work.
         res_shi = evaluator._apply_unary_op("shi", "@foo", extra_key="@foo")
         
-        print(f"\n[TEST] _apply_unary_op('shi', '@foo') -> {res_shi!r}")
         
         # CRITICAL: It returns None (the value in the map).
         self.assertIsNone(res_shi, "shi @foo (None) should return None")
@@ -71,7 +70,6 @@ class TestSafetyIntegration(unittest.TestCase):
         self.assertEqual(res_k3_or_fail, "undefined", "False OR U must be Undefined")
         
         
-        print("\n[TEST] K3 Binary Logic Verified:\n  F & U = F\n  T | U = T\n  F | U = U")
 
         # 5. Test Negation K3 (nai / nex)
         # not U = U
@@ -88,7 +86,6 @@ class TestSafetyIntegration(unittest.TestCase):
         res_neg_f = evaluator._apply_unary_op("nai", False)
         self.assertTrue(res_neg_f, "NOT False should be True")
         
-        print("[TEST] K3 Negation Verified: result 'undefined' matches expectation for U.")
             
 if __name__ == "__main__":
     unittest.main()
