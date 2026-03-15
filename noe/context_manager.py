@@ -27,10 +27,9 @@ Designed for:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Callable, Tuple
+from typing import Any, Dict, Optional, Callable
 import copy
 import hashlib
-import json
 import threading
 import time
 
@@ -80,11 +79,11 @@ def _deep_freeze(obj: Any) -> Any:
     
     - dict → MappingProxyType (immutable dict view)
     - list/tuple → tuple (recursively frozen)
-    - set → frozenset (recursively frozen)
+    - set → REJECTED (sets are not valid JSON types; raises BadContextError)
     - primitives → unchanged
     
     This enables safe caching of hashes while preventing all mutation vectors,
-    including nested lists/sets that would otherwise remain mutable.
+    including nested lists that would otherwise remain mutable.
     
     Used internally to guarantee root/domain immutability.
     """
@@ -94,7 +93,7 @@ def _deep_freeze(obj: Any) -> Any:
     elif isinstance(obj, (list, tuple)):
         return tuple(_deep_freeze(x) for x in obj)
     elif isinstance(obj, set):
-        return frozenset(_deep_freeze(x) for x in obj)
+        raise BadContextError("Sets are not pure JSON types and are unsupported in Noe context layers.")
     else:
         # Primitives (int, str, float, bool, None) are already immutable
         return obj
@@ -117,36 +116,11 @@ def _deep_unfreeze(obj: Any) -> Any:
     elif isinstance(obj, tuple):
         # Convert back to list (tuples were used to freeze lists)
         return [_deep_unfreeze(x) for x in obj]
-    elif isinstance(obj, frozenset):
-        return {_deep_unfreeze(x) for x in obj}
     else:
         return obj
 
 
-# Default Limit: 256KB per shard (Root, Domain, Local) in strict mode.
-# This ensures O(1) hashing/copying performance and prevents "Performance Cliffs".
-_DEFAULT_MAX_SHARD_SIZE = 256 * 1024  # 256KB
 
-def _hash_json(obj: Any, max_size: int = 0) -> str:
-    """
-    Hash a JSON-serializable object to SHA-256 hex.
-    
-    Args:
-        obj: Object to hash
-        max_size: Optional size limit in bytes for canonical JSON
-    
-    Returns:
-        SHA-256 hex digest (64 hex chars)
-    
-    Raises:
-        ContextTooLargeError: If canonical JSON exceeds max_size
-    """
-    s = canonical_json(obj).encode("utf-8")
-    if max_size > 0 and len(s) > max_size:
-        raise ContextTooLargeError(
-            f"Context shard size {len(s)} exceeds limit {max_size}"
-        )
-    return hashlib.sha256(s).hexdigest()
 
 
 def _hash_json_digest(obj: Any, max_size: int = 0) -> tuple[bytes, str]:
@@ -208,37 +182,39 @@ class ContextSnapshot:
     
     V1.0 Design:
         - local: Deep-copied volatile layer (safe, mutable copy)
-        - merged: Materialized merged context (root < domain < local) for evaluation
+        - c_merged: Materialized merged context (root < domain < local) for evaluation
         - structured: Full three-layer structure (for hashing/export)
         - *_hash: Cryptographic hashes for provenance
-        - timestamp_ms, is_stale: Metadata
+        - composite_hash: Composite hash of all 3 raw shards (NOT H_safe)
+        - timestamp_ms, local_layer_age_stale: Metadata
     
     Immutability Guarantee:
-        - local is a fresh deep copy per snapshot
-        - merged is a fresh materialized dict per snapshot
-        - structured contains cached references (frozen internally)
-        - root/domain not exposed to prevent aliasing
+        - The snapshot dataclass itself is frozen.
+        - top-level dicts (local, c_merged, structured) are deep-copied.
+        - Notice: Inner elements of these dict elements are STILL MUTABLE.
+          If true immutability is needed at the boundary, downstream consumers
+          must wrap them in read-only proxies or deeply clone.
     
     Performance Note:
-        Creating merged costs O(|root| + |domain| + |local|) due to dict materialization.
+        Creating c_merged costs O(|root| + |domain| + |local|) due to dict materialization.
         With typical 50KB contexts, expect 4-5ms per snapshot in Python.
         For <1ms performance, see v1.1 ChainMap/Mapping view approach.
     """
     
     # Core evaluation data (hot path)
     local: Dict[str, Any]       # Deep copy of volatile layer
-    merged: Dict[str, Any]       # Materialized merged context
+    c_merged: Dict[str, Any]       # Materialized merged context
     structured: Dict[str, Any]   # {"root": ..., "domain": ..., "local": ...}
     
     # Provenance hashes
     root_hash: str
     domain_hash: str
     local_hash: str
-    context_hash: str
+    composite_hash: str
     
     # Metadata
     timestamp_ms: int
-    is_stale: bool
+    local_layer_age_stale: bool
 
 
 # -------------------------------------------------------------------------
@@ -250,10 +226,17 @@ class ContextManager:
     """
     Structured Context Manager for Noe.
 
+    **Scope:** This manager owns raw-layer context only. It does NOT construct
+    C_safe and does NOT compute H_safe; those are validator responsibilities
+    (NIP-009 § π_safe, NIP-015 § evaluation semantics). Downstream code must
+    never treat snapshot.c_merged or snapshot.composite_hash as a substitute
+    for C_safe or H_safe.
+
     Responsibilities:
         - Maintain C_root, C_domain, C_local in memory.
         - Provide immutable snapshots with provenance hashes.
-        - Enforce a staleness window over C_local (for strict mode).
+        - Enforce a coarse staleness window over C_local (manager heuristic only;
+          normative per-literal staleness is enforced by the validator).
 
     Performance Characteristics:
         - snapshot() materializes merged dict: O(|root| + |domain| + |local|)
@@ -283,44 +266,46 @@ class ContextManager:
         This prevents external mutations from invalidating provenance hashes.
         
     Hash Provenance:
-        snapshot.context_hash is computed from the exact snapshot data,
-        guaranteeing: hash attests to what was evaluated, not internal state.
+        snapshot.composite_hash is a composition of the raw shard digests only.
+        It is NOT H_safe. The validator must compute H_safe after projecting C_safe.
     """
 
     def __init__(
-        self,
-        root: Optional[Dict[str, Any]] = None,
-        domain: Optional[Dict[str, Any]] = None,
-        local: Optional[Dict[str, Any]] = None,
-        *,
-        staleness_ms: int = 100,
-        max_shard_size: int = _DEFAULT_MAX_SHARD_SIZE,
-        time_fn: Callable[[], float] = time.time,
+        self, 
+        root: Optional[Dict[str, Any]], 
+        domain: Optional[Dict[str, Any]], 
+        local: Optional[Dict[str, Any]],
+        staleness_ms: int = 1000,
+        max_shard_size: int = 256 * 1024,
+        time_fn: Callable[[], float] = time.time
     ):
         """
         Initialize the context manager.
 
         Args:
-            root:   C_root, global invariants. If None, defaults to {}.
-            domain: C_domain, environment/model config. If None, defaults to {}.
-            local:  C_local, mutable runtime state. If None, defaults to {}.
+            root:   C_root, global invariants. Must be a dict. Explicit None is rejected.
+            domain: C_domain, environment/model config. Must be a dict. Explicit None is rejected.
+            local:  C_local, mutable runtime state. Must be a dict. Explicit None is rejected.
             staleness_ms: maximum allowed age for C_local snapshots in strict mode.
             max_shard_size: maximum serialized size (bytes) for any single shard. 0 = unlimited.
                             Defaults to 256KB to enforce Control vs Data plane separation.
             time_fn: injectable time source (seconds), used for tests or simulation.
         """
+        if not isinstance(root, dict) or not isinstance(domain, dict) or not isinstance(local, dict):
+            raise BadContextError("Context layers (root, domain, local) must be dictionaries.")
+
         self._lock = threading.RLock()
         self._max_shard_size = max_shard_size
         
-        # PERFORMANCE OPTIMIZATION: Deep-freeze static layers for immutability
-        # This enables safe hash caching - frozen data can never change
-        # Internally: MappingProxyType/tuple/frozenset (immutable)
-        # Externally (snapshots): plain dicts (compatibility)
-        self._root_frozen = _deep_freeze(copy.deepcopy(root) if root is not None else {})
-        self._domain_frozen = _deep_freeze(copy.deepcopy(domain) if domain is not None else {})
+        # PERFORMANCE OPTIMIZATION: Deep-freeze static layers.
+        # We freeze internal root/domain to prevent mutation and safely cache hashes.
+        # Snapshots expose plain dict copies for API compatibility.
         
-        # Local is the volatile layer - kept mutable, updated frequently
-        self._local: Dict[str, Any] = copy.deepcopy(local) if local is not None else {}
+        self._root_frozen = _deep_freeze(copy.deepcopy(root))
+        self._domain_frozen = _deep_freeze(copy.deepcopy(domain))
+        
+        # Local is the volatile layer - kept mutable, updated frequently. Guaranteed to be a dict.
+        self._local: Dict[str, Any] = copy.deepcopy(local)
 
         self._staleness_ms = max(int(staleness_ms), 0)
         self._time_fn = time_fn
@@ -361,36 +346,7 @@ class ContextManager:
         if not isinstance(self._local, dict):
             raise BadContextError("C_local must be a dict")
 
-    def _compute_snapshot_hashes(
-        self, 
-        root_obj: Dict[str, Any], 
-        domain_obj: Dict[str, Any], 
-        local_obj: Dict[str, Any]
-    ) -> tuple[str, str, str, str]:
-        """
-        Compute hashes for snapshot copies.
-        
-        CRITICAL: Total hash MUST match validator's compute_context_hashes(...)['total']
-        This requires composing from byte digests, not concatenated hex strings.
-        
-        Args:
-            root_obj: The root context snapshot copy
-            domain_obj: The domain context snapshot copy  
-            local_obj: The local context snapshot copy
-            
-        Returns:
-            (root_hex, domain_hex, local_hex, total_hex)
-        """
-        # Compute byte digests + hex for each shard
-        root_digest, root_hex = _hash_json_digest(root_obj, self._max_shard_size)
-        domain_digest, domain_hex = _hash_json_digest(domain_obj, self._max_shard_size)
-        local_digest, local_hex = _hash_json_digest(local_obj, self._max_shard_size)
-        
-        # CRITICAL FIX: Compose total from byte digests (matches validator)
-        # OLD (WRONG): total = sha256((root_hex + domain_hex + local_hex).encode())
-        # NEW (CORRECT): total = sha256(root_digest + domain_digest + local_digest)
-        total_hex = hashlib.sha256(root_digest + domain_digest + local_digest).hexdigest()
-        return root_hex, domain_hex, local_hex, total_hex
+
 
     # ------------------------------------------------------------------
     # Public API
@@ -433,7 +389,7 @@ class ContextManager:
         with self._lock:
             # Check staleness
             time_since_update = now_ms - self._last_local_update_ms
-            is_stale = time_since_update > self._staleness_ms
+            is_stale = (self._staleness_ms > 0) and (time_since_update > self._staleness_ms)
             
             # DE-ALIASING GUARANTEE:
             # Create fresh separate copies of all layers.
@@ -449,14 +405,11 @@ class ContextManager:
             merged = _deep_merge(merged, local_copy)
             
             # Compute/Retrieve Hashes
-            # Since root/domain are cached as "unfrozen frozen data", their digests 
-            # are stable if we assume _root_dict_cached is effectively immutable 
-            # (which we enforce by deep-copying it on access).
+            # CACHING INVARIANT: Since root/domain are structurally frozen, their cached 
+            # digests remain stable. They are only recalculated under lock during 
+            # explicit update/replace operations. This avoids O(N) re-hashing per snapshot.
             
-            # But wait - if we deep copied root_copy, we technically should hash root_copy
-            # to be PROVABLY correct. However, deepcopy preserves value equality.
-            # Reuse cached digests for speed, calculate local fresh.
-            
+            # Since local is volatile, we calculate its digest fresh on every snapshot.
             local_digest, local_hash = _hash_json_digest(local_copy, self._max_shard_size)
             
             # Compose total from BYTE DIGESTS
@@ -473,14 +426,14 @@ class ContextManager:
             
             snap = ContextSnapshot(
                 local=local_copy,
-                merged=merged, 
+                c_merged=merged, 
                 structured=structured,
                 root_hash=self._root_hash,
                 domain_hash=self._domain_hash,
                 local_hash=local_hash,
-                context_hash=total_hash,
+                composite_hash=total_hash,
                 timestamp_ms=now_ms,
-                is_stale=is_stale,
+                local_layer_age_stale=is_stale,
             )
             return snap
 
@@ -527,6 +480,14 @@ class ContextManager:
             raise BadContextError("replace_local expects a dict")
 
         with self._lock:
+            # SECURITY: Enforce size limit immediately (not just at snapshot)
+            if self._max_shard_size > 0:
+                serialized = canonical_json(new_local).encode("utf-8")
+                if len(serialized) > self._max_shard_size:
+                    raise ContextTooLargeError(
+                        f"Local context size {len(serialized)} exceeds limit {self._max_shard_size}"
+                    )
+            
             self._local = copy.deepcopy(new_local)
             self._last_local_update_ms = self._now_ms()
             # No need to recompute - snapshots compute fresh hashes
@@ -537,15 +498,20 @@ class ContextManager:
             raise BadContextError("update_domain expects a dict delta")
 
         with self._lock:
-            # Unfreeze cached dict, merge, re-freeze
+            # Unfreeze cached dict, merge, deep-copy to prevent aliasing, re-freeze
             domain_dict = _deep_merge(self._domain_dict_cached, delta)
+            
+            # Verify size before mutating internal state
+            new_digest, new_hash = _hash_json_digest(domain_dict, self._max_shard_size)
+            
+            domain_dict = copy.deepcopy(domain_dict)
             self._domain_frozen = _deep_freeze(domain_dict)
             
             # Update cached dict version
             self._domain_dict_cached = domain_dict
             
-            # Invalidate cached digest
-            self._domain_digest, self._domain_hash = _hash_json_digest(domain_dict, self._max_shard_size)
+            # Update cached digest
+            self._domain_digest, self._domain_hash = new_digest, new_hash
 
     def replace_domain(self, new_domain: Dict[str, Any]) -> None:
         """Replace C_domain entirely. Invalidates cached digest + base merge."""
@@ -553,15 +519,19 @@ class ContextManager:
             raise BadContextError("replace_domain expects a dict")
 
         with self._lock:
-            # Deep copy and freeze
+            # Deep copy to prevent aliasing
             domain_dict = copy.deepcopy(new_domain)
+            
+            # Verify size before mutating internal state
+            new_digest, new_hash = _hash_json_digest(domain_dict, self._max_shard_size)
+            
             self._domain_frozen = _deep_freeze(domain_dict)
             
             # Update cached dict version
             self._domain_dict_cached = domain_dict
             
-            # Invalidate cached digest
-            self._domain_digest, self._domain_hash = _hash_json_digest(domain_dict, self._max_shard_size)
+            # Update cached digest
+            self._domain_digest, self._domain_hash = new_digest, new_hash
 
     def unsafe_replace_root(self, new_root: Dict[str, Any]) -> None:
         """Replace C_root. Invalidates cached digest + base merge."""
@@ -569,16 +539,19 @@ class ContextManager:
             raise BadContextError("unsafe_replace_root expects a dict")
 
         with self._lock:
-            # Deep copy and freeze
+            # Deep copy to prevent aliasing
             root_dict = copy.deepcopy(new_root)
+            
+            # Verify size before mutating internal state
+            new_digest, new_hash = _hash_json_digest(root_dict, self._max_shard_size)
+            
             self._root_frozen = _deep_freeze(root_dict)
             
             # Update cached dict version
             self._root_dict_cached = root_dict
             
-            # Invalidate cached digest and base merge
-            # Invalidate cached digest
-            self._root_digest, self._root_hash = _hash_json_digest(root_dict, self._max_shard_size)
+            # Update cached digest
+            self._root_digest, self._root_hash = new_digest, new_hash
 
     # ------------------------------------------------------------------
     # Staleness & conflict helpers
@@ -586,10 +559,20 @@ class ContextManager:
 
     def assert_fresh(self) -> None:
         """
-        Raise ContextStaleError if the current local context is stale.
+        Raise ContextStaleError if the local layer has not been updated recently.
 
-        This is not used by NoeRuntime directly (it uses snapshot().is_stale),
-        but can be used by external callers that want explicit exceptions.
+        MANAGER HEURISTIC ONLY — not spec-normative.
+
+        This check is based solely on the wall-clock age of the last
+        update_local() / replace_local() call (self._last_local_update_ms).
+        It is a coarse freshness guard for the manager, not the validator's
+        per-field staleness enforcement required by NIP-015.
+
+        A fresh local-layer update does NOT guarantee that individual sensor
+        entries within that update are themselves fresh. Per-literal timestamp
+        staleness is enforced by the validator (ERR_STALE_CONTEXT), not here.
+
+        Use snapshot().local_layer_age_stale for the equivalent inline check.
         """
         now_ms = self._now_ms()
         age_ms = now_ms - self._last_local_update_ms
@@ -605,4 +588,4 @@ class ContextManager:
         Returns True if hashes are equal, False otherwise.
         """
         snap = self.snapshot()
-        return snap.context_hash == other_snapshot.context_hash
+        return snap.composite_hash == other_snapshot.composite_hash
