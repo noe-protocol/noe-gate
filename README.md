@@ -107,50 +107,41 @@ python -m pip install -e ".[dev]"
 
 <br />
 
-### One-minute example
+### What this proves
+
+`make all` and `make demo-full` demonstrate five invariants:
+
+1. **Deterministic evaluation** — the same rule applied to the same grounded context always produces the same verdict, and the verdict can be independently replayed from the certificate alone.
+2. **Epistemic non-execution** — when a sensor's confidence falls below the required threshold, the knowledge path resolves to `undefined` and no action is emitted.
+3. **Cross-modal veto** — when two sensor modalities disagree (e.g. vision says open, LiDAR measures a wall), Noe blocks the proposed action regardless of individual confidence scores.
+4. **Structural halt on missing context** — if a chain requires a literal (`@human_override`, a spatial shard, etc.) that is absent from the admitted context, the belief path cannot execute. The error is structural, not heuristic.
+5. **Policy-layer composability** — higher-level arbitration (multi-agent voting, liveness policies) can be layered above Noe without relaxing the deterministic validation boundary that Noe enforces on individual proposed actions.
+
+Every permitted action leaves a replayable, hash-bound certificate in `examples/auditor_demo/`. Every blocked action leaves no certificate and emits no hash — the proof of non-execution is the absence of an artifact.
+
+<br />
+
+### Minimal Example
 
 ```
 shi @human_present khi sek mek @stop sek nek
 ```
 
-- `shi` = evidentiary status check at the knowledge tier
-- `khi` = guard (if ... then)
-- `sek` = explicit scope boundary for guarded action blocks
-- `mek` = action verb
-- `nek` = chain terminator
+- `shi` checks grounded knowledge-tier membership
+- `khi` introduces the guard
+- `mek @stop` is the action emission
+- `sek` ... `sek` bounds the guarded action block
+- `nek` terminates the chain
 
-Identifiers such as `@human_present` and `@stop` are registry keys. See `noe/registry.json` for identifier kinds and types.
+If @human_present is grounded true in C_safe, Noe emits mek @stop.
 
-Illustrative example only: sources and thresholds live in the active Domain Pack; the core registry fixes identifier kinds and types.
+If grounded false, the result is undefined.
 
-Important: `shi @human_present` must be grounded from attested sensor evidence or a trusted adapter result. Proposer-supplied claims do not satisfy `shi` or `vek`.
+If missing or unsupported in strict mode, the runtime rejects with ERR_EPISTEMIC_MISMATCH.
 
-```json
-{
-  "@human_present":  { "kind": "literal", "shard": "modal.knowledge", "source": "vision.person_bbox", "threshold": 0.90 },
-  "@e_stop_pressed": { "kind": "literal", "shard": "modal.knowledge", "source": "hw.estop" },
-  "@stop":           { "kind": "action",  "verb": "mek", "action_class": "safety_stop" }
-}
-```
-
-- If `@human_present` is grounded true in `C_safe.modal.knowledge` → emits `mek @stop`
-- If grounded false → `undefined`
-- If missing or ungrounded in strict mode → error: `ERR_EPISTEMIC_MISMATCH`
+Identifiers such as @human_present and @stop are registry keys. See noe/registry.json for kinds and types. Full operator semantics are defined in the NIPs.
 
 <br />
-
-### One-minute example (compound)
-
-```
-shi @human_present ur shi @e_stop_pressed khi sek mek @stop sek nek
-```
-
-- `ur` = disjunction (OR)
-- If either `shi @human_present` or `shi @e_stop_pressed` is grounded true in `C_safe` → emits `mek @stop`
-- If both are grounded false → `undefined`
-- If a required predicate is missing or ungrounded in strict mode → error
-
-Propagation rules for `ur` over `undefined` are normative in NIP-005.
 
 [Full Auditor Demo Walkthrough](examples/auditor_demo/README.md)
 
