@@ -19,8 +19,8 @@ export NOE_DEBUG=0
 
 # 1. Run Happy Path
 echo "----------------------------------------------------------------------"
-echo "SCENARIO 1: The Happy Path"
-echo "Context: Fresh sensor data, all checks pass."
+echo "SCENARIO 1: Deterministic Permit Case"
+echo "Context: Fresh grounded sensor data, all epistemic thresholds satisfied."
 echo "Expectation: Shipment RELEASED."
 echo "----------------------------------------------------------------------"
 echo
@@ -30,9 +30,9 @@ echo
 
 # 2. Run Safety Path
 echo "----------------------------------------------------------------------"
-echo "SCENARIO 2: The Epistemic Gap (Confidence Trap)"
-echo "Context: Sensor data is fresh but noisy (Confidence 0.85)."
-echo "Expectation: Safety Halt (Knowledge < 0.90), unless Human Override."
+echo "SCENARIO 2: Epistemic Threshold Failure"
+echo "Context: Sensor confidence 0.85 — below shi threshold of 0.90."
+echo "Expectation: Knowledge path blocks; belief path requires @human_override."
 echo "----------------------------------------------------------------------"
 echo ""
 
@@ -40,9 +40,9 @@ python3 examples/auditor_demo/verify_shipment_uncertain.py
 
 echo
 echo "----------------------------------------------------------------------"
-echo "SCENARIO 3: The Hallucination Firewall"
-echo "Context: Vision hallucinates a door, but Lidar sees a wall."
-echo "Expectation: Lidar vetoes Vision -> Safe Halt."
+echo "SCENARIO 3: Cross-Modal Sensor Conflict"
+echo "Context: Vision asserts door open, LiDAR measures wall at 85mm."
+echo "Expectation: LiDAR veto blocks action — non-execution."
 echo "----------------------------------------------------------------------"
 echo ""
 
@@ -50,7 +50,7 @@ python3 examples/auditor_demo/verify_hallucination.py
 
 echo
 echo "----------------------------------------------------------------------"
-echo "SCENARIO 4: Mutual Safety Arbitration"
+echo "SCENARIO 4: Multi-Agent Safety Arbitration"
 echo "Context: Two robots must agree on human safety to enable motion."
 echo "Expectation: Run 1 -> Enable. Run 2 -> Block (Disagreement)."
 echo "(Note: This scenario runs ABOVE Noe as a liveness / policy layer;"
