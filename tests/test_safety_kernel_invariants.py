@@ -59,13 +59,17 @@ class TestSafetyKernelInvariants(unittest.TestCase):
 
     def test_delivery_action_structure(self):
         """Verify vus/vel are BLOCKED in strict mode if undefined."""
-        # 1. vus @pkg -> Returns undefined because @pkg definition is incomplete/legacy or not matching strict schema?
-        # Actually, it's undefined. Strict mode returns "undefined".
-        # This confirms Safety Kernel blocks ambiguity.
-        res = self._run("vus @pkg")
-        print(f"DEBUG vus result: {res}")
-        self.assertEqual(res.get("domain"), "undefined")
-        self.assertEqual(res.get("value"), "undefined")
+        # 1. vus @pkg -> Returns a valid action because @pkg maps to pkg_123 which is in delivery.items
+        res_valid = self._run("vus @pkg")
+        print(f"DEBUG vus valid result: {res_valid}")
+        self.assertEqual(res_valid.get("domain"), "action")
+        self.assertEqual(res_valid.get("value", {}).get("status"), "delivered")
+
+        # 2. vus @agent -> Returns undefined because agent_007 is not in delivery items
+        res_missing = self._run("vus @agent")
+        print(f"DEBUG vus missing result: {res_missing}")
+        self.assertEqual(res_missing.get("domain"), "undefined")
+        self.assertEqual(res_missing.get("value"), "undefined")
 
     def test_request_action_structure(self):
         """Verify complex noq chains triggers ACTION_MISUSE guard."""
