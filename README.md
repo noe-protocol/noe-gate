@@ -91,7 +91,6 @@ python -m pip install ".[dev]"
 
 make conformance
 make demo
-make all
 ```
 
 For development workflows, replace:
