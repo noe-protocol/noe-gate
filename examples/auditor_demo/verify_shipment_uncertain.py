@@ -199,7 +199,7 @@ def evaluate_dual_policies(context):
 
 def main():
     print("=" * 70)
-    print("NOE EPISTEMIC DEMO: The Confidence Trap")
+    print("SCENARIO 2: EPISTEMIC THRESHOLD FAILURE")
     print("=" * 70)
     print()
     
@@ -210,7 +210,7 @@ def main():
     # ---------------------------------------------------------
     # RUN 1: The Trap (Confidence 0.85, No Override)
     # ---------------------------------------------------------
-    print("RUN 1: Noise Detected (Confidence: 0.85)")
+    print("Run A: Confidence below shi threshold (0.85 < 0.90)")
     print("----------------------------------------")
     
     c_local = build_c_local_risky(now_ts)
@@ -230,11 +230,17 @@ def main():
     print(f"   - Policy B (Belief):    {res_b.get('domain')} {res_b.get('code', '')}")
     
     # Expectation: A=Undefined, B=Undefined/List(empty)
-    if res_k.get('domain') == "undefined" and (res_b.get('value') == [] or res_b.get('domain') == "undefined"):
-        print("   ✅ Safety Halt! Protocol blocked low-confidence action.")
+    if res_k.get('domain') == "undefined" and (res_b.get('value') == [] or res_b.get('domain') in ["undefined", "error"]):
+        # Policy B fails with ERR_LITERAL_MISSING because @human_override is absent from this context.
+        # That is expected structural behaviour: the chain requires a literal that is not admitted.
+        if res_b.get('domain') == "error" and res_b.get('code') == "ERR_LITERAL_MISSING":
+            print("   ✅ Knowledge path: undefined (confidence below threshold)")
+            print("   ✅ Belief path: structurally blocked — @human_override not in context")
+            print("   ✅ Non-execution: action cannot be emitted without grounded override")
+        else:
+            print("   ✅ Safe halt: action blocked due to insufficient epistemic grounding")
     elif res_k.get('domain') == "error" or res_b.get('domain') == "error":
-        # Accept error too (e.g. missing literal)
-        print("   ✅ Safety Halt! (Error state)")
+        print("   ✅ Safe halt (error state)")
     else:
         print(f"   ❌ FAILED! Unexpected result: A={res_k} B={res_b}")
         exit(1)
@@ -244,7 +250,7 @@ def main():
     # ---------------------------------------------------------
     # RUN 2: The Solution (Add Override)
     # ---------------------------------------------------------
-    print("RUN 2: Human Override Applied")
+    print("Run B: @human_override injected")
     print("----------------------------------------")
     
     # Add human override to local literals
