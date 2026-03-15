@@ -34,7 +34,7 @@ If you already have the repo locally, skip the `git clone` step and just `cd` in
 <br />
 
 ```bash
-git clone https://github.com/noe-protocol/noe.git || true
+git clone https://github.com/noe-protocol/noe.git
 cd noe
 
 python3.11 -m venv .venv
