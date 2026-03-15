@@ -9,7 +9,11 @@ echo "======================================================================"
 echo "   NOE AUDITING & VERIFICATION DEMO"
 echo "======================================================================"
 echo
-echo "This demo runs two scenarios to prove Noe's deterministic safety."
+echo "This demo runs four scenarios:"
+echo "  1. Deterministic Permit Case    — same rule + same grounded context => same verdict"
+echo "  2. Epistemic Threshold Failure  — insufficient grounding => non-execution"
+echo "  3. Cross-Modal Sensor Conflict  — conflicting sensor evidence => veto"
+echo "  4. Policy-Layer Composition     — higher-level arbitration composing above Noe"
 echo
 
 # Ensure we are running from project root
@@ -50,11 +54,11 @@ python3 examples/auditor_demo/verify_hallucination.py
 
 echo
 echo "----------------------------------------------------------------------"
-echo "SCENARIO 4: Multi-Agent Safety Arbitration"
+echo "SCENARIO 4: Policy-Layer Composition above Noe"
 echo "Context: Two robots must agree on human safety to enable motion."
-echo "Expectation: Run 1 -> Enable. Run 2 -> Block (Disagreement)."
-echo "(Note: This scenario runs ABOVE Noe as a liveness / policy layer;"
-echo "       Noe still validates each proposed action deterministically.)"
+echo "Expectation: Green -> Enable. Yellow -> Creep. Red -> Halt."
+echo "(This scenario runs ABOVE Noe as an arbitration policy layer;"
+echo "       Noe validates each individual action deterministically.)"
 echo "----------------------------------------------------------------------"
 echo ""
 
