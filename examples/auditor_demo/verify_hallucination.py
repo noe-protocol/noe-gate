@@ -486,7 +486,7 @@ def main():
     # RUN 1: Hallucinated door → BLOCKED
     # ------------------------------------------------------------------
     print("-" * 72)
-    print("Run A: Vision open / LiDAR wall (85mm) — conflict expected")
+    print("Run A: Vision open / LiDAR wall (100mm) — conflict expected")
     print("-" * 72)
 
     now_us = time.time_ns() // 1_000
