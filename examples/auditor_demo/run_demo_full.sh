@@ -45,7 +45,7 @@ python3 examples/auditor_demo/verify_shipment_uncertain.py
 echo
 echo "----------------------------------------------------------------------"
 echo "SCENARIO 3: Cross-Modal Sensor Conflict"
-echo "Context: Vision asserts door open, LiDAR measures wall at 85mm."
+echo "Context: Vision asserts door open, LiDAR measures wall at 100mm."
 echo "Expectation: LiDAR veto blocks action — non-execution."
 echo "----------------------------------------------------------------------"
 echo ""
