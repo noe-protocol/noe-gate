@@ -227,7 +227,12 @@ def main():
     res_k, res_b = evaluate_dual_policies(c_safe)
     
     print(f"   - Policy A (Knowledge): {res_k.get('domain')} {res_k.get('code', '')}")
-    print(f"   - Policy B (Belief):    {res_b.get('domain')} {res_b.get('code', '')}")
+    # Display ERR_LITERAL_MISSING semantically rather than as a raw error code:
+    # it means the belief chain structurally requires @human_override which is absent.
+    if res_b.get('domain') == 'error' and res_b.get('code') == 'ERR_LITERAL_MISSING':
+        print(f"   - Policy B (Belief):    blocked (@human_override absent from context)")
+    else:
+        print(f"   - Policy B (Belief):    {res_b.get('domain')} {res_b.get('code', '')}")
     
     # Expectation: A=Undefined, B=Undefined/List(empty)
     if res_k.get('domain') == "undefined" and (res_b.get('value') == [] or res_b.get('domain') in ["undefined", "error"]):
