@@ -150,7 +150,6 @@ def setup_logs():
     if os.path.exists(LOG_DIR):
         shutil.rmtree(LOG_DIR)
     os.makedirs(LOG_DIR)
-    print(f"[*] Initialized log directory: {LOG_DIR}")
 
 def get_simulated_context(tick_cfg, base_start_time):
     """
@@ -194,20 +193,16 @@ def run_robot_loop():
     commit_hash = os.getenv("GIT_COMMIT", "dirty")
     registry_hash = "a1b2c3d4e5f6..."
     
-    print(f"[*] Starting Robot Guard Simulation")
-    print(f"    Commit:   {commit_hash}")
-    print(f"    Registry: {registry_hash}")
-    print(f"    Strict:   True")
-    print(f"    MaxSkew:  {MAX_SKEW_MS}ms")
+    print(f"NOE ROBOT GUARD DEMO")
+    print(f"  strict: true  max_skew_ms: {MAX_SKEW_MS}")
+    print()
     
     base_time = 1700000000000.0 # Arbitrary epoch ms
     actual_verdicts = {}
     
     for scenario in SCENARIOS:
         tick = scenario["tick"]
-        print(f"\n--- TICK {tick}: {scenario['name']} ---")
-        print(f"    Desc: {scenario['desc']}")
-        print(f"    Chain: {scenario['chain']}")
+        print(f"\nTICK {tick}  {scenario['name']}")
         
         # 1. Update Context (Simulate Sensor Reading)
         ctx_data = get_simulated_context(scenario, base_time)
@@ -258,6 +253,8 @@ def run_robot_loop():
         verdict = "ALLOWED" if result_obj.domain in ["action", "list"] else "BLOCKED"
         reason_code = getattr(result_obj, "error", None)
         reason_msg = str(getattr(result_obj, "value", "Unknown Failure")) if result_obj.domain == "error" else None
+        if reason_msg and (reason_msg.startswith("[") or reason_msg == "None"):
+            reason_msg = None
         
         # Extract strict codes from message if passed through value or error (e.g. 'ERR_EPISTEMIC_MISMATCH: msg')
         if reason_code and ":" in reason_code and reason_code.split(":")[0].startswith("ERR_"):
@@ -297,29 +294,29 @@ def run_robot_loop():
         color = "\033[92m" if verdict == "ALLOWED" else "\033[91m" # Green/Red
         reset = "\033[0m"
         
-        print(f"    Verdict: {color}{verdict}{reset} ({reason_code})")
+        print(f"  verdict: {color}{verdict}{reset} ({reason_code})")
         if verdict == "ALLOWED":
             # Check scenario to determine action type
             if tick in [6, 7]:  # Guarded action scenarios
-                print(f"    Action:  MOVE_TO_ZONE1 (guarded)")
+                print(f"  action: MOVE_TO_ZONE1 (guarded)")
                 # Extract action hash from result
                 action_data = result_obj.value
                 if isinstance(action_data, list) and len(action_data) > 0:
                     action_hash = action_data[0].get("action_hash", "N/A")
-                    event_hash = action_data[0].get("event_hash", "N/A")
-                    print(f"    ├─ action_hash: {action_hash[:16]}...")
-                    print(f"    └─ provenance: PRESENT")
+                    print(f"  action_hash: {action_hash[:16]}...")
+                    print(f"  provenance: PRESENT")
             else:
-                print(f"    Action:  MOVE_TO_SAFE_ZONE")
+                print(f"  action: MOVE_TO_SAFE_ZONE")
         else:
-            print(f"    Reason:  {reason_msg}")
+            if reason_msg:
+                print(f"  reason: {reason_msg}")
             if tick in [6, 7]:  # Guarded action scenarios
                 # Show that blocked actions have NO hashes
-                print(f"    ├─ action_hash: null")
-                print(f"    ├─ provenance_hash: null")
-                print(f"    └─ Proof: Blocked ≠ Executed")
+                print(f"  action_hash: null")
+                print(f"  provenance_hash: null")
+                print(f"  proof: blocked ≠ executed")
             if missing_shards:
-                print(f"    Missing: {missing_shards}")
+                print(f"  missing: {missing_shards}")
 
         # 4. Generate Audit Artifact
         audit_record = {
@@ -363,7 +360,6 @@ def run_robot_loop():
         
         write_audit_record(audit_record)
 
-    print(f"\n[*] Simulation Complete. Audit log written to {LOG_FILE}")
     
     # 5. Golden Verdict Vector Assertion (Anti-Regression Anchor)
     # This prevents the simulator from silently decaying in CI if rules relax
@@ -376,21 +372,21 @@ def run_robot_loop():
         6: "ALLOWED",
         7: "BLOCKED:undefined"
     }
-    print("\n[*] Validating against golden verdict vector:")
+    print("\nGolden verdict vector:")
     passed = True
     for t_id, expected in golden_verdicts.items():
         actual = actual_verdicts.get(t_id)
         if actual == expected:
-            print(f"    Tick {t_id}: MATCH ({actual})")
+            print(f"  tick {t_id}: MATCH ({actual})")
         else:
-            print(f"    Tick {t_id}: REGRESSION! Expected '{expected}', got '{actual}'")
+            print(f"  tick {t_id}: REGRESSION! Expected '{expected}', got '{actual}'")
             passed = False
     
     if not passed:
         import sys
         sys.exit(1)
     else:
-        print("    All ticks matched golden vector.")
+        print("  all ticks matched golden vector.")
 
 if __name__ == "__main__":
     setup_logs()
