@@ -25,7 +25,7 @@ Only an emitted action is eligible for downstream execution. Both `undefined` an
 - `make` installed
 - On Windows, use WSL2 for a Linux-native development environment
 
-Start with `make demo` for the flagship shipment gate. Run `make demo-full` for the broader auditor walkthrough. If the repo is already cloned locally, skip `git clone` and just `cd noe`.
+Start with `make demo` for the flagship shipment gate. Run `make demo-full` for the broader auditor walkthrough, or `make integration-demo` for the minimal execution-boundary demo. If the repo is already cloned locally, skip `git clone` and just `cd noe`.
 
 <br />
 
@@ -117,6 +117,35 @@ Permitted actions produce replayable, hash-bound execution certificates. Non-exe
 
 <br />
 
+### Execution Boundary Demo
+
+Noe can also run as a minimal supervisory gate between a proposer and downstream execution.
+
+The integration demo models a simple boundary:
+
+```
+planner_node  →  noe_gate  →  controller_sink
+```
+
+A proposer submits a discrete command. The gate admits `C_safe`, evaluates the active chain, and either forwards a permitted command together with a context hash and certificate path, or suppresses execution when the result is undefined, `ERR_CONTEXT_STALE`, or another strict-mode refusal.
+
+Four scenarios are exercised:
+
+1. **Permit** — two grounded facts (`@path_clear` and `@controller_ready`) produce a forwarded command
+2. **Veto** — missing grounded knowledge suppresses execution (`undefined`)
+3. **Stale** — expired context is rejected at admission (`ERR_CONTEXT_STALE`)
+4. **Error** — malformed context is rejected before evaluation
+
+Permitted commands are replay-verified against the same admitted context hash, demonstrating that forwarding is tied to deterministic evaluation rather than proposer intent.
+
+```bash
+make integration-demo
+```
+
+See [Measured Execution Boundary Demo](docs/execution_boundary_demo.md).
+
+<br />
+
 ### Minimal Example
 
 ```
@@ -144,14 +173,15 @@ Identifiers such as @human_present and @stop are registry keys. See noe/registry
 ### Common Commands
 
 ```bash
-make demo          # Flagship shipment demo
-make demo-full     # Full auditor demo suite
-make guard         # Robot guard golden-vector demo (7 ticks)
-make conformance   # NIP-011 conformance vectors
-make test          # Unit tests
-make bench         # ROS bridge overhead benchmark
-make all           # Run everything
-make help          # Show all available targets
+make demo              # Flagship shipment demo
+make demo-full         # Full auditor demo suite
+make integration-demo  # Execution-boundary demo (permit/veto/stale/error)
+make guard             # Robot guard golden-vector demo (7 ticks)
+make conformance       # NIP-011 conformance vectors
+make test              # Unit tests
+make bench             # ROS bridge overhead benchmark
+make all               # Run everything
+make help              # Show all available targets
 ```
 
 In practice: planners and LLMs propose → Noe gates → ROS2/controllers execute.
@@ -443,15 +473,16 @@ If you are implementing a new runtime, start with `tests/nip011/` and treat the 
 ```text
 noe/                    # Core runtime (parser, validator, context admission, interpreter)
 tests/                  # Unit tests + NIP-011 conformance vectors
-examples/               # End-to-end demos (auditor, robot guard)
+examples/               # End-to-end demos (auditor, robot guard, integration demo)
 nips/                   # Specification documents (NIP-005, NIP-009, NIP-010, NIP-011)
 ```
 
 <br />
 
 ## Documentation
-- [NIP-011: Conformance](tests/nip011/README.md) - normative vectors and manifest
+- [Measured Execution Boundary Demo](docs/execution_boundary_demo.md) - runnable permit/veto/stale/error gate demo with forwarded command envelope and replay verification
 - [ROS 2 Integration Pattern](docs/ros2_integration_example.md) - integration guide
+- [NIP-011: Conformance](tests/nip011/README.md) - normative vectors and manifest
 - [Canonicalization Tests](tests/test_context_canonicalization.py) - order-invariant hashing coverage
 - [Error Codes](docs/error_codes.md) - strict-mode failure semantics
 - [Threat Model](THREAT_MODEL.md) - trust boundaries, adversary assumptions, and limits
