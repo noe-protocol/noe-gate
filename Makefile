@@ -1,7 +1,7 @@
 # Noe Reference Implementation — Makefile
-# Usage: make test | make conformance | make demo | make bench | make all
+# Usage: make test | make conformance | make demo | make bench | make all | make integration-demo
 
-.PHONY: test conformance demo bench guard all clean
+.PHONY: test conformance demo demo-full guard bench integration-demo all clean
 
 # ─── Core Test Suites ────────────────────────────────────────────────
 
@@ -21,6 +21,9 @@ demo-full:                     ## Run full auditor demo set
 
 guard:                         ## Run robot guard golden-vector demo (7 ticks)
 	python3 examples/robot_guard_demo.py
+
+integration-demo:              ## Run execution-boundary integration demo (permit/veto/error)
+	python3 examples/integration_demo/run_integration_demo.py
 
 # ─── Benchmarks ──────────────────────────────────────────────────────
 
