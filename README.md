@@ -2,15 +2,15 @@
 
 **A deterministic action-gating kernel for autonomous systems.**
 
-**Thesis:** As autonomy stacks increasingly rely on untrusted proposers such as LLMs, planners, and learned components, it becomes critical to separate proposal from permission. In safety-relevant environments, it is not enough to generate an action; the system must also be able to show why that action was admissible under grounded context and replay the same decision later under the same rule and commitments. Noe is a deterministic action-admission kernel designed for that purpose.
+**Thesis:** As autonomy stacks increasingly rely on untrusted proposers such as LLMs, planners, and learned components, proposal must be separated from permission. In safety-relevant environments, it is not enough to generate an action. The system must also be able to show why that action was allowed under grounded context, and reproduce the same verdict later from the same rule and context. Noe is a deterministic action-admission kernel designed for that purpose.
 
-Noe is an **enforcement boundary** between **untrusted proposers** such as humans, LLMs, and planners, and **critical actuators** such as robots and industrial automation. A proposer suggests an action. Noe evaluates a small deterministic decision chain against a frozen, grounded context (`C_safe`) and returns one of three outcomes:
+Noe is an **enforcement boundary** between **untrusted proposers** such as humans, LLMs, and planners, and **critical actuators** such as robots and industrial automation. A proposer suggests an action. Noe evaluates a deterministic decision chain against a frozen grounded context, `C_safe`, and returns one of three outcomes:
 
-- **`list[action]`** → permitted; action proposal emitted
+- **`list[action]`** → permission granted; action emitted
 - **`undefined`** → no action emitted because the guard did not resolve to permission
 - **`error`** → strict-mode contract rejection, such as `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE` (refusal; reason recorded in the certificate when provenance is enabled)
 
-Only an emitted action is eligible for downstream execution. Both `undefined` and `error` are non-execution outcomes, but they differ materially: `undefined` is expected semantic fall-through, while `error` signals a violated safety contract and should be surfaced to supervision.
+Only an emitted action may be passed downstream for execution. Both `undefined` and `error` are non-execution outcomes, but they differ materially: `undefined` is expected semantic fall-through, while `error` signals a violated safety contract and should be surfaced to supervision.
 
 **Scope:** Noe gates **discrete, safety-relevant decisions**. It is **not** a control loop, motion planner, or recovery system. A downstream supervisor or reflex layer remains responsible for fallback behavior such as hold, slow, or stop. Noe is fail-stop by design: it prevents unauthorized actions from being emitted. Liveness, retry, and recovery are handled elsewhere in the stack.
 
