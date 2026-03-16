@@ -14,6 +14,12 @@ Only an emitted action is eligible for downstream execution. Both `undefined` an
 
 **Scope:** Noe gates **discrete, safety-relevant decisions**. It is **not** a control loop, motion planner, or recovery system. A downstream supervisor or reflex layer remains responsible for fallback behavior such as hold, slow, or stop. Noe is fail-stop by design: it prevents unauthorized actions from being emitted. Liveness, retry, and recovery are handled elsewhere in the stack.
 
+```
+untrusted proposer  →  Noe gate  →  downstream controller
+                ↘ certificate / replay record
+```
+
+
 <br />
 
 ## Quick Start
@@ -40,6 +46,7 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 
 make demo
+make integration-demo
 make conformance
 ```
 <br />
