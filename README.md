@@ -10,7 +10,7 @@ Noe is an **enforcement boundary** between **untrusted proposers** such as human
 - **`undefined`** → no action emitted because the guard did not resolve to permission
 - **`error`** → strict-mode contract rejection, such as `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE` (refusal; reason recorded in the certificate when provenance is enabled)
 
-Only an emitted action is eligible for downstream execution. Both **`undefined`** and **`error`** are **non-execution outcomes**, but they are intentionally distinct in the provenance record. `undefined` is an expected semantic fall-through. `error` indicates a violated safety contract and should be surfaced to supervision.
+Only an emitted action is eligible for downstream execution. Both `undefined` and `error` are non-execution outcomes, but they differ materially: `undefined` is expected semantic fall-through, while `error` signals a violated safety contract and should be surfaced to supervision.
 
 **Scope:** Noe gates **discrete, safety-relevant decisions**. It is **not** a control loop, motion planner, or recovery system. A downstream supervisor or reflex layer remains responsible for fallback behavior such as hold, slow, or stop. Noe is fail-stop by design: it prevents unauthorized actions from being emitted. Liveness, retry, and recovery are handled elsewhere in the stack.
 
@@ -25,11 +25,7 @@ Only an emitted action is eligible for downstream execution. Both **`undefined`*
 - `make` installed
 - On Windows, use WSL2 for a Linux-native development environment
 
-Start with `make demo` for the flagship shipment gate demo.  
-
-Run `make demo-full` for the broader auditor walkthrough.
-
-If you already have the repo locally, skip the `git clone` step and just `cd` into `noe`.
+Start with `make demo` for the flagship shipment gate. Run `make demo-full` for the broader auditor walkthrough. If the repo is already cloned locally, skip `git clone` and just `cd noe`.
 
 <br />
 
@@ -109,15 +105,15 @@ python -m pip install -e ".[dev]"
 
 ### What this proves
 
-`make all` and `make demo-full` demonstrate five invariants:
+`make all` and `make demo-full` demonstrate five core invariants:
 
-1. **Deterministic evaluation** — the same rule applied to the same grounded context always produces the same verdict, and the verdict can be independently replayed from the certificate alone.
-2. **Epistemic non-execution** — when a sensor's confidence falls below the required threshold, the knowledge path resolves to `undefined` and no action is emitted.
-3. **Cross-modal veto** — when two sensor modalities disagree (e.g. vision says open, LiDAR measures a wall), Noe blocks the proposed action regardless of individual confidence scores.
-4. **Structural halt on missing context** — if a chain requires a literal (`@human_override`, a spatial shard, etc.) that is absent from the admitted context, the belief path cannot execute. The error is structural, not heuristic.
-5. **Policy-layer composability** — higher-level arbitration (multi-agent voting, liveness policies) can be layered above Noe without relaxing the deterministic validation boundary that Noe enforces on individual proposed actions.
+1. **Deterministic evaluation**: the same rule and grounded context always produce the same verdict, and that verdict can be independently replayed from the certificate.
+2. **Epistemic non-execution**: when a sensor's confidence falls below the required threshold, the knowledge path resolves to `undefined` and no action is emitted.
+3. **Cross-modal veto**: when two sensor modalities disagree (e.g. vision says open, LiDAR measures a wall), Noe blocks the proposed action regardless of individual confidence scores.
+4. **Structural halt on missing context**: if a chain requires a literal (`@human_override`, a spatial shard, etc.) that is absent from the admitted context, the belief path cannot execute. The error is structural, not heuristic.
+5. **Policy-layer composability**: higher-level arbitration (multi-agent voting, liveness policies) can be layered above Noe without relaxing the deterministic validation boundary that Noe enforces on individual proposed actions.
 
-Every permitted action leaves a replayable, hash-bound certificate in `examples/auditor_demo/`. Every blocked action leaves no certificate and emits no hash — the proof of non-execution is the absence of an artifact.
+Permitted actions produce replayable, hash-bound execution certificates. Non-execution outcomes should still produce auditable decision records, but with no emitted action and no executable action_hash.
 
 <br />
 
@@ -129,14 +125,12 @@ shi @human_present khi sek mek @stop sek nek
 
 - `shi` checks grounded knowledge-tier membership
 - `khi` introduces the guard
-- `mek @stop` is the action emission
+- `mek @stop` is the action
 - `sek` ... `sek` bounds the guarded action block
 - `nek` terminates the chain
 
 If @human_present is grounded true in C_safe, Noe emits mek @stop.
-
 If grounded false, the result is undefined.
-
 If missing or unsupported in strict mode, the runtime rejects with ERR_EPISTEMIC_MISMATCH.
 
 Identifiers such as @human_present and @stop are registry keys. See noe/registry.json for kinds and types. Full operator semantics are defined in the NIPs.
@@ -224,7 +218,7 @@ Given the same **chain + registry + semantics + `C_safe`**, any conforming runti
 - exactly one **normative interpretation** under the fixed grammar, registry, and semantics
 - exactly one evaluation outcome for normative fields
 
-Noe’s determinism claim is intentionally narrow. It applies only to the normative replay boundary: given the same chain, registry, semantics, and admitted C_safe, a conforming runtime must produce the same normative outcome and the same canonical commitments for normative fields. It does not claim to make upstream sensing, grounding, or physical actuation deterministic.
+Noe’s determinism claim is intentionally narrow: given the same chain, registry, semantics, and admitted `C_safe`, a conforming runtime must produce the same normative outcome and canonical commitments. It does not make sensing, grounding, or physical actuation deterministic.
 
 Noe enforces an **integer-only contract** for normative commitments. Every `*_hash` input is float-free. Richer upstream context may contain floats, but sensor and planner adapters must quantize before projection into `C_safe`.
 
@@ -243,7 +237,7 @@ If a chain asserts evidentiary status that is not supported by `C_safe`, strict 
 
 ## Replayable evidence, not legal verdicts
 
-Noe produces a deterministic verdict together with an integrity-protected record of the rule, context commitments, and outcome. This supports:
+Noe produces a deterministic verdict together with an integrity-protected record of the rule, admitted context, and outcome. This supports:
 
 - incident reconstruction
 - supervisory debugging
