@@ -23,7 +23,7 @@ guard:                         ## Run robot guard golden-vector demo (7 ticks)
 	python3 examples/robot_guard_demo.py
 
 integration-demo:              ## Run execution-boundary integration demo (permit/veto/error)
-	python3 examples/integration_demo/run_integration_demo.py
+	python3 examples/run_integration_demo.py
 
 # ─── Benchmarks ──────────────────────────────────────────────────────
 
