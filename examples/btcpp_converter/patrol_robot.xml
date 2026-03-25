@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  examples/btcpp_converter/patrol_robot.xml
+
+  Sample BT.CPP behavior tree for a patrol robot.
+  Covers: Sequence, Fallback, Condition, Action, Decorator (unsupported).
+
+  This tree demonstrates:
+    - A Sequence with safety guards before action
+    - A Fallback for alternative charging strategies
+    - A Decorator (Retry) that the converter will flag as UNSUPPORTED
+    - Multiple conditions triggering NEEDS_GROUNDING and SAFETY_RELEVANT
+
+  Run conversion:
+    noe-btcpp-convert examples/btcpp_converter/patrol_robot.xml
+    python examples/btcpp_converter/run_convert.py
+-->
+<root main_tree_to_execute="PatrolMission">
+
+  <BehaviorTree ID="PatrolMission">
+    <Sequence name="mission_root">
+
+      <!-- Safety check sequence before all movement -->
+      <Sequence name="safety_checks">
+        <IsPathClear name="check_path"/>
+        <IsEmergencyStopClear name="check_estop"/>
+        <IsHumanProximityOK name="check_human_proximity"/>
+      </Sequence>
+
+      <!-- Battery fallback: attempt fast charge, then slow charge -->
+      <Fallback name="battery_management">
+        <Sequence name="fast_charge">
+          <IsBatteryLow name="check_battery"/>
+          <IsDockAvailable name="check_dock"/>
+          <MoveToChargingStation name="go_to_dock"/>
+        </Sequence>
+        <Sequence name="slow_charge">
+          <IsBatteryLow name="check_battery_again"/>
+          <ActivateTrickleCharge name="start_trickle"/>
+        </Sequence>
+      </Fallback>
+
+      <!-- Main patrol action (only reached if safety + battery checks pass) -->
+      <Sequence name="patrol_action">
+        <IsPatrolRouteLoaded name="check_route"/>
+        <MoveAlongRoute name="execute_patrol"/>
+        <ReportPatrolComplete name="report_done"/>
+      </Sequence>
+
+      <!-- Decorator: retry patrol up to 3 times on failure (UNSUPPORTED) -->
+      <Retry num_attempts="3">
+        <SendHeartbeat name="heartbeat"/>
+      </Retry>
+
+    </Sequence>
+  </BehaviorTree>
+
+</root>
