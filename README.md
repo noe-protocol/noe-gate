@@ -2,39 +2,119 @@
 
 **A deterministic action-gating kernel for autonomous systems.**
 
-**Thesis:** As autonomy stacks increasingly rely on untrusted proposers such as LLMs, planners, and learned components, proposal must be separated from permission. In safety-relevant environments, it is not enough to generate an action. The system must also be able to show why that action was allowed under grounded context, and reproduce the same verdict later from the same rule and context. Noe is a deterministic action-admission kernel designed for that purpose.
-
-Noe is an **enforcement boundary** between **untrusted proposers** such as humans, LLMs, and planners, and **critical actuators** such as robots and industrial automation. A proposer suggests an action. Noe evaluates a deterministic decision chain against a frozen grounded context, `C_safe`, and returns one of three outcomes:
+Noe sits between untrusted proposers - humans, LLMs, planners - and
+downstream actuators such as robots and industrial automation. It evaluates
+a deterministic decision chain against grounded context and returns one of
+three outcomes:
 
 - **`list[action]`** → permission granted; action emitted
-- **`undefined`** → no action emitted because the guard did not resolve to permission
-- **`error`** → strict-mode contract rejection, such as `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE` (refusal; reason recorded in the certificate when provenance is enabled)
+- **`undefined`** → no action emitted because the guard did not resolve to
+  permission
+- **`error`** → strict-mode contract rejection, such as
+  `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE`
 
-Only an emitted action may be passed downstream for execution. Both `undefined` and `error` are non-execution outcomes, but they differ materially: `undefined` is expected semantic fall-through, while `error` signals a violated safety contract and should be surfaced to supervision.
+Noe is not a control loop or motion planner. It is a fail-stop decision
+boundary for discrete, safety-relevant actions, with replayable evidence
+records.
 
-**Scope:** Noe gates **discrete, safety-relevant decisions**. It is **not** a control loop, motion planner, or recovery system. A downstream supervisor or reflex layer remains responsible for fallback behavior such as hold, slow, or stop. Noe is fail-stop by design: it prevents unauthorized actions from being emitted. Liveness, retry, and recovery are handled elsewhere in the stack.
-
+**Thesis:** As autonomy stacks increasingly rely on untrusted proposers,
+proposal must be separated from permission. In safety-relevant environments,
+it is not enough to generate an action. The system must also be able to show
+why that action was allowed under grounded context, and reproduce the same
+verdict later from the same rule and context.
 ```
 untrusted proposer  →  Noe gate  →  downstream controller
                 ↘ certificate / replay record
 ```
 
+<br />
+
+## What is in this repository
+
+- Python reference runtime
+- Rust core runtime (conformance-matched against Python reference)
+- C FFI boundary
+- C++20 header-only wrapper
+- ROS2 lifecycle adapter
+- NIP-011 conformance suite (locked vectors, SHA-256 manifest)
+- Grounding reference adapters (LiDAR, camera, epistemic, temporal)
+- Certificate persistence, replay, and audit tooling
+- BehaviorTree.CPP → Noe migration tool
+
+<br />
+
+## What has been validated
+
+This repository now includes a Python reference runtime, a Rust core, language bindings, and a ROS2 adapter.
+
+**Validated:**
+
+- Python reference runtime against the full NIP-011 conformance surface
+- Rust core runtime matched against Python reference at 93/93 conformance
+  vectors
+- C and C++ integration boundaries - smoke tests passing
+- ROS2 lifecycle adapter built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble
+- Worked zone-entry scenario:
+  - human present → BLOCKED
+  - human absent → PERMITTED
+  - result: `ALL PASS`
+
+**Not yet claimed:**
+
+- production deployment readiness
+- broad external replication
+- long-running load or soak validation
+- wider domain coverage beyond the worked scenarios
 
 <br />
 
 ## Quick Start
 
-**Requirements**
 
-- Python 3.11 recommended (3.10 supported)
-- macOS, Linux, or Windows (via WSL2 recommended)
-- `make` installed
-- On Windows, use WSL2 for a Linux-native development environment
+### ROS2 - validated target path
 
-Start with `make demo` for the flagship shipment gate. Run `make demo-full` for the broader auditor walkthrough, or `make integration-demo` for the minimal execution-boundary demo. If the repo is already cloned locally, skip `git clone` and just `cd noe`.
+Built and runtime-validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble. See
+[ros2_adapter/README.md](ros2_adapter/README.md) for the exact build
+environment, flags, and known limitations before attempting a fresh
+installation.
+```bash
+# 1. Build the Rust core
+cd rust/noe_core && cargo build --release
+cd ../..
+
+# 2. Build the ROS2 adapter
+source /opt/ros/humble/setup.bash
+cd ros2_adapter
+colcon build --packages-select noe_ros2_adapter
+
+# 3. Run the zone-entry example
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
+```
+
+
+In a second terminal:
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+python3 examples/mobile_robot_zone_entry/publish_scenario.py
+```
+
+
+Expected output:
+```
+Scenario 1 PASS   # human present → BLOCKED
+Scenario 2 PASS   # human absent  → PERMITTED
+Result: ALL PASS
+```
 
 <br />
 
+### Python - reference and demo path
+
+**Requirements:** Python 3.11 recommended (3.10 supported), `make`,
+macOS / Linux / WSL2.
 ```bash
 git clone https://github.com/noe-protocol/noe.git
 cd noe
@@ -42,44 +122,48 @@ cd noe
 python3.11 -m venv .venv
 source .venv/bin/activate
 
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+pip install --upgrade pip
+pip install -e ".[dev]"
 
-make demo
-make integration-demo
-make conformance
+make demo              # flagship shipment gate
+make integration-demo  # permit / veto / stale / error boundary
+make conformance       # locked NIP-011 conformance vectors
 ```
+
 <br />
 
-### Run the conformance suite
-Executes the locked NIP-011 conformance vectors.
+### Agent governance - pip install
 
+For LLM tool-use workflows and agentic pipelines:
 ```bash
-make conformance
+pip install noe-protocol
 ```
+```python
+import noe
+
+gate = noe.Gate("noe/registry.json")
+
+context = {
+    "domain": {"human_approved_broadcast": True},
+    "local":  {}
+}
+
+chain = "shi @human_approved_broadcast khi sek mek @send_email sek nek"
+result = gate.evaluate(chain, context)
+
+if result.permitted:
+    execute(result.action)
+    store_certificate(result.certificate)
+```
+
+See [docs/quickstart_llm_governance.md](docs/quickstart_llm_governance.md)
+for a full walkthrough.
+
 <br />
 
-### Run the full suite
-Runs the full verification path: unit tests, conformance, demos, and benchmark.
-
+### Windows
 ```bash
-make all
-```
-<br />
-
-### Optional: run the full demo set
-Runs the broader auditor demo set, including epistemic, hallucination, and multi-agent scenarios.
-
-```bash
-make demo-full
-```
-<br />
-
-### Windows (recommended): WSL2 / Ubuntu
-
-```bash
-# 1) Install WSL2 + Ubuntu, then open an Ubuntu terminal
-# 2) Install build tools
+# Install WSL2 + Ubuntu, then open an Ubuntu terminal
 sudo apt update
 sudo apt install -y make git python3.11 python3.11-venv python3-pip
 
@@ -89,113 +173,32 @@ cd noe
 python3.11 -m venv .venv
 source .venv/bin/activate
 
-python -m pip install --upgrade pip
-python -m pip install ".[dev]"
+pip install ".[dev]"
 
 make conformance
 make demo
 ```
 
-For development workflows, replace:
+<br />
 
+### Common commands
 ```bash
-python -m pip install ".[dev]"
-```
-
-with:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-<br />
-
-### What this proves
-
-`make all` and `make demo-full` demonstrate five core invariants:
-
-1. **Deterministic evaluation**: the same rule and grounded context always produce the same verdict, and that verdict can be independently replayed from the certificate.
-2. **Epistemic non-execution**: when a sensor's confidence falls below the required threshold, the knowledge path resolves to `undefined` and no action is emitted.
-3. **Cross-modal veto**: when two sensor modalities disagree (e.g. vision says open, LiDAR measures a wall), Noe blocks the proposed action regardless of individual confidence scores.
-4. **Structural halt on missing context**: if a chain requires a literal (`@human_override`, a spatial shard, etc.) that is absent from the admitted context, the belief path cannot execute. The error is structural, not heuristic.
-5. **Policy-layer composability**: higher-level arbitration (multi-agent voting, liveness policies) can be layered above Noe without relaxing the deterministic validation boundary that Noe enforces on individual proposed actions.
-
-Permitted actions produce replayable, hash-bound execution certificates. Non-execution outcomes should still produce auditable decision records, but with no emitted action and no executable action_hash.
-
-<br />
-
-### Execution Boundary Demo
-
-Noe can also run as a minimal supervisory gate between a proposer and downstream execution.
-
-The integration demo models a simple boundary:
-
-```
-planner_node  →  noe_gate  →  controller_sink
-```
-
-A proposer submits a discrete command. The gate admits `C_safe`, evaluates the active chain, and either forwards a permitted command together with a context hash and certificate path, or suppresses execution when the result is undefined, `ERR_CONTEXT_STALE`, or another strict-mode refusal.
-
-Four scenarios are exercised:
-
-1. **Permit** — two grounded facts (`@path_clear` and `@controller_ready`) produce a forwarded command
-2. **Veto** — missing grounded knowledge suppresses execution (`undefined`)
-3. **Stale** — expired context is rejected at admission (`ERR_CONTEXT_STALE`)
-4. **Error** — malformed context is rejected before evaluation
-
-Permitted commands are replay-verified against the same admitted context hash, demonstrating that forwarding is tied to deterministic evaluation rather than proposer intent.
-
-```bash
-make integration-demo
-```
-
-See [Measured Execution Boundary Demo](docs/execution_boundary_demo.md).
-
-<br />
-
-### Minimal Example
-
-```
-shi @human_present khi sek mek @stop sek nek
-```
-
-- `shi` checks grounded knowledge-tier membership
-- `khi` introduces the guard
-- `mek @stop` is the action
-- `sek` ... `sek` bounds the guarded action block
-- `nek` terminates the chain
-
-If @human_present is grounded true in C_safe, Noe emits mek @stop.
-If grounded false, the result is undefined.
-If missing or unsupported in strict mode, the runtime rejects with ERR_EPISTEMIC_MISMATCH.
-
-Identifiers such as @human_present and @stop are registry keys. See noe/registry.json for kinds and types. Full operator semantics are defined in the NIPs.
-
-<br />
-
-[Full Auditor Demo Walkthrough](examples/auditor_demo/README.md)
-
-<br />
-
-### Common Commands
-
-```bash
-make demo              # Flagship shipment demo
-make demo-full         # Full auditor demo suite
-make integration-demo  # Execution-boundary demo (permit/veto/stale/error)
-make guard             # Robot guard golden-vector demo (7 ticks)
+make demo              # flagship shipment gate
+make demo-full         # full auditor demo suite
+make integration-demo  # execution-boundary demo (permit/veto/stale/error)
+make guard             # robot guard golden-vector demo (7 ticks)
 make conformance       # NIP-011 conformance vectors
-make test              # Unit tests
+make test              # unit tests
 make bench             # ROS bridge overhead benchmark
-make all               # Run everything
-make help              # Show all available targets
+make audit-demo        # chain → store → replay → verify sequence
+make all               # run everything
+make help              # show all available targets
 ```
-
-In practice: planners and LLMs propose → Noe gates → ROS2/controllers execute.
 
 <br />
 
-## **Contents**
+## Contents
+
 1. [Why Noe exists](#why-noe-exists)
 2. [Determinism and replay](#determinism-and-replay)
 3. [Epistemic admission](#epistemic-admission)
@@ -215,25 +218,30 @@ In practice: planners and LLMs propose → Noe gates → ROS2/controllers execut
 
 ## Why Noe exists
 
-Modern autonomy stacks already use rule engines, PLC interlocks, runtime assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe does not replace all of these.** Its purpose is narrower.
+Modern autonomy stacks already use rule engines, PLC interlocks, runtime
+assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe
+does not replace all of these.** Its purpose is narrower.
 
-Noe exists for the case where **untrusted proposers** are allowed to suggest safety-relevant actions, but those actions must pass through a **small deterministic enforcement boundary** that is:
+Noe exists for the case where **untrusted proposers** are allowed to suggest
+safety-relevant actions, but those actions must pass through a **small
+deterministic enforcement boundary** that is:
 
 - grounded in an explicit admissible context (`C_safe`)
 - replayable across conforming runtimes
 - capable of distinguishing benign non-permission from contract violation
-- able to produce portable evidence records for audit and incident reconstruction
+- able to produce portable evidence records for audit and incident
+  reconstruction
 
-In that setting, the central questions are not just:
+In that setting, the central questions are not just "was the action blocked"
+but:
 
-- Was the action blocked?
 - What exact context was admitted into the decision boundary?
 - What rule was evaluated?
 - Why was the action emitted, withheld, or refused?
-- Can another conforming runtime replay the same decision and obtain the same normative result?
+- Can another conforming runtime replay the same decision and obtain the same
+  normative result?
 
 Noe is designed to make those questions answerable.
-<br />
 
 | Need | Common baseline | What Noe adds |
 |------|-----------------|---------------|
@@ -243,38 +251,60 @@ Noe is designed to make those questions answerable.
 | Constraining AI- or planner-generated proposals before actuation | Custom wrappers and application logic | A formal action-admission boundary between proposers and actuators |
 | Post-incident reconstruction | Logs, traces, ad hoc telemetry | Frozen context commitments plus typed, replayable decision outcomes |
 
-Noe's claim is not that it is better than all existing safety mechanisms. Its claim is narrower: **when action proposals come from untrusted or probabilistic sources, Noe provides a deterministic, replayable, evidence-bearing gate before execution.**
+Noe's claim is not that it is better than all existing safety mechanisms. Its
+claim is narrower: **when action proposals come from untrusted or probabilistic
+sources, Noe provides a deterministic, replayable, evidence-bearing gate
+before execution.**
 
 <br />
 
 ## Determinism and replay
 
-Given the same **chain + registry + semantics + `C_safe`**, any conforming runtime is expected to produce:
+Given the same **chain + registry + semantics + `C_safe`**, any conforming
+runtime is expected to produce:
 
 - exactly one parse
-- exactly one **normative interpretation** under the fixed grammar, registry, and semantics
+- exactly one **normative interpretation** under the fixed grammar, registry,
+  and semantics
 - exactly one evaluation outcome for normative fields
 
-Noe’s determinism claim is intentionally narrow: given the same chain, registry, semantics, and admitted `C_safe`, a conforming runtime must produce the same normative outcome and canonical commitments. It does not make sensing, grounding, or physical actuation deterministic.
+Noe's determinism claim is intentionally narrow: given the same chain,
+registry, semantics, and admitted `C_safe`, a conforming runtime must produce
+the same normative outcome and canonical commitments. It does not make
+sensing, grounding, or physical actuation deterministic.
 
-Noe enforces an **integer-only contract** for normative commitments. Every `*_hash` input is float-free. Richer upstream context may contain floats, but sensor and planner adapters must quantize before projection into `C_safe`.
+Noe enforces an **integer-only contract** for normative commitments. Every
+`*_hash` input is float-free. Richer upstream context may contain floats, but
+sensor and planner adapters must quantize before projection into `C_safe`.
 
-`π_safe` is the deterministic projection from richer upstream state into the minimal context the evaluator is allowed to consume. In practice, `π_safe` is the policy-controlled admission layer that converts richer upstream state into the minimal, canonical, admissible context consumed by Noe. It is responsible for pruning stale inputs, enforcing admissibility rules, and exposing grounded predicate membership to the kernel. Debounce, hysteresis, and other perception-side smoothing belong upstream of `π_safe`.
+`π_safe` is the deterministic projection from richer upstream state into the
+minimal context the evaluator is allowed to consume. It is responsible for
+pruning stale inputs, enforcing admissibility rules, and exposing grounded
+predicate membership to the kernel. Debounce, hysteresis, and other
+perception-side smoothing belong upstream of `π_safe`.
+
 <br />
 
 ## Epistemic admission
 
-`shi` and `vek` should be read as **runtime-enforced evidentiary status operators**, not as unrestricted proposer claims. A proposer cannot simply assert knowledge or belief and have that assertion accepted. The runtime derives or verifies those memberships from trusted evidence, such as signed sensor frames or an attested adapter result.
+`shi` and `vek` should be read as **runtime-enforced evidentiary status
+operators**, not as unrestricted proposer claims. A proposer cannot simply
+assert knowledge or belief and have that assertion accepted. The runtime
+derives or verifies those memberships from trusted evidence, such as signed
+sensor frames or an attested adapter result.
 
-If a chain asserts evidentiary status that is not supported by `C_safe`, strict mode returns `ERR_EPISTEMIC_MISMATCH`.
+If a chain asserts evidentiary status that is not supported by `C_safe`,
+strict mode returns `ERR_EPISTEMIC_MISMATCH`.
 
-`undefined` is a semantic evaluation value. `error` is a contract rejection emitted by the validator or runtime.
+`undefined` is a semantic evaluation value. `error` is a contract rejection
+emitted by the validator or runtime.
 
 <br />
 
 ## Replayable evidence, not legal verdicts
 
-Noe produces a deterministic verdict together with an integrity-protected record of the rule, admitted context, and outcome. This supports:
+Noe produces a deterministic verdict together with an integrity-protected
+record of the rule, admitted context, and outcome. This supports:
 
 - incident reconstruction
 - supervisory debugging
@@ -283,9 +313,12 @@ Noe produces a deterministic verdict together with an integrity-protected record
 
 **What Noe provides:**
 
-- **Deterministic evaluation:** identical normative inputs produce identical normative outcomes
-- **Integrity-protected records:** certificates bind the decision to a specific registry and context snapshot
-- **Replayability:** a conforming runtime can re-evaluate the same chain against the same admitted context
+- **Deterministic evaluation:** identical normative inputs produce identical
+  normative outcomes
+- **Integrity-protected records:** certificates bind the decision to a
+  specific registry and context snapshot
+- **Replayability:** a conforming runtime can re-evaluate the same chain
+  against the same admitted context
 
 **What Noe does not provide:**
 
@@ -293,52 +326,71 @@ Noe produces a deterministic verdict together with an integrity-protected record
 - guarantees that the downstream supervisor implemented a safe fallback
 - legal conclusions about liability or fault on its own
 
-Noe should therefore be understood as **evidence infrastructure for action admission**, not as a complete legal or safety determination system.
+Noe should therefore be understood as **evidence infrastructure for action
+admission**, not as a complete legal or safety determination system.
 
 <br />
 
 ## Untrusted proposers
 
-LLMs and other planning systems may generate useful proposals, but their internal reasoning is not itself a deterministic safety contract. Noe treats those systems as **untrusted proposers**.
+LLMs and other planning systems may generate useful proposals, but their
+internal reasoning is not itself a deterministic safety contract. Noe treats
+those systems as **untrusted proposers**.
 
 A proposer may suggest:
 
 > "Release the pallet."
 
-Noe does not trust that suggestion. It checks whether the action is permitted under the currently admitted grounded context and the active decision chain. If the guard does not resolve to permission, the action is not emitted. If the proposal relies on unsupported evidentiary status, strict mode rejects it with an explicit error.
+Noe does not trust that suggestion. It checks whether the action is permitted
+under the currently admitted grounded context and the active decision chain.
+If the guard does not resolve to permission, the action is not emitted. If the
+proposal relies on unsupported evidentiary status, strict mode rejects it with
+an explicit error.
 
-This lets probabilistic systems participate in autonomy stacks without giving them direct authority to trigger safety-relevant actions.
+This lets probabilistic systems participate in autonomy stacks without giving
+them direct authority to trigger safety-relevant actions.
 
 <br />
 
 ## Determinism contract
 
-Upstream systems often produce floating-point state. Portable replay across runtimes is brittle if those values are allowed into canonical hashed commitments.
+Upstream systems often produce floating-point state. Portable replay across
+runtimes is brittle if those values are allowed into canonical hashed
+commitments.
 
-For that reason, Noe requires an **integer-only contract** for normative decision inputs and certificate commitments. Floating-point values may exist in richer upstream context, but they must be quantized before projection into `C_safe`.
+For that reason, Noe requires an **integer-only contract** for normative
+decision inputs and certificate commitments. Floating-point values may exist
+in richer upstream context, but they must be quantized before projection into
+`C_safe`.
 
-This is a necessary part of cross-runtime replay portability. It reduces ambiguity across architectures and languages by excluding float representations that do not canonicalize reliably.
+This is a necessary part of cross-runtime replay portability. It reduces
+ambiguity across architectures and languages by excluding float
+representations that do not canonicalize reliably.
 
 <br />
 
-## Conformance Integrity Notes (NIP-011)
+## Conformance integrity (NIP-011)
 
-`make conformance` verifies that each test vector is byte-exact against a locked SHA-256 manifest. An integrity failure means the JSON file on disk does not match the recorded hash.
+`make conformance` verifies that each test vector is byte-exact against a
+locked SHA-256 manifest. An integrity failure means the JSON file on disk does
+not match the recorded hash.
 
-If a test vector is intentionally modified, the corresponding hashes must be updated in both:
+If a test vector is intentionally modified, the corresponding hashes must be
+updated in both:
+
 - `tests/nip011/nip011_manifest.json`
 - `tests/nip011/conformance_pack_v1.0.0.json`
 
-Integrity failures indicate a spec or test change, not a runtime bug, and must be resolved by updating the manifests and committing them together.
-
-The conformance runner aborts on any mismatch by design.
+Integrity failures indicate a spec or test change, not a runtime bug, and
+must be resolved by updating the manifests and committing them together. The
+conformance runner aborts on any mismatch by design.
 
 <br />
 
 ## What a certificate looks like
 
-Every decision produces a JSON certificate with hash commitments. Example (truncated):
-
+Every decision produces a JSON certificate with hash commitments. Example
+(truncated):
 ```json
 {
   "noe_version": "v1.0-rc1",
@@ -366,11 +418,13 @@ Every decision produces a JSON certificate with hash commitments. Example (trunc
 }
 ```
 
-An auditor can replay the decision by freezing the context, re-evaluating the chain, and verifying that the hashes match. See a full example at [shipment_certificate_strict.json](examples/auditor_demo/shipment_certificate_strict.json)
+An auditor can replay the decision by freezing the context, re-evaluating the
+chain, and verifying that the hashes match. See
+[shipment_certificate_strict.json](examples/auditor_demo/shipment_certificate_strict.json).
 
-Store certificates in an append-only log. Auditors verify them by recomputing `context_hashes.safe` and replaying the chain against `context_snapshot.safe`.
-
-Certificates explicitly bind the runtime's registry by hash, and optionally by source commit, so auditors replay against the exact identifier-to-type mapping used at decision time. This prevents cross-agent ambiguity when the same symbolic identifiers exist in multiple registries. Certificates may also bind evidence provenance, such as a sensor-frame hash or adapter attestation hash, so auditors can verify that epistemic grounding was derived from attested inputs rather than proposer claims.
+Store certificates in an append-only log (`noe/persistence/cert_store.py`).
+Auditors verify them by recomputing `context_hashes.safe` and replaying the
+chain against `context_snapshot.safe` using `noe_replay verify <cert_file>`.
 
 <br />
 
@@ -398,9 +452,9 @@ Full list: [docs/error_codes.md](docs/error_codes.md)
 | `an` | Conjunction (AND) | `shi @a an shi @b` |
 | `ur` | Disjunction (OR) | `shi @a ur shi @b` |
 | `nai` | Negation (NOT) | `nai (shi @danger)` |
-| `khi` | Guard (if ... then) | `shi @safe khi sek mek @go sek nek` |
+| `khi` | Guard (if … then) | `shi @safe khi sek mek @go sek nek` |
 | `sek` | Explicit scope boundary | `sek mek @action sek` |
-| `nek` | Chain terminator | `... sek nek` |
+| `nek` | Chain terminator | `… sek nek` |
 | `mek` | Action emission | `mek @release_pallet` |
 | `men` | Audit/log action | `men @safety_check` |
 
@@ -408,36 +462,49 @@ Full list: [docs/error_codes.md](docs/error_codes.md)
 
 ## Engineering constraints and trade-offs
 
-Noe is opinionated. It prioritizes deterministic action admission, replayability, and evidence quality over maximal flexibility.
+Noe is opinionated. It prioritizes deterministic action admission,
+replayability, and evidence quality over maximal flexibility.
 
 ### 1. "Modal Logic Theatre" / the threshold critique
 
 **Critique:** "You are redefining knowledge as high confidence."
 
-**Response:** Correct, in a narrow systems sense. Noe does not solve philosophical truth. It enforces an explicit evidentiary threshold and makes that threshold inspectable, replayable, and attributable after the fact.
+**Response:** Correct, in a narrow systems sense. Noe does not solve
+philosophical truth. It enforces an explicit evidentiary threshold and makes
+that threshold inspectable, replayable, and attributable after the fact.
 
 ### 2. The latency critique
 
 **Critique:** "This is too slow for tight control loops."
 
-**Response:** Correct. Noe is not a reflex controller. It is meant to gate discrete supervisory decisions, such as whether a robot may enter a room or release a pallet. Tight control loops belong elsewhere in the stack.
+**Response:** Correct. Noe is not a reflex controller. It gates discrete
+supervisory decisions - whether a robot may enter a room, whether a pallet
+may be released - at 1–10 Hz. Tight control loops and reactive safety
+functions belong elsewhere in the stack. Noe sits above them.
 
 ### 3. Garbage in, signed garbage out
 
 **Critique:** "If the sensor lies, Noe just signs the lie."
 
-**Response:** Correct. Noe does not guarantee perception correctness. What it does provide is a precise record of which admitted inputs led to which decision, which improves attribution across sensors, adapters, perception models, and supervisory code.
+**Response:** Correct. Noe does not guarantee perception correctness. What it
+provides is a precise record of which admitted inputs led to which decision,
+which improves attribution across sensors, adapters, perception models, and
+supervisory code.
 
 ### 4. Relationship to existing safety patterns
-- **PLCs / interlocks:** still the correct mechanism for hard real-time plant-floor safety
-- **Runtime assurance:** Noe can sit inside a broader runtime assurance architecture as a symbolic decision gate
-- **Behavior trees / ROS2 supervisors:** Noe does not replace orchestration; it constrains action admission within it
-- **Rule engines:** Noe is narrower, but offers stronger replay and provenance commitments
+
+- **PLCs / interlocks:** still the correct mechanism for hard real-time
+  plant-floor safety. Noe sits above them, not in place of them.
+- **Runtime assurance:** Noe can sit inside a broader runtime assurance
+  architecture as a symbolic decision gate.
+- **Behavior trees / ROS2 supervisors:** Noe does not replace orchestration;
+  it constrains action admission within it.
+- **Rule engines:** Noe is narrower, but offers stronger replay and provenance
+  commitments.
 
 <br />
 
 ## Architecture
-
 ```mermaid
 flowchart TD
     A["Untrusted Inputs<br/>(Humans, LLMs, Planners)"] --> B["Noe Parser + Static Validator<br/>(Syntax + Registry + Operator-class Checks)"]
@@ -458,41 +525,60 @@ flowchart TD
 
 ## Implementation status
 
-This repository contains the Python reference implementation, which functions as an executable specification optimized for semantic clarity, testability, and spec conformance.
-- **Reference implementation:** Python 3.11+
-- **Conformance:** NIP-011 vectors are normative
-- **Portability contract:** any compliant runtime in Rust, C++, Zig, or another language must match:
-  - parse and evaluation outcomes for all NIP-011 vectors
-  - certificate and hash commitments for normative fields
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Python reference runtime | Stable reference | Normative. All conformance vectors defined here. |
+| NIP-011 conformance suite | Locked | SHA-256 manifest. 93 vectors. Aborts on mismatch. |
+| Rust core runtime | Implemented | `rust/noe_core/`. Matched against Python reference at 93/93 vectors. One narrow parse-message-format exemption documented. |
+| C FFI surface | Implemented | `noe_eval_json` / `noe_free_string` / `noe_version`. Panic-contained. Null and UTF-8 errors return error JSON. |
+| C++20 header-only wrapper | Implemented | RAII memory handling. Zero ROS2 dependency. |
+| ROS2 lifecycle node adapter | Validated on worked scenario | Built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble. Correct blocked/permitted output confirmed. See `ros2_adapter/README.md` for scope. |
+| Grounding reference adapters | Implemented | `packages/grounding/` - LiDAR zone, camera human-presence, epistemic mapping, temporal utilities. |
+| Certificate persistence + replay | Implemented | `noe/persistence/` - append-only JSONL store, tamper detection, replay engine, `noe_replay` CLI. |
+| BT.CPP converter | Initial release | `tools/btcpp_converter/` - migration estimator, chain generation, placeholder registry, conversion report. |
+| Domain packs | Not started | Planned for logistics and healthcare verticals. |
 
-The proposer is not trusted. The runtime, registry, and context-admission path together define the trusted decision boundary.
-
-Planned porting targets:
-- Rust core runtime for high-assurance portable embedding
-- C++20 runtime / header-only adapter layer for ROS 2 and industrial integration
-
-If you are implementing a new runtime, start with `tests/nip011/` and treat the conformance manifest as the source of truth.
+**Portability contract:** any conforming runtime must match parse and
+evaluation outcomes for all NIP-011 vectors and certificate and hash
+commitments for normative fields. Start with `tests/nip011/` and treat the
+conformance manifest as the source of truth.
 
 <br />
 
 ## Repository structure
-
 ```text
-noe/                    # Core runtime (parser, validator, context admission, interpreter)
-tests/                  # Unit tests + NIP-011 conformance vectors
-examples/               # End-to-end demos (auditor, robot guard, integration demo)
-nips/                   # Specification documents (NIP-005, NIP-009, NIP-010, NIP-011)
+noe/                      # Python reference runtime + persistence layer
+  persistence/            # cert_store.py, replay.py, audit.py
+rust/
+  noe_core/               # Rust core runtime (conformance-matched)
+ros2_adapter/             # ROS2 lifecycle node, C FFI surface, C++20 wrapper
+  include/noe/            # noe_core.h, noe.hpp
+  src/                    # noe_gate_node.cpp
+  examples/               # mobile_robot_zone_entry/
+packages/
+  grounding/              # LiDAR zone, camera human-presence, epistemic,
+                          # temporal reference adapters
+  btcpp_converter/        # BehaviorTree.CPP → Noe chain migration tool
+tests/                    # Unit tests + NIP-011 conformance vectors
+examples/                 # End-to-end demos (auditor, robot guard,
+                          # integration demo)
+nips/                     # Specification documents
+docs/                     # Integration guides, error codes, threat model
 ```
 
 <br />
 
 ## Documentation
-- [Measured Execution Boundary Demo](docs/execution_boundary_demo.md) - runnable permit/veto/stale/error gate demo with forwarded command envelope and replay verification
-- [ROS 2 Integration Pattern](docs/ros2_integration_example.md) - integration guide
-- [NIP-011: Conformance](tests/nip011/README.md) - normative vectors and manifest
-- [Canonicalization Tests](tests/test_context_canonicalization.py) - order-invariant hashing coverage
-- [Error Codes](docs/error_codes.md) - strict-mode failure semantics
-- [Threat Model](THREAT_MODEL.md) - trust boundaries, adversary assumptions, and limits
+
+- [LLM / agent governance quickstart](docs/quickstart_llm_governance.md)
+- [ROS2 adapter](ros2_adapter/README.md) - build instructions, validation
+  environment, honest scope statement
+- [Measured execution boundary demo](docs/execution_boundary_demo.md)
+- [ROS2 integration pattern](docs/ros2_integration_example.md)
+- [NIP-011 conformance](tests/nip011/README.md) - normative vectors and
+  manifest
+- [Error codes](docs/error_codes.md)
+- [Threat model](THREAT_MODEL.md)
 
 <br />
 
@@ -503,5 +589,6 @@ Apache 2.0. See [LICENSE](LICENSE).
 <br />
 
 ## Contact
+
 - Issues: [github.com/noe-protocol/noe/issues](https://github.com/noe-protocol/noe/issues)
 - Discussions: [github.com/noe-protocol/noe/discussions](https://github.com/noe-protocol/noe/discussions)
