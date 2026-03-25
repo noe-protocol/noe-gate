@@ -1,0 +1,304 @@
+{
+  "noe_version": "v1.0-rc1",
+  "spec_version": "NIP-010-draft",
+  "chain": "shi @temperature_ok an shi @location_ok an shi @chain_of_custody_ok an shi @human_clear khi sek mek @release_pallet sek nek",
+  "created_at": "2026-03-18T05:50:23Z",
+  "context_hashes": {
+    "root": "4802862de68311cadcf5ff34fd4b95e8efa853266bd11bee2c247799fcbd4d74",
+    "domain": "8d84e2f12efbcb6abe1dee3b71b41681678baa30758c4456ac733f4075fe3c90",
+    "local": "cb23d9b80bfffcc5fe25de295d03050424cd45396c5b3cda4306497117b74cfb",
+    "safe": "0053740f45c4e15cdd031ceb19895f7271377f38dbe983f329f4a235cf49c04e"
+  },
+  "context_snapshot": {
+    "root": {
+      "units": {
+        "temperature": "celsius",
+        "time": "microseconds",
+        "distance": "millimeters",
+        "angle": "milliradians"
+      },
+      "safety": {
+        "max_temp_millicelsius": 8000,
+        "min_temp_millicelsius": 2000
+      },
+      "temporal": {
+        "max_staleness_us": 5000000,
+        "clock": "epoch_us"
+      },
+      "modal": {
+        "schema": "v1"
+      },
+      "axioms": {
+        "value_system": {
+          "accepted": [
+            "release_when_safe"
+          ],
+          "rejected": [
+            "unsafe_release"
+          ]
+        }
+      },
+      "rel": {},
+      "demonstratives": {}
+    },
+    "domain": {
+      "entities": {
+        "shipment": {
+          "id": "SHIP-12345",
+          "product": "vaccine_vial",
+          "required_checks": [
+            "@temperature_ok",
+            "@location_ok",
+            "@chain_of_custody_ok",
+            "@human_clear"
+          ]
+        },
+        "location": {
+          "warehouse_id": "WH-01",
+          "allowed_loading_bays": [
+            "BAY-07"
+          ]
+        },
+        "pallet_system": {
+          "id": "CTRL_PALLET_01",
+          "type": "control_point",
+          "symbol": "@release_pallet"
+        }
+      },
+      "safety": {
+        "min_continuous_temp_ok_seconds": 60
+      }
+    },
+    "local": {
+      "literals": {
+        "@temperature_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "temp_probe_01"
+        },
+        "@location_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "dock_rfid_07"
+        },
+        "@chain_of_custody_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "custody_ledger"
+        },
+        "@human_clear": {
+          "value": false,
+          "timestamp_us": 1773813022980088,
+          "source": "zone_lidar_02"
+        },
+        "@release_pallet": {
+          "value": true,
+          "timestamp_us": 1773813022980088
+        }
+      },
+      "temporal": {
+        "now_us": 1773813023480088,
+        "timestamp_us": 1773813023480088,
+        "max_skew_us": 100000
+      },
+      "spatial": {
+        "thresholds_mm": {
+          "near": 2000,
+          "far": 10000
+        },
+        "orientation_mrad": {
+          "target": 0,
+          "tolerance": 100
+        }
+      },
+      "modal": {
+        "knowledge": {
+          "@temperature_ok": true,
+          "@location_ok": true,
+          "@chain_of_custody_ok": true,
+          "@human_clear": true
+        },
+        "belief": {},
+        "certainty": {}
+      },
+      "delivery": {
+        "status": "ready_for_release"
+      },
+      "audit": {
+        "log_level": "strict",
+        "enabled": true
+      },
+      "rel": {},
+      "demonstratives": {},
+      "axioms": {},
+      "entities": {}
+    },
+    "safe": {
+      "units": {
+        "temperature": "celsius",
+        "time": "microseconds",
+        "distance": "millimeters",
+        "angle": "milliradians"
+      },
+      "safety": {
+        "max_temp_millicelsius": 8000,
+        "min_temp_millicelsius": 2000,
+        "min_continuous_temp_ok_seconds": 60
+      },
+      "temporal": {
+        "max_staleness_us": 5000000,
+        "clock": "epoch_us",
+        "now_us": 1773813023480088,
+        "timestamp_us": 1773813023480088,
+        "max_skew_us": 100000,
+        "derived": {
+          "max_literal_age_us": 5000000,
+          "skew_us": 0
+        }
+      },
+      "modal": {
+        "schema": "v1",
+        "knowledge": {
+          "@temperature_ok": true,
+          "@location_ok": true,
+          "@chain_of_custody_ok": true,
+          "@human_clear": true
+        },
+        "belief": {},
+        "certainty": {}
+      },
+      "axioms": {
+        "value_system": {
+          "accepted": [
+            "release_when_safe"
+          ],
+          "rejected": [
+            "unsafe_release"
+          ]
+        }
+      },
+      "rel": {},
+      "demonstratives": {},
+      "entities": {
+        "shipment": {
+          "id": "SHIP-12345",
+          "product": "vaccine_vial",
+          "required_checks": [
+            "@temperature_ok",
+            "@location_ok",
+            "@chain_of_custody_ok",
+            "@human_clear"
+          ]
+        },
+        "location": {
+          "warehouse_id": "WH-01",
+          "allowed_loading_bays": [
+            "BAY-07"
+          ]
+        },
+        "pallet_system": {
+          "id": "CTRL_PALLET_01",
+          "type": "control_point",
+          "symbol": "@release_pallet"
+        }
+      },
+      "literals": {
+        "@temperature_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "temp_probe_01"
+        },
+        "@location_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "dock_rfid_07"
+        },
+        "@chain_of_custody_ok": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "custody_ledger"
+        },
+        "@human_clear": {
+          "value": true,
+          "timestamp_us": 1773813022980088,
+          "source": "zone_lidar_02"
+        },
+        "@release_pallet": {
+          "value": true,
+          "timestamp_us": 1773813022980088
+        }
+      },
+      "spatial": {
+        "thresholds_mm": {
+          "near": 2000,
+          "far": 10000
+        },
+        "orientation_mrad": {
+          "target": 0,
+          "tolerance": 100
+        }
+      },
+      "delivery": {
+        "status": "ready_for_release"
+      },
+      "audit": {
+        "log_level": "strict",
+        "enabled": true
+      }
+    }
+  },
+  "outcome": {
+    "domain": "list",
+    "value": [
+      {
+        "type": "action",
+        "verb": "mek",
+        "target": "@release_pallet",
+        "action_hash": "3031ceddc094cc56a7fd0d1ca3ba95dae727fc096f7b2dbb5ec493f8492ef00b",
+        "event_hash": "3031ceddc094cc56a7fd0d1ca3ba95dae727fc096f7b2dbb5ec493f8492ef00b",
+        "provenance": {
+          "action_hash": "3031ceddc094cc56a7fd0d1ca3ba95dae727fc096f7b2dbb5ec493f8492ef00b",
+          "event_hash": "3031ceddc094cc56a7fd0d1ca3ba95dae727fc096f7b2dbb5ec493f8492ef00b",
+          "context_hash": "347c30515673fb1467fb604792814560061ea5dc2ed7a6e101df75bf54e89757",
+          "source": "shi @temperature_ok an shi @location_ok an shi @chain_of_custody_ok an shi @human_clear khi sek mek @release_pallet sek nek"
+        }
+      }
+    ],
+    "action_hash": "3031ceddc094cc56a7fd0d1ca3ba95dae727fc096f7b2dbb5ec493f8492ef00b",
+    "meta": {
+      "safe_context_hash": "0053740f45c4e15cdd031ceb19895f7271377f38dbe983f329f4a235cf49c04e",
+      "mode": "strict"
+    }
+  },
+  "decision": {
+    "guard": "khi",
+    "required_knowledge": [
+      "@temperature_ok",
+      "@location_ok",
+      "@chain_of_custody_ok",
+      "@human_clear"
+    ],
+    "inputs_knowledge_present": [
+      "@temperature_ok",
+      "@location_ok",
+      "@chain_of_custody_ok",
+      "@human_clear"
+    ],
+    "satisfied": true
+  },
+  "evaluation": {
+    "mode": "strict",
+    "runtime": "python-reference",
+    "nip": [
+      "NIP-005",
+      "NIP-009",
+      "NIP-010",
+      "NIP-014"
+    ]
+  },
+  "hashing": {
+    "canonicalization": "noe-canonical-v1",
+    "hash": "sha256",
+    "action_hash_version": "v2"
+  }
+}
