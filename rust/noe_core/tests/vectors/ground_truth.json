@@ -1,0 +1,6478 @@
+[
+  {
+    "id": "ADV_001",
+    "chain": "((((((((((true)))))))))) nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_002",
+    "chain": "   true      ur      false   nek   ",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_003",
+    "chain": "@\ud83d\ude80 | nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@\ud83d\ude80": true
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "a38e6468ff1d593e0a457856a43a6ed133e1e2346f3ac647a9be384692f0e16c",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": true,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "02dfb1738e48da154945e8a03fa7fde75c4d4cb13f264c3e8f7ae19b1886d273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "a38e6468ff1d593e0a457856a43a6ed133e1e2346f3ac647a9be384692f0e16c"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_004",
+    "chain": "123 ur true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_005",
+    "chain": "@obj an true nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@obj": {
+            "some": "obj"
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "5f729d1b622ad4241fdd9ac6735b8a129e00bc0bf30ddb8179f362b0fae6299d",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "938672f374f15aa0e0a08e36f667a597963d35f2ef168f87360bd5f7b6a0ad93",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5f729d1b622ad4241fdd9ac6735b8a129e00bc0bf30ddb8179f362b0fae6299d"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_006",
+    "chain": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "numeric",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_007",
+    "chain": "@injection nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@injection": " | true | "
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      },
+      "literals": {
+        "@true_val": true
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "literal",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "72ca11f2e63d7f7b26525e5afa6b4bedf9f69542769d9ef5f6dd283a7bccb314",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "e4a3fb623c9bb9dc74abd6d1fdc4d08afcd040603b736cc36819fd8677081e10",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "72ca11f2e63d7f7b26525e5afa6b4bedf9f69542769d9ef5f6dd283a7bccb314"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_008",
+    "chain": "nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_009",
+    "chain": "true",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "ADV_010",
+    "chain": "true nek nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "74300e626f8f54feb301208d3e4ad372e4e2850b77f49b4cbfa16edfc5821273",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "777091040578180506fa63be8f34c1ab69e233eff3f22f150415dd60a5ee1c92"
+        }
+      }
+    }
+  },
+  {
+    "id": "AUD_001",
+    "chain": "men @action nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@action": {
+            "type": "move",
+            "timestamp": 950
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "delivery": {},
+        "audit": {
+          "log": [
+            {
+              "action": "move",
+              "timestamp": 950,
+              "agent": "robot_1"
+            }
+          ]
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "verb": "men",
+        "target": "@action",
+        "kind": "audit",
+        "action_hash": "4f22d5cce4f6fbd04ff33f6c52372f8782207a587b13bd8327e45280eefcce1c",
+        "event_hash": "4f22d5cce4f6fbd04ff33f6c52372f8782207a587b13bd8327e45280eefcce1c",
+        "provenance": {
+          "action_hash": "4f22d5cce4f6fbd04ff33f6c52372f8782207a587b13bd8327e45280eefcce1c",
+          "event_hash": "4f22d5cce4f6fbd04ff33f6c52372f8782207a587b13bd8327e45280eefcce1c",
+          "context_hash": "d22eaed3ff188e87ae191aab43c15c14bd84983d6cf7ef5dc09fe9a0bd1d6b34",
+          "source": "men @action nek"
+        }
+      },
+      "meta": {
+        "context_hash": "d22eaed3ff188e87ae191aab43c15c14bd84983d6cf7ef5dc09fe9a0bd1d6b34",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "94c0b361ae78a0ea5b05009b646df607d266263aa6f73c480486c200a407b9c0",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "d22eaed3ff188e87ae191aab43c15c14bd84983d6cf7ef5dc09fe9a0bd1d6b34"
+        }
+      }
+    }
+  },
+  {
+    "id": "AUD_002",
+    "chain": "men @event nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@event": {
+            "id": "evt_001"
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "delivery": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Missing audit subsystem",
+      "meta": {
+        "context_hash": "82ed8b49ee308163009d1df37df2d940d8986e5b31007b89d14a179cc7869fe6",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": true,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "24d6a1a813049ac2d93928070c25196e60cf246b3247fddf00300477860ed9c7",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "82ed8b49ee308163009d1df37df2d940d8986e5b31007b89d14a179cc7869fe6"
+        }
+      }
+    }
+  },
+  {
+    "id": "CTX_001",
+    "chain": "true nek",
+    "context": [
+      "this",
+      "is",
+      "invalid"
+    ],
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_BAD_CONTEXT",
+      "value": "blocked",
+      "details": "Context malformed: list",
+      "meta": {
+        "context_hash": "",
+        "mode": "strict",
+        "flags": {
+          "schema_invalid": true
+        },
+        "context_hashes": {
+          "root": "",
+          "domain": "",
+          "local": "",
+          "total": ""
+        }
+      }
+    }
+  },
+  {
+    "id": "CTX_002",
+    "chain": "true nek",
+    "context": [],
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_BAD_CONTEXT",
+      "value": "blocked",
+      "details": "Context malformed: list",
+      "meta": {
+        "context_hash": "",
+        "mode": "strict",
+        "flags": {
+          "schema_invalid": true
+        },
+        "context_hashes": {
+          "root": "",
+          "domain": "",
+          "local": "",
+          "total": ""
+        }
+      }
+    }
+  },
+  {
+    "id": "CTX_003",
+    "chain": "true nek",
+    "context": "not an object",
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_BAD_CONTEXT",
+      "value": "blocked",
+      "details": "Context malformed: str",
+      "meta": {
+        "context_hash": "",
+        "mode": "strict",
+        "flags": {
+          "schema_invalid": true
+        },
+        "context_hashes": {
+          "root": "",
+          "domain": "",
+          "local": "",
+          "total": ""
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-UNIVERSAL-TRUTH",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": null,
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-PRIVATE-LITERAL",
+    "chain": "mek @secret nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@secret' missing",
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-DRIFT-STALENESS",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6b5e9af93ce793ef867d0fda0dec0200b35a9719b9f4032f93beba84050cbfec",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "6c5e91e8369e1f0bf1c45f38ae5ea1f88c09a906105e0512ab5a39378d78c832",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6b5e9af93ce793ef867d0fda0dec0200b35a9719b9f4032f93beba84050cbfec"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-PARTIAL-OVERLAP",
+    "chain": "shi @shared nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@shared": "shared_val",
+          "@a_only": "a_val",
+          "@b_only": "b_val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": null,
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Knowledge check failed for 'shared' in strict mode",
+      "meta": {
+        "context_hash": "f97d4d67be7e5d16aa818096134410a85b933312b8ed97b57b53da0d82a5dabc",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "508a5c85f606b1680c8c93beeaa62fa13ff5b669320c6d9c92f733cfad96856b",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "f97d4d67be7e5d16aa818096134410a85b933312b8ed97b57b53da0d82a5dabc"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-TEMPORAL-BOUNDARY",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "82980b8debf96ac94e380098cde36ee7232508989b32b1f72f29a81d08bdd204",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "8056a22d380853d476d59cbdd2ffb5636912b49895e5eb86482ca9f402eed43d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "82980b8debf96ac94e380098cde36ee7232508989b32b1f72f29a81d08bdd204"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-CONFLICTING-BELIEFS#agent1",
+    "chain": "vek @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@x": true
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@x": true
+          },
+          "certainty": {}
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "source_test_id": "T-CA-CONFLICTING-BELIEFS",
+    "agent_id": "agent1",
+    "pair_expectation": "disagree",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "c0df4991684f4b5c28ce8abed3baf922e19f65f35af95d0a02c4ae2c66aa7951",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "a9901ef0b4c5696c9a48762126443b6bd7e739b9be756aad23071b7291fd8af4",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "c0df4991684f4b5c28ce8abed3baf922e19f65f35af95d0a02c4ae2c66aa7951"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-CA-CONFLICTING-BELIEFS#agent2",
+    "chain": "vek @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@x": false
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@x": false
+          },
+          "certainty": {}
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "source_test_id": "T-CA-CONFLICTING-BELIEFS",
+    "agent_id": "agent2",
+    "pair_expectation": "disagree",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "45f0c7ec2f120870ef22754af911ab1735424ed9e488a6c7603dc385f285cb09",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "c0c6680c794a7199d5a9a3580dd0e5ab8683f221c92c539b360142c3e5b2de39",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "45f0c7ec2f120870ef22754af911ab1735424ed9e488a6c7603dc385f285cb09"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEL_001",
+    "chain": "vus @item nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@item": {
+            "id": "item_789"
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "audit": {},
+        "delivery": {
+          "items": {
+            "item_789": {
+              "status": "delivered",
+              "verified": false
+            }
+          }
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "kind": "delivery",
+        "verb": "vus",
+        "target": "@item",
+        "status": "delivered",
+        "verified": false,
+        "action_hash": "32ffc1899c9e86939b99455786075d26d79c5d03691ced0c85af79029ec392de",
+        "event_hash": "41f3456fb0d2f0791139644d0c512229e93851cbe446d4bb0aed5d19fba22350",
+        "provenance": {
+          "action_hash": "32ffc1899c9e86939b99455786075d26d79c5d03691ced0c85af79029ec392de",
+          "event_hash": "41f3456fb0d2f0791139644d0c512229e93851cbe446d4bb0aed5d19fba22350",
+          "context_hash": "f1f7471913353c22f9efa18247ab6cc0bee51c6d541b60f601ebc8f4f2103cb9",
+          "source": "vus @item nek"
+        }
+      },
+      "meta": {
+        "context_hash": "f1f7471913353c22f9efa18247ab6cc0bee51c6d541b60f601ebc8f4f2103cb9",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "94c39f896df9e5f9435a284f47ce284d1d49f374cb76a5b5d55a12cb6eaf5366",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "f1f7471913353c22f9efa18247ab6cc0bee51c6d541b60f601ebc8f4f2103cb9"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEL_002",
+    "chain": "vel @item nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@item": {
+            "id": "item_789"
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "audit": {},
+        "delivery": {
+          "items": {
+            "item_789": {
+              "status": "verified",
+              "verified": true
+            }
+          }
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "kind": "delivery",
+        "verb": "vel",
+        "target": "@item",
+        "status": "verified",
+        "verified": true,
+        "action_hash": "66c0569c68ea9501a0b6189ca80ec5bd4d3bf98b26f89806100e469936a43bf2",
+        "event_hash": "7c586fb87b62ab2b58c6b5a6e87dac4148363e8475dbc6e6b7c0b321cb8a6d5e",
+        "provenance": {
+          "action_hash": "66c0569c68ea9501a0b6189ca80ec5bd4d3bf98b26f89806100e469936a43bf2",
+          "event_hash": "7c586fb87b62ab2b58c6b5a6e87dac4148363e8475dbc6e6b7c0b321cb8a6d5e",
+          "context_hash": "99ab3531a706a7efbb431dd10f8cd42b6a2bbac08ca2a731c660344cfb4ee796",
+          "source": "vel @item nek"
+        }
+      },
+      "meta": {
+        "context_hash": "99ab3531a706a7efbb431dd10f8cd42b6a2bbac08ca2a731c660344cfb4ee796",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "f49131a7a63a154a37ade313fd1673d479215557ff9693896dc8edbc8d4731ac",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "99ab3531a706a7efbb431dd10f8cd42b6a2bbac08ca2a731c660344cfb4ee796"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEL_003",
+    "chain": "vus @item nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@item": {
+            "id": "item_789"
+          }
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 100
+        },
+        "audit": {},
+        "delivery": "broken",
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "C.delivery must be an object in strict mode",
+      "meta": {
+        "context_hash": "10aa8975c554508483194026dec80ce322f824e1942fe49c6b47f5ef02e0846f",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": true,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "591dd0af6ab4f0216e6ee0d69affcc8486fff0b63809648af4c7ef8acdf5cc4f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "10aa8975c554508483194026dec80ce322f824e1942fe49c6b47f5ef02e0846f"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEM_001",
+    "chain": "shi dia nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {
+          "dia": {
+            "entity": "@box1"
+          }
+        },
+        "entities": {
+          "@box1": {
+            "distance": 0
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "9bfe00bcfb69bd2d330374e668b0b646f8889eba01a6669a7ee951161509a3aa",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "0e4d589ee7bc4581cf220b1b7cd9e31f669572cc184110f8a48d1ffc5d37b0c5",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "9bfe00bcfb69bd2d330374e668b0b646f8889eba01a6669a7ee951161509a3aa"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEM_002",
+    "chain": "shi dia nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "distance": 0
+          },
+          "@box2": {
+            "distance": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "915e8c8ddb9076ef5cd006c4cf408e5f642b6e5cfd8d37677292a11c9f2cae71",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "3d2dbc6e5ba928a66ecf1d5f5f0601d458a7adda67c97a2de82d5c836ec19401",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "915e8c8ddb9076ef5cd006c4cf408e5f642b6e5cfd8d37677292a11c9f2cae71"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEM_003",
+    "chain": "shi dia nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "distance": 0
+          },
+          "@box2": {
+            "distance": 0
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "8d351b1179ef83c1e5bc8cc602e6df32c5a3a7a8407aa154adcfe55488097efd",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "3c225ae086c4d564d29e1ad1870ea18d992776467da7d246f41f63ccb0b7d40d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "8d351b1179ef83c1e5bc8cc602e6df32c5a3a7a8407aa154adcfe55488097efd"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEM_004",
+    "chain": "shi dia nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "distance": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "33f43f2bf98ea82e250e7dbd47c850266462ae4ade6e992a3ad245d8675ede62",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "4e1c2942b32099864328985bce2065df1466b9752d4d9624d78c06ea47feccb2",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "33f43f2bf98ea82e250e7dbd47c850266462ae4ade6e992a3ad245d8675ede62"
+        }
+      }
+    }
+  },
+  {
+    "id": "DEM_005",
+    "chain": "shi dia nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {},
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "distance": 0
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_DEMONSTRATIVE_UNGROUNDED",
+      "value": "blocked",
+      "details": "Missing spatial grounding",
+      "meta": {
+        "context_hash": "a32d66dcdd19095145aaf5d3c389f9a525062988ba7fcb8e1e238d1f819a51c4",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": true,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "54f12a5e786dc7ce3d68b939c2a74e8c5151003b9157c63c5a732998563a33a8",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "a32d66dcdd19095145aaf5d3c389f9a525062988ba7fcb8e1e238d1f819a51c4"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_001",
+    "chain": "shi @fact nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@fact": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "5f77f067f4571446dfd3b9a9c3e3a6f9c085a4b4b101a21f0fba0ebbc4a45d9e",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "483725e9f8df3be06ee1b5ae5fdd63b43947d6b28448f6c9826a12b37facaa09",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5f77f067f4571446dfd3b9a9c3e3a6f9c085a4b4b101a21f0fba0ebbc4a45d9e"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_002",
+    "chain": "shi @unknown nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@unknown": "val",
+          "@dummy": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@dummy": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Knowledge check failed for 'unknown' in strict mode",
+      "meta": {
+        "context_hash": "16f379d7de2882671b454f1a661a68f748dbb0334385043c011d452b99518a35",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "512cc585762d36e8135ecb4f74ab15d5f322b662a7b4247539a3139406adcd0e",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "16f379d7de2882671b454f1a661a68f748dbb0334385043c011d452b99518a35"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_006",
+    "chain": "vek @unknown nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@unknown": "val",
+          "@dummy": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@dummy": true
+          },
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "abbe2b566ca28b920c3ee07dda086992d9100746642e0993348881b142097663",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "2631536d09e630bc1c82a04b5616b6ced7d802d285ea2cd67aa41452309c18ac",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "abbe2b566ca28b920c3ee07dda086992d9100746642e0993348881b142097663"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_007",
+    "chain": "sha @high_conf nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@high_conf": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@high_conf": true
+          },
+          "certainty": {
+            "@high_conf": 0
+          },
+          "certainty_threshold": 0
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "0aa4151c9dee047a98394f992dc682f1d6b28404e1da5de8326fc08db2648a55",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "46801bfd2abd4799d951068d8291f0a2dea217f2f41294def8509605a3536f2a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "0aa4151c9dee047a98394f992dc682f1d6b28404e1da5de8326fc08db2648a55"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_008",
+    "chain": "sha @low_conf nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@low_conf": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@low_conf": true
+          },
+          "certainty": {
+            "@low_conf": 0.1
+          },
+          "certainty_threshold": 0.5
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Certainty check failed for 'low_conf' (threshold 0.5) in strict mode",
+      "meta": {
+        "context_hash": "ad3b758979a37a3d921946e3918b82de6b025489b166078d8bcb2a47f07f6633",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "c2bcfe9d0f41798a8cf863c6bcb3f5efb8f0d19cd318c5318e0c877495a12201",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "ad3b758979a37a3d921946e3918b82de6b025489b166078d8bcb2a47f07f6633"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_009",
+    "chain": "sha @unknown nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@unknown": "val",
+          "@dummy": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {
+            "@dummy": 0
+          },
+          "certainty_threshold": 0.5
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Certainty check failed for 'unknown' (threshold 0.5) in strict mode",
+      "meta": {
+        "context_hash": "cceab4db8f4789df5deb57a48352ae3c2180e02c26d9dc98f2e0893ca6c495ba",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "bde35097678110c7130b961142cc70d11afcc8c909f2694193fdbaf462be3155",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "cceab4db8f4789df5deb57a48352ae3c2180e02c26d9dc98f2e0893ca6c495ba"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_10",
+    "chain": "shi @belief nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@belief": "val",
+          "@dummy": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@dummy": true
+          },
+          "belief": {
+            "@belief": true
+          },
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Knowledge check failed for 'belief' in strict mode",
+      "meta": {
+        "context_hash": "e735111bfeb25ab91bc7998d2b5e03b7e7153f5819bb178b737687c62a8530d3",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb0b444d90c97516ede101c4d5bdf5296043e5d5c3dd76d0b71a87a11c7fb899",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "e735111bfeb25ab91bc7998d2b5e03b7e7153f5819bb178b737687c62a8530d3"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_011",
+    "chain": "shi 123 nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@dummy": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@dummy": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "4f82ae5504156ca38159a6fa4a29a012c271ae98cef697620e93df755aaf43aa",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "dfd51e03e968123ed53c1db2c9b66e62b8b39cd37fc3edcf092b1fd8abf95319",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "4f82ae5504156ca38159a6fa4a29a012c271ae98cef697620e93df755aaf43aa"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_012",
+    "chain": "shi @fact nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_EPISTEMIC_MISMATCH",
+      "value": "Knowledge check failed for 'fact' in strict mode",
+      "meta": {
+        "context_hash": "1bdec567b66095f3c4110e9a8ef186303e8fb46d04426462fdd490e42038286a",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "bd251a28f9931494062824d1399691d4dcb8a6aaa5906579a9de3d510ef6fd7c",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "1bdec567b66095f3c4110e9a8ef186303e8fb46d04426462fdd490e42038286a"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_013",
+    "chain": "sha @boundary nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@boundary": "val"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@boundary": true
+          },
+          "certainty": {
+            "@boundary": 0
+          },
+          "certainty_threshold": 0
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "561196820707d1cfd1ddf7e921406d346cf141734afbf6d043391bab79b3ed45",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "86b42dd370ac6a11e4f16b259bf9c9fb8f9cafd40ed82f67591275acce7a6708",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "561196820707d1cfd1ddf7e921406d346cf141734afbf6d043391bab79b3ed45"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_015",
+    "chain": "shi @a an shi @b nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@a": "val_a",
+          "@b": "val_b"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@a": true,
+            "@b": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "8c87e514dd72eb73246b36ccdde4d01d9b3774af77403f1a4e31ae4cc691c500",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "cf1983b32afc018cddb60882f7e324423ee018caeae849fcce5ab957cdb9df68",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "8c87e514dd72eb73246b36ccdde4d01d9b3774af77403f1a4e31ae4cc691c500"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_003",
+    "chain": "shi @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact",
+          "@x": false
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@fact": true,
+            "@x": false
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "64dcbdc897e74831b3c37bb45538653950171fd415cc3e7754b60247c2592ca9",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "77179ba3a2d8e7ea40e7a0708d2ada64ad452a67b7c05670302a43865e8d566d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "64dcbdc897e74831b3c37bb45538653950171fd415cc3e7754b60247c2592ca9"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_004",
+    "chain": "vek @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact",
+          "@x": true
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@x": true
+          },
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "f2ed0fd9096da6c2e7bb248304b4fc5348341f6b20ec6888676bab27cc74ea8e",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "4f4e4e7f2dd5ca63016852f28e42d0f850554eff45517da199df1ccf6caef2ae",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "f2ed0fd9096da6c2e7bb248304b4fc5348341f6b20ec6888676bab27cc74ea8e"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_005",
+    "chain": "vek @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact",
+          "@x": true
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "32ce8e04062f76825837fad6cc667a3b4c3d33f65a97b0787bb92c426052aa59",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "52a2bfe033f226b74fddbffaa2dea91a1d0026a93a30deb60d004d2eb468b5d6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "32ce8e04062f76825837fad6cc667a3b4c3d33f65a97b0787bb92c426052aa59"
+        }
+      }
+    }
+  },
+  {
+    "id": "EDET_014",
+    "chain": "vek @x nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact",
+          "@x": false
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {
+            "@x": false
+          },
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "294e50f4117ad675fcfbf736df78659df35182a161e1d3e32b540dfb6bafbada",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "076aa268704660a0a7d60a4abb741a92ecc1f8664ea7e1c7495a2f0f40b3f56a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "294e50f4117ad675fcfbf736df78659df35182a161e1d3e32b540dfb6bafbada"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNDEF_001",
+    "chain": "@missing ur true nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@missing": "undefined"
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000.0,
+          "max_skew_ms": 100.0
+        },
+        "delivery": {},
+        "audit": {}
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000.0
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "7c0a28a4291f9efdb126474be2bdd67a83bf5d56599fded97b04b728f9e18b3f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "e521bab8b4a3a2c64a947d5b533f94bebfd8821117da5449e7133b4e36d5e740",
+          "total": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNDEF_002",
+    "chain": "true ur @missing nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@missing": "undefined"
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000.0,
+          "max_skew_ms": 100.0
+        },
+        "delivery": {},
+        "audit": {}
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000.0
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "7c0a28a4291f9efdb126474be2bdd67a83bf5d56599fded97b04b728f9e18b3f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "e521bab8b4a3a2c64a947d5b533f94bebfd8821117da5449e7133b4e36d5e740",
+          "total": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNDEF_003",
+    "chain": "@missing an false nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@missing": "undefined"
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000.0,
+          "max_skew_ms": 100.0
+        },
+        "delivery": {},
+        "audit": {}
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000.0
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "7c0a28a4291f9efdb126474be2bdd67a83bf5d56599fded97b04b728f9e18b3f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "e521bab8b4a3a2c64a947d5b533f94bebfd8821117da5449e7133b4e36d5e740",
+          "total": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNDEF_004",
+    "chain": "false an @missing nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@missing": "undefined"
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000.0,
+          "max_skew_ms": 100.0
+        },
+        "delivery": {},
+        "audit": {}
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000.0
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "7c0a28a4291f9efdb126474be2bdd67a83bf5d56599fded97b04b728f9e18b3f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "e521bab8b4a3a2c64a947d5b533f94bebfd8821117da5449e7133b4e36d5e740",
+          "total": "8c032eddb17699ab2a5ce96896b42a58f3e0f9bad34f4a4a46c09e1c7de0df3a"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNDEF_005",
+    "chain": "(@missing an true) ur false nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@action": {
+            "type": "move",
+            "target": "forward"
+          },
+          "@missing": "undefined"
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000.0,
+          "max_skew_ms": 100.0
+        },
+        "delivery": {},
+        "audit": {}
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000.0
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "8863f02cbf29479c65b40e2a3484af7bdacbbb768c724b859964ce0f78ca09d9",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "72f269aebbeba07b68c8fa5ff0c401a054dd7146e9b4dd0c528ca19aef20e78f",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "e521bab8b4a3a2c64a947d5b533f94bebfd8821117da5449e7133b4e36d5e740",
+          "total": "8863f02cbf29479c65b40e2a3484af7bdacbbb768c724b859964ce0f78ca09d9"
+        }
+      }
+    }
+  },
+  {
+    "id": "LIT_001",
+    "chain": "shi @fact nek",
+    "context": {
+      "root": {
+        "literals": {
+          "fact": "some_fact"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "fact": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "b361cf6b5064203911839660a398223bf4335dbb45dd69f2a1afb727616267cc",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "e8203191e7c00494d88859ece943184311a46b8c6bdc725361d35b8777216809",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "b361cf6b5064203911839660a398223bf4335dbb45dd69f2a1afb727616267cc"
+        }
+      }
+    }
+  },
+  {
+    "id": "LIT_002",
+    "chain": "@missing nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@dummy": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@missing' missing",
+      "meta": {
+        "context_hash": "1a107e56c1885e96cde8f83c5c85bf7b736dd2ecef7cf8d18a01309b4c9c0765",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "4c93097229389fb4d7d856999f257d6408eba02c164ece92da9589f84bc4112a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "1a107e56c1885e96cde8f83c5c85bf7b736dd2ecef7cf8d18a01309b4c9c0765"
+        }
+      }
+    }
+  },
+  {
+    "id": "LIT_003",
+    "chain": "shi @bad-char nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@fact": "some_fact"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@dummy": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_INVALID_LITERAL",
+      "value": "blocked",
+      "details": "Malformed literal '@bad-char'",
+      "meta": {
+        "context_hash": "1a107e56c1885e96cde8f83c5c85bf7b736dd2ecef7cf8d18a01309b4c9c0765",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": true,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "4c93097229389fb4d7d856999f257d6408eba02c164ece92da9589f84bc4112a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "1a107e56c1885e96cde8f83c5c85bf7b736dd2ecef7cf8d18a01309b4c9c0765"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-001",
+    "chain": "true ur false an false nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-002",
+    "chain": "true an false nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-002B",
+    "chain": "false an true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-003",
+    "chain": "(true ur false) an false",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-004",
+    "chain": "false ur true an false ur true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-MISCOMM-005",
+    "chain": "(true an true) an false nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "REQ_001",
+    "chain": "@robot noq @action nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@agent": true,
+          "@robot": true,
+          "@action": {
+            "type": "action",
+            "verb": "test"
+          }
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "kind": "request",
+        "verb": "noq",
+        "subject": "robot",
+        "target": {
+          "type": "action",
+          "verb": "test",
+          "action_hash": "f03520b46eebbcb2065ef37dd8e1c7cad1c6d1084998d12d543a30bbae51bfde"
+        },
+        "child_action_hash": "f03520b46eebbcb2065ef37dd8e1c7cad1c6d1084998d12d543a30bbae51bfde",
+        "action_hash": "cf7fcefc016a63b1c4bb6e3999ef195997c4e851730c20f7f36b4aff0103e3b1",
+        "event_hash": "cf7fcefc016a63b1c4bb6e3999ef195997c4e851730c20f7f36b4aff0103e3b1",
+        "provenance": {
+          "action_hash": "cf7fcefc016a63b1c4bb6e3999ef195997c4e851730c20f7f36b4aff0103e3b1",
+          "event_hash": "cf7fcefc016a63b1c4bb6e3999ef195997c4e851730c20f7f36b4aff0103e3b1",
+          "context_hash": "49c058aa87e67e54301697d03c0452410d86d365e6b616890bc90d609b3c88df",
+          "source": "@robot noq @action nek"
+        }
+      },
+      "meta": {
+        "context_hash": "49c058aa87e67e54301697d03c0452410d86d365e6b616890bc90d609b3c88df",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "20d1d7342e2bbcae3044b36104c790a348b86083cdf9a368e43aba9cce5845af",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "49c058aa87e67e54301697d03c0452410d86d365e6b616890bc90d609b3c88df"
+        }
+      }
+    }
+  },
+  {
+    "id": "REQ_002",
+    "chain": "@robot noq @missing nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@missing' missing",
+      "meta": {
+        "context_hash": "ee12921b837e0040935b461978afdc786183c6e11476ed180bb39f833bb66910",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "c5166fc6a653a87caee98d2151a6fbf05142231647e4f7a9f145029b40de6342",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "ee12921b837e0040935b461978afdc786183c6e11476ed180bb39f833bb66910"
+        }
+      }
+    }
+  },
+  {
+    "id": "REQ_003",
+    "chain": "@agent noq true nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@agent": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_ACTION_MISUSE",
+      "value": "noq RHS must be an action",
+      "meta": {
+        "context_hash": "cf6d9fca25e6cb8d1337edebc12b189ddcca40de1dab2ddaef7dd0bf43ba26bf",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "8d04538b5c5a35f9429b29e10f1fbf7d658dda6007c9bbb75ad1b97509033d8c",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "cf6d9fca25e6cb8d1337edebc12b189ddcca40de1dab2ddaef7dd0bf43ba26bf"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_001",
+    "chain": "@robot nel @target_near nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_002",
+    "chain": "@robot tel @target_far nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_003",
+    "chain": "@robot xel @target_near nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_004",
+    "chain": "@robot en @zone nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_005",
+    "chain": "@box1 nel @missing nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@box1": true,
+          "@missing": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "pos": [
+              0,
+              0
+            ]
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "e1b4262bf3a7aa360f26a873c6d2032bc59bf14c7117e9985beb620a610a2d16",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "688d6517e8253731a2410d65540b96ee3c8c0df6a55f81a30e915431be59fbab",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "e1b4262bf3a7aa360f26a873c6d2032bc59bf14c7117e9985beb620a610a2d16"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_006",
+    "chain": "@box1 nel @box2 nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@box1": true,
+          "@box2": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {},
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "pos": [
+              0,
+              0
+            ]
+          },
+          "@box2": {
+            "pos": [
+              1,
+              1
+            ]
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "undefined",
+    "actual_python_result": {
+      "domain": "undefined",
+      "value": "undefined",
+      "meta": {
+        "context_hash": "ab001596f4a2cb71761b042672dfabdc606b7417e36ea1aaebf8091db97c6e15",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43a50eb0bc202d4172d0267f8f11116a7f7cbfaeb06eba36c037ac927f790857",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "ab001596f4a2cb71761b042672dfabdc606b7417e36ea1aaebf8091db97c6e15"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_007",
+    "chain": "@robot tra @target_near nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "SPA_008",
+    "chain": "@robot fra @target_near nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@target_near": true,
+          "@target_far": true,
+          "@zone": true
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 2.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "robot": {
+            "position": [
+              0,
+              0
+            ],
+            "velocity": [
+              1,
+              0
+            ]
+          },
+          "target_near": {
+            "position": [
+              1,
+              0
+            ]
+          },
+          "target_far": {
+            "position": [
+              15,
+              0
+            ]
+          },
+          "zone": {
+            "position": [
+              0,
+              0
+            ],
+            "radius": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "modal": {
+          "knowledge": {
+            "@box1": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "eb2f5223ed6d524c0acccd145fce4b9b47358469b0786ef01470d5d041530fdf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "6a4a7cf156a488ed73a7438ea6b33a0d9697ce5ef5116b4e48f2eb0b8d482082"
+        }
+      }
+    }
+  },
+  {
+    "id": "STALE_001",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 50
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 980
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "d92b94e2aa336f0554192aac665fcaa6283d94dc820155dda0ab798474dc05b5",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "68419a693eabc1eea5bbfd9614dbb19edc78a03e3b71ad7e55213790a365267a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "464bb83db5f14e42c4622ffd33ee8594909e13638f7d1390f80f9053964c66da",
+          "total": "d92b94e2aa336f0554192aac665fcaa6283d94dc820155dda0ab798474dc05b5"
+        }
+      }
+    }
+  },
+  {
+    "id": "STALE_002",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 20
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 0
+      },
+      "temporal": {
+        "now": 2000,
+        "max_skew_ms": 100
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_STALE",
+      "value": "blocked",
+      "details": "Context is stale based on timestamp/skew",
+      "meta": {
+        "context_hash": "e20b73f9b9e677e291d911ee981b270d02c5e5a627aea60220ab50a6e9284b8b",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": true,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "ffdc716224c58a0b82b04c154dab862d21d2fd46489d1b3dc10a0b11db11479c",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "9e75ebfc01e22432d089d89af5e828595d40955406cc421f8a9d57f93ab51f99",
+          "total": "e20b73f9b9e677e291d911ee981b270d02c5e5a627aea60220ab50a6e9284b8b"
+        }
+      }
+    }
+  },
+  {
+    "id": "TEMPORAL_INCOMPLETE_001",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": null
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 0
+      },
+      "temporal": {
+        "now": 2000,
+        "max_skew_ms": 100
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Context shape invalid: ERR_CONTEXT_INCOMPLETE",
+      "meta": {
+        "context_hash": "2d9a8a426ef69aa58ebe4477583c23738f495eda20b642d977738b61f19e2f3a",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": true,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "4fc4b9d86825967744e18161ccd21a4a9ce68e4798a267951d3883099925f213",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "9e75ebfc01e22432d089d89af5e828595d40955406cc421f8a9d57f93ab51f99",
+          "total": "2d9a8a426ef69aa58ebe4477583c23738f495eda20b642d977738b61f19e2f3a"
+        }
+      }
+    }
+  },
+  {
+    "id": "STALE_004",
+    "chain": "dia nel dai nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 20
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "entities": {
+          "@box1": {
+            "distance": 5
+          }
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 0
+      },
+      "temporal": {
+        "now": 2000,
+        "max_skew_ms": 100
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_STALE",
+      "value": "blocked",
+      "details": "Context is stale based on timestamp/skew",
+      "meta": {
+        "context_hash": "816d72901f4eea203df21551978a387d86861c18f37d7da89543cf781d3777eb",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": true,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "fa37aa47c5b805bb4f8f5bc3b564d409e0fbd6f74d1505c2dd6b9f5261b7f5d2",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "9e75ebfc01e22432d089d89af5e828595d40955406cc421f8a9d57f93ab51f99",
+          "total": "816d72901f4eea203df21551978a387d86861c18f37d7da89543cf781d3777eb"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-STRICT-ACTION-001",
+    "chain": "mek @undefined_target nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@undefined_target' missing",
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-STRICT-ACTION-002",
+    "chain": "true an false nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "43ee34d4dba789f90c0bca8c23d7b1e2afe17e37240863f1fa3166602c6fa52d",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "5add0996b33b2ff009b80cc231f07b3feb578089a258d7e1d2f3e8d423768ff2"
+        }
+      }
+    }
+  },
+  {
+    "id": "T-STRICT-ACTION-003",
+    "chain": "mek @valid_target nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@valid_target": "target_obj"
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1,
+            "far": 10
+          },
+          "orientation": {
+            "target": 0,
+            "tolerance": 0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "demonstratives": {},
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "verb": "mek",
+        "target": "@valid_target",
+        "action_hash": "b1ac3430d1631812fc850c9b89fa52cf4c9cbb016fc41289d0a5d4309b410783",
+        "event_hash": "b1ac3430d1631812fc850c9b89fa52cf4c9cbb016fc41289d0a5d4309b410783",
+        "provenance": {
+          "action_hash": "b1ac3430d1631812fc850c9b89fa52cf4c9cbb016fc41289d0a5d4309b410783",
+          "event_hash": "b1ac3430d1631812fc850c9b89fa52cf4c9cbb016fc41289d0a5d4309b410783",
+          "context_hash": "cb3b2f849b5c234d825c65eef043a1231837272b2f1611ddea6055f636834c11",
+          "source": "mek @valid_target nek"
+        }
+      },
+      "meta": {
+        "context_hash": "cb3b2f849b5c234d825c65eef043a1231837272b2f1611ddea6055f636834c11",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "afe715d42354f4dc56431321836a1402389cb9d67b789ca7a1715aa16311e8bf",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "cb3b2f849b5c234d825c65eef043a1231837272b2f1611ddea6055f636834c11"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNGROUNDED_001",
+    "chain": "shi @foo khi sek mek @halt sek nek",
+    "context": {
+      "root": {
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 0
+        },
+        "timestamp": 1000,
+        "literals": {},
+        "audit": {},
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1.0,
+            "far": 5.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 5.0
+          }
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@foo' missing",
+      "meta": {
+        "context_hash": "792e7e5faec63e201591bb0920c75786435459ca0c8ea56115aeb5e816caefa7",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "4a161264accbc31a3d70318a6ca669919346dbcbb0ac215b882eb1271329575a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "792e7e5faec63e201591bb0920c75786435459ca0c8ea56115aeb5e816caefa7"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNGROUNDED_002",
+    "chain": "dia nel dai khi sek mek @halt sek nek",
+    "context": {
+      "audit": {},
+      "local": {
+        "timestamp": 1000
+      },
+      "root": {
+        "spatial": {
+          "thresholds": {
+            "near": 1.0,
+            "far": 5.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 5.0
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 0
+        },
+        "timestamp": 1000,
+        "literals": {
+          "@halt": {
+            "domain": "action",
+            "value": {
+              "type": "action",
+              "verb": "halt",
+              "target": "now"
+            }
+          }
+        },
+        "demonstratives": {
+          "proximal": "auto"
+        },
+        "entities": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        }
+      },
+      "domain": {}
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_CONTEXT_INCOMPLETE",
+      "value": "blocked",
+      "details": "Missing audit subsystem",
+      "meta": {
+        "context_hash": "ca17950dfaa929bcef8bfd5b454324cde09ed83a98470dad2e94dd69a8e00bd7",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": false,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": true,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "edd83443efa9f700b1b0ecb6cf632872acd341fc411adfaf065dfc42fc31f1e3",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "ca17950dfaa929bcef8bfd5b454324cde09ed83a98470dad2e94dd69a8e00bd7"
+        }
+      }
+    }
+  },
+  {
+    "id": "UNGROUNDED_003",
+    "chain": "nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1.0,
+            "far": 5.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 5.0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_PARSE_FAILED",
+      "value": "Expected 'qua\\b' or unary_op or 'mek\\b|men\\b' or 'sek\\b' or '(' or literal or bool_literal or number or demonstrative or glyph at position (1, 1) => '*nek'.",
+      "meta": {
+        "context_hash": "e0b4dec78b26edf1d2dfffc250ec7c85ee3247231cb5a1db3392a2f4e983e23d",
+        "context_hashes": {
+          "root": "ef75a5619af2a783440addb9be5ba3962928a7cc644d466903540690f3fa1ff7",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "e0b4dec78b26edf1d2dfffc250ec7c85ee3247231cb5a1db3392a2f4e983e23d"
+        },
+        "mode": "strict"
+      }
+    }
+  },
+  {
+    "id": "UNGROUNDED_004",
+    "chain": "noq @missing_target nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "spatial": {
+          "thresholds": {
+            "near": 1.0,
+            "far": 5.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 5.0
+          }
+        },
+        "temporal": {
+          "now": 1678886400000,
+          "max_skew_ms": 5000
+        },
+        "delivery": {
+          "status": {}
+        },
+        "audit": {},
+        "timestamp": 1000
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1678886400000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@missing_target' missing",
+      "meta": {
+        "context_hash": "c69c887a4ba436ffb19fd72303a584f046c9adc7ed51c17b75aa1dce9bbbdb0d",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "20fd6382ae0da2cab0c42b8b0d2a106604a2d33c464a2acb3ebbabc72415b3a0",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "818b064d894bcf5c9526b7924d1c8cc4e4cefc1f69cb5dac1dc019a80f717a15",
+          "total": "c69c887a4ba436ffb19fd72303a584f046c9adc7ed51c17b75aa1dce9bbbdb0d"
+        }
+      }
+    }
+  },
+  {
+    "id": "PARSE_EDGE_001",
+    "chain": "((true)) nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "067563b959cc611c6ab407c0d48199845358a52d3096b118ef95928f66c06ca6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab"
+        }
+      }
+    }
+  },
+  {
+    "id": "PARSE_EDGE_002",
+    "chain": "42 nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "numeric",
+      "value": 42.0,
+      "meta": {
+        "context_hash": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "067563b959cc611c6ab407c0d48199845358a52d3096b118ef95928f66c06ca6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab"
+        }
+      }
+    }
+  },
+  {
+    "id": "PARSE_EDGE_003",
+    "chain": "(shi @alpha) an (vek @beta) nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@alpha": true,
+          "@beta": false
+        },
+        "modal": {
+          "knowledge": {
+            "@alpha": true
+          },
+          "belief": {
+            "@beta": false
+          },
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": false,
+      "meta": {
+        "context_hash": "77ffb6ce91dfee6510176a829090e8ad5912d8c607fd52f267170abd27e725e7",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "8afc08fcf578ea8b211fed1d02e26387abeca190e5900290ef075feb8ee74e18",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "77ffb6ce91dfee6510176a829090e8ad5912d8c607fd52f267170abd27e725e7"
+        }
+      }
+    }
+  },
+  {
+    "id": "PARSE_EDGE_004",
+    "chain": "3.14 nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "numeric",
+      "value": 3.14,
+      "meta": {
+        "context_hash": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "067563b959cc611c6ab407c0d48199845358a52d3096b118ef95928f66c06ca6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab"
+        }
+      }
+    }
+  },
+  {
+    "id": "PARSE_EDGE_005",
+    "chain": "nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_PARSE_FAILED",
+      "value": "Expected 'qua\\b' or unary_op or 'mek\\b|men\\b' or 'sek\\b' or '(' or literal or bool_literal or number or demonstrative or glyph at position (1, 1) => '*nek'.",
+      "meta": {
+        "context_hash": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab",
+        "context_hashes": {
+          "root": "067563b959cc611c6ab407c0d48199845358a52d3096b118ef95928f66c06ca6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab"
+        },
+        "mode": "strict"
+      }
+    }
+  },
+  {
+    "id": "DIFF_CTX_001",
+    "chain": "shi @fact nek",
+    "context": {
+      "literals": {
+        "@fact": true
+      },
+      "modal": {
+        "knowledge": {
+          "@fact": true
+        },
+        "belief": {},
+        "certainty": {}
+      },
+      "axioms": {
+        "value_system": {
+          "accepted": [],
+          "rejected": []
+        }
+      },
+      "rel": {},
+      "spatial": {
+        "unit": "generic",
+        "thresholds": {
+          "near": 1.0,
+          "far": 10.0
+        },
+        "orientation": {
+          "target": 0.0,
+          "tolerance": 0.1
+        }
+      },
+      "temporal": {
+        "now": 1000,
+        "max_skew_ms": 5000
+      },
+      "timestamp": 1000
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "7c56bff51f729ddff008a0b9b9b9c8479b3c79a3030b5a8e52a597c448ae9fff",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "a0c3c0d0b45eb4939e7530dd27bdbceb0cfe43fbc9c97de214468914a0479abc",
+          "total": "7c56bff51f729ddff008a0b9b9b9c8479b3c79a3030b5a8e52a597c448ae9fff"
+        }
+      }
+    }
+  },
+  {
+    "id": "DIFF_CTX_002",
+    "chain": "shi @val nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@val": true
+        },
+        "modal": {
+          "knowledge": {
+            "@val": false
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "modal": {
+          "knowledge": {
+            "@val": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "330e66666792bd0e6705bf85596033c9705ce059338034f62c666963894746d3",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "1edaa8062ac4b403a70b33bd14c3259d3ffb5a02aa97f91e5c330d17cb09c663",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "d5d84206069be22138420cb119e31e1d47395bb0876edaae30b4495f23af001e",
+          "total": "330e66666792bd0e6705bf85596033c9705ce059338034f62c666963894746d3"
+        }
+      }
+    }
+  },
+  {
+    "id": "DIFF_CTX_003",
+    "chain": "true nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "truth",
+    "actual_python_result": {
+      "domain": "truth",
+      "value": true,
+      "meta": {
+        "context_hash": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "067563b959cc611c6ab407c0d48199845358a52d3096b118ef95928f66c06ca6",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "a73bf3ceb57c2e1a291efe484706c02baf3f12834d168bdb93a9bda8f61231ab"
+        }
+      }
+    }
+  },
+  {
+    "id": "DIFF_ACTION_001",
+    "chain": "mek @target nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@target": true
+        },
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "audit": {
+          "log": []
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "action",
+    "actual_python_result": {
+      "domain": "action",
+      "value": {
+        "type": "action",
+        "verb": "mek",
+        "target": "@target",
+        "action_hash": "ae728123aad1babec32c9ceaaceb0095088c7c966d2b57acf0d6a6282d62e494",
+        "event_hash": "ae728123aad1babec32c9ceaaceb0095088c7c966d2b57acf0d6a6282d62e494",
+        "provenance": {
+          "action_hash": "ae728123aad1babec32c9ceaaceb0095088c7c966d2b57acf0d6a6282d62e494",
+          "event_hash": "ae728123aad1babec32c9ceaaceb0095088c7c966d2b57acf0d6a6282d62e494",
+          "context_hash": "ae5626cd0c57260c49926145d1b9e8658a463980f9fc9b93f887a10374831d6d",
+          "source": "mek @target nek"
+        }
+      },
+      "meta": {
+        "context_hash": "ae5626cd0c57260c49926145d1b9e8658a463980f9fc9b93f887a10374831d6d",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "247258e94f88ec0baa874978e35332e8c990814c55cdb49f6f51a51d6eba3093",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "ae5626cd0c57260c49926145d1b9e8658a463980f9fc9b93f887a10374831d6d"
+        }
+      }
+    }
+  },
+  {
+    "id": "DIFF_ACTION_002",
+    "chain": "mek @unknown nek",
+    "context": {
+      "root": {
+        "literals": {},
+        "modal": {
+          "knowledge": {},
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "audit": {
+          "log": []
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_LITERAL_MISSING",
+      "value": "blocked",
+      "details": "Literal '@unknown' missing",
+      "meta": {
+        "context_hash": "4936e5a50894956d220fa8852ee538939da2aa7ac7000b68bf23264696b6bcc9",
+        "mode": "strict",
+        "flags": {
+          "invalid_literal": false,
+          "literal_mismatch": true,
+          "action_misuse": false,
+          "demonstrative_ungrounded": false,
+          "spatial_mismatch": false,
+          "epistemic_mismatch": false,
+          "sensor_mismatch": false,
+          "delivery_mismatch": false,
+          "audit_mismatch": false,
+          "schema_invalid": false,
+          "context_stale": false,
+          "demonstrative_mismatch": false,
+          "value_system_mismatch": false
+        },
+        "context_hashes": {
+          "root": "6f961492af083f88595953e6552bc3edb21f049c9011ccdceadfb004acb76892",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "4936e5a50894956d220fa8852ee538939da2aa7ac7000b68bf23264696b6bcc9"
+        }
+      }
+    }
+  },
+  {
+    "id": "DIFF_ACTION_003",
+    "chain": "@robot noq @permit nek",
+    "context": {
+      "root": {
+        "literals": {
+          "@robot": true,
+          "@permit": true
+        },
+        "entities": {
+          "robot": {
+            "position": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        },
+        "modal": {
+          "knowledge": {
+            "@robot": true,
+            "@permit": true
+          },
+          "belief": {},
+          "certainty": {}
+        },
+        "axioms": {
+          "value_system": {
+            "accepted": [],
+            "rejected": []
+          }
+        },
+        "rel": {},
+        "delivery": {
+          "status": "idle"
+        },
+        "spatial": {
+          "unit": "generic",
+          "thresholds": {
+            "near": 1.0,
+            "far": 10.0
+          },
+          "orientation": {
+            "target": 0.0,
+            "tolerance": 0.1
+          }
+        },
+        "temporal": {
+          "now": 1000,
+          "max_skew_ms": 5000
+        }
+      },
+      "domain": {},
+      "local": {
+        "timestamp": 1000
+      }
+    },
+    "mode": "strict",
+    "expected_domain": "error",
+    "actual_python_result": {
+      "domain": "error",
+      "code": "ERR_ACTION_MISUSE",
+      "value": "noq RHS must be an action",
+      "meta": {
+        "context_hash": "2b496c10be2d04508a75b4ca35bf8f9ef2fffc1e6483707fcaa655a28b41d812",
+        "mode": "strict",
+        "context_hashes": {
+          "root": "cb2a9e5bd6d836751feeaea0894b233fe63da95ea89374019a02edffe97c3fbb",
+          "domain": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "local": "8ab87cd1e9091ffa400386318f6095d42aadedec004fdd6214234af1176c404c",
+          "total": "2b496c10be2d04508a75b4ca35bf8f9ef2fffc1e6483707fcaa655a28b41d812"
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,29 @@
+[package]
+name = "noe_core"
+version = "0.1.0"
+edition = "2021"
+description = "Noe runtime core — conformance-first Rust implementation"
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[[test]]
+name = "hash_parity"
+path = "tests/hash_parity.rs"
+
+[[test]]
+name = "parser_golden"
+path = "tests/parser_golden.rs"
+
+[[test]]
+name = "conformance"
+path = "tests/conformance.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1" }
+sha2 = "0.10"
+hex = "0.4"
+
+[dev-dependencies]
+serde_json = { version = "1" }
