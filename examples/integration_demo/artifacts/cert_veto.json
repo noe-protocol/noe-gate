@@ -1,0 +1,19 @@
+{
+  "noe_version": "v1.0-rc1",
+  "scenario": "SCENARIO 2: VETO   — @path_clear absent (wall at 100mm)",
+  "goal_id": "goal-FB9B7E",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "8e6af598e35f1fa119a3805f92dfe4c3c8c62c417b035400af42bc220981801b",
+  "verdict": "VETO",
+  "domain": "undefined",
+  "result_value": "undefined",
+  "forwarded_to_controller": false,
+  "timings_ms": {
+    "admission_single": 0.0017,
+    "evaluation_single": 0.0756
+  },
+  "runtime": {
+    "python": "3.11.8",
+    "platform": "Darwin"
+  }
+}

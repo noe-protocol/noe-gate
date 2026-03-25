@@ -1,0 +1,8 @@
+{
+  "goal_id": "goal-F33DD5",
+  "action": "@move_forward",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "f7cadcdd58e94af477c1c133c4b1c6d65dd5936d7db6eafc0924ca5c4e44f532",
+  "certificate_path": "/Users/shaunogilvy/Downloads/noe_reference 2/examples/integration_demo/artifacts/cert_permit.json",
+  "timestamp_ms": 1773632622022
+}

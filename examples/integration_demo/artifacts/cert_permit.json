@@ -1,0 +1,33 @@
+{
+  "noe_version": "v1.0-rc1",
+  "scenario": "SCENARIO 1: PERMIT — @path_clear AND @controller_ready grounded",
+  "goal_id": "goal-F33DD5",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "f7cadcdd58e94af477c1c133c4b1c6d65dd5936d7db6eafc0924ca5c4e44f532",
+  "verdict": "PERMIT",
+  "domain": "list",
+  "result_value": [
+    {
+      "type": "action",
+      "verb": "mek",
+      "target": "@move_forward",
+      "action_hash": "632f637f03fc76e27d3269cf1ce7131b1734337765040c90d235a922f45ba00a",
+      "event_hash": "632f637f03fc76e27d3269cf1ce7131b1734337765040c90d235a922f45ba00a",
+      "provenance": {
+        "action_hash": "632f637f03fc76e27d3269cf1ce7131b1734337765040c90d235a922f45ba00a",
+        "event_hash": "632f637f03fc76e27d3269cf1ce7131b1734337765040c90d235a922f45ba00a",
+        "context_hash": "2fe16d07e78edf40e675dc48bf9eaed344d250e5f0b6bfa55692a0728cb162e5",
+        "source": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek"
+      }
+    }
+  ],
+  "forwarded_to_controller": true,
+  "timings_ms": {
+    "admission_single": 0.0013,
+    "evaluation_single": 1.2665
+  },
+  "runtime": {
+    "python": "3.11.8",
+    "platform": "Darwin"
+  }
+}

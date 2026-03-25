@@ -1,0 +1,19 @@
+{
+  "noe_version": "v1.0-rc1",
+  "scenario": "SCENARIO 4: ERROR  — malformed context (root=None)",
+  "goal_id": "goal-9298DB",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "7869626ac448ef0f098b614be1cd2ec87b3482e30214466ef023a1a6f8844f0b",
+  "verdict": "ERROR",
+  "domain": "error",
+  "result_value": null,
+  "forwarded_to_controller": false,
+  "timings_ms": {
+    "admission_single": 0.0,
+    "evaluation_single": 0.0
+  },
+  "runtime": {
+    "python": "3.11.8",
+    "platform": "Darwin"
+  }
+}

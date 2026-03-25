@@ -1,0 +1,19 @@
+{
+  "noe_version": "v1.0-rc1",
+  "scenario": "SCENARIO 3: STALE  — valid context, timestamp 10 min expired",
+  "goal_id": "goal-59A3E5",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "2a55245584c929c7cd6577720dfc2715612200bf8847bdcf7efeb708f4bd60d6",
+  "verdict": "ERROR",
+  "domain": "error",
+  "result_value": null,
+  "forwarded_to_controller": false,
+  "timings_ms": {
+    "admission_single": 0.0,
+    "evaluation_single": 0.0
+  },
+  "runtime": {
+    "python": "3.11.8",
+    "platform": "Darwin"
+  }
+}

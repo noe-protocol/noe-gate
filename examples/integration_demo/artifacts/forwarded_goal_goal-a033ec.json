@@ -1,0 +1,8 @@
+{
+  "goal_id": "goal-A033EC",
+  "action": "@move_forward",
+  "chain": "shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek",
+  "context_hash": "60800e70a1b8014c32b5a03d027ed9417dc2f43cc82ba7f060498099d5d3d609",
+  "certificate_path": "/Users/shaunogilvy/Downloads/noe_reference 2/examples/integration_demo/artifacts/cert_permit.json",
+  "timestamp_ms": 1773632546845
+}
