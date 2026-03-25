@@ -23,7 +23,7 @@ it is not enough to generate an action. The system must also be able to show
 why that action was allowed under grounded context, and reproduce the same
 verdict later from the same rule and context.
 ```
-untrusted proposer  →  Noe Gate gate  →  downstream controller
+untrusted proposer  →  Noe Gate  →  downstream controller
                 ↘ certificate / replay record
 ```
 
