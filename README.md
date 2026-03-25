@@ -1,8 +1,8 @@
-# Noe
+# Noe Kernel
 
 **A deterministic action-gating kernel for autonomous systems.**
 
-Noe sits between untrusted proposers - humans, LLMs, planners - and
+Noe Kernel sits between untrusted proposers - humans, LLMs, planners - and
 downstream actuators such as robots and industrial automation. It evaluates
 a deterministic decision chain against grounded context and returns one of
 three outcomes:
@@ -13,7 +13,7 @@ three outcomes:
 - **`error`** → strict-mode contract rejection, such as
   `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE`
 
-Noe is not a control loop or motion planner. It is a fail-stop decision
+Noe Kernel is not a control loop or motion planner. It is a fail-stop decision
 boundary for discrete, safety-relevant actions, with replayable evidence
 records.
 
@@ -23,7 +23,7 @@ it is not enough to generate an action. The system must also be able to show
 why that action was allowed under grounded context, and reproduce the same
 verdict later from the same rule and context.
 ```
-untrusted proposer  →  Noe gate  →  downstream controller
+untrusted proposer  →  Noe Kernel gate  →  downstream controller
                 ↘ certificate / replay record
 ```
 
@@ -39,7 +39,7 @@ untrusted proposer  →  Noe gate  →  downstream controller
 - NIP-011 conformance suite (locked vectors, SHA-256 manifest)
 - Grounding reference adapters (LiDAR, camera, epistemic, temporal)
 - Certificate persistence, replay, and audit tooling
-- BehaviorTree.CPP → Noe migration tool
+- BehaviorTree.CPP → Noe Kernel migration tool
 
 <br />
 
@@ -79,18 +79,18 @@ environment, flags, and known limitations before attempting a fresh
 installation.
 ```bash
 # 1. Build the Rust core
-cd rust/noe_core && cargo build --release
+cd rust/Noe Kernel_core && cargo build --release
 cd ../..
 
 # 2. Build the ROS2 adapter
 source /opt/ros/humble/setup.bash
 cd ros2_adapter
-colcon build --packages-select noe_ros2_adapter
+colcon build --packages-select Noe Kernel_ros2_adapter
 
 # 3. Run the zone-entry example
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
+ros2 launch Noe Kernel_ros2_adapter mobile_robot_zone_entry.launch.py
 ```
 
 
@@ -116,8 +116,8 @@ Result: ALL PASS
 **Requirements:** Python 3.11 recommended (3.10 supported), `make`,
 macOS / Linux / WSL2.
 ```bash
-git clone https://github.com/noe-protocol/noe.git
-cd noe
+git clone https://github.com/Noe Kernel-protocol/Noe Kernel.git
+cd Noe Kernel
 
 python3.11 -m venv .venv
 source .venv/bin/activate
@@ -136,12 +136,12 @@ make conformance       # locked NIP-011 conformance vectors
 
 For LLM tool-use workflows and agentic pipelines:
 ```bash
-pip install noe-protocol
+pip install Noe Kernel-protocol
 ```
 ```python
-import noe
+import Noe Kernel
 
-gate = noe.Gate("noe/registry.json")
+gate = Noe Kernel.Gate("Noe Kernel/registry.json")
 
 context = {
     "domain": {"human_approved_broadcast": True},
@@ -167,8 +167,8 @@ for a full walkthrough.
 sudo apt update
 sudo apt install -y make git python3.11 python3.11-venv python3-pip
 
-git clone https://github.com/noe-protocol/noe.git
-cd noe
+git clone https://github.com/Noe Kernel-protocol/Noe Kernel.git
+cd Noe Kernel
 
 python3.11 -m venv .venv
 source .venv/bin/activate
@@ -199,7 +199,7 @@ make help              # show all available targets
 
 ## Contents
 
-1. [Why Noe exists](#why-noe-exists)
+1. [Why Noe Kernel exists](#why-Noe Kernel-exists)
 2. [Determinism and replay](#determinism-and-replay)
 3. [Epistemic admission](#epistemic-admission)
 4. [Replayable evidence, not legal verdicts](#replayable-evidence-not-legal-verdicts)
@@ -216,13 +216,13 @@ make help              # show all available targets
 
 <br />
 
-## Why Noe exists
+## Why Noe Kernel exists
 
 Modern autonomy stacks already use rule engines, PLC interlocks, runtime
-assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe
+assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe Kernel
 does not replace all of these.** Its purpose is narrower.
 
-Noe exists for the case where **untrusted proposers** are allowed to suggest
+Noe Kernel exists for the case where **untrusted proposers** are allowed to suggest
 safety-relevant actions, but those actions must pass through a **small
 deterministic enforcement boundary** that is:
 
@@ -241,19 +241,19 @@ but:
 - Can another conforming runtime replay the same decision and obtain the same
   normative result?
 
-Noe is designed to make those questions answerable.
+Noe Kernel is designed to make those questions answerable.
 
-| Need | Common baseline | What Noe adds |
+| Need | Common baseline | What Noe Kernel adds |
 |------|-----------------|---------------|
 | Deterministic gating of discrete actions | Rule engines, behavior-tree guards, supervisor code | A bounded decision language with deterministic replay across conforming runtimes |
-| Hard real-time plant-floor safety | PLCs, interlocks, low-level safety controllers | Noe does not replace these; it sits upstream of them |
+| Hard real-time plant-floor safety | PLCs, interlocks, low-level safety controllers | Noe Kernel does not replace these; it sits upstream of them |
 | Supervisory control around advanced autonomy | Runtime assurance architectures, runtime monitors | Explicit guard chains, admissible context projection, and replayable certificates |
 | Constraining AI- or planner-generated proposals before actuation | Custom wrappers and application logic | A formal action-admission boundary between proposers and actuators |
 | Post-incident reconstruction | Logs, traces, ad hoc telemetry | Frozen context commitments plus typed, replayable decision outcomes |
 
-Noe's claim is not that it is better than all existing safety mechanisms. Its
+Noe Kernel's claim is not that it is better than all existing safety mechanisms. Its
 claim is narrower: **when action proposals come from untrusted or probabilistic
-sources, Noe provides a deterministic, replayable, evidence-bearing gate
+sources, Noe Kernel provides a deterministic, replayable, evidence-bearing gate
 before execution.**
 
 <br />
@@ -268,12 +268,12 @@ runtime is expected to produce:
   and semantics
 - exactly one evaluation outcome for normative fields
 
-Noe's determinism claim is intentionally narrow: given the same chain,
+Noe Kernel's determinism claim is intentionally narrow: given the same chain,
 registry, semantics, and admitted `C_safe`, a conforming runtime must produce
 the same normative outcome and canonical commitments. It does not make
 sensing, grounding, or physical actuation deterministic.
 
-Noe enforces an **integer-only contract** for normative commitments. Every
+Noe Kernel enforces an **integer-only contract** for normative commitments. Every
 `*_hash` input is float-free. Richer upstream context may contain floats, but
 sensor and planner adapters must quantize before projection into `C_safe`.
 
@@ -303,7 +303,7 @@ emitted by the validator or runtime.
 
 ## Replayable evidence, not legal verdicts
 
-Noe produces a deterministic verdict together with an integrity-protected
+Noe Kernel produces a deterministic verdict together with an integrity-protected
 record of the rule, admitted context, and outcome. This supports:
 
 - incident reconstruction
@@ -311,7 +311,7 @@ record of the rule, admitted context, and outcome. This supports:
 - compliance evidence workflows
 - fault attribution across perception, adapter, and decision layers
 
-**What Noe provides:**
+**What Noe Kernel provides:**
 
 - **Deterministic evaluation:** identical normative inputs produce identical
   normative outcomes
@@ -320,13 +320,13 @@ record of the rule, admitted context, and outcome. This supports:
 - **Replayability:** a conforming runtime can re-evaluate the same chain
   against the same admitted context
 
-**What Noe does not provide:**
+**What Noe Kernel does not provide:**
 
 - guarantees that upstream sensing was correct
 - guarantees that the downstream supervisor implemented a safe fallback
 - legal conclusions about liability or fault on its own
 
-Noe should therefore be understood as **evidence infrastructure for action
+Noe Kernel should therefore be understood as **evidence infrastructure for action
 admission**, not as a complete legal or safety determination system.
 
 <br />
@@ -334,14 +334,14 @@ admission**, not as a complete legal or safety determination system.
 ## Untrusted proposers
 
 LLMs and other planning systems may generate useful proposals, but their
-internal reasoning is not itself a deterministic safety contract. Noe treats
+internal reasoning is not itself a deterministic safety contract. Noe Kernel treats
 those systems as **untrusted proposers**.
 
 A proposer may suggest:
 
 > "Release the pallet."
 
-Noe does not trust that suggestion. It checks whether the action is permitted
+Noe Kernel does not trust that suggestion. It checks whether the action is permitted
 under the currently admitted grounded context and the active decision chain.
 If the guard does not resolve to permission, the action is not emitted. If the
 proposal relies on unsupported evidentiary status, strict mode rejects it with
@@ -358,7 +358,7 @@ Upstream systems often produce floating-point state. Portable replay across
 runtimes is brittle if those values are allowed into canonical hashed
 commitments.
 
-For that reason, Noe requires an **integer-only contract** for normative
+For that reason, Noe Kernel requires an **integer-only contract** for normative
 decision inputs and certificate commitments. Floating-point values may exist
 in richer upstream context, but they must be quantized before projection into
 `C_safe`.
@@ -393,10 +393,10 @@ Every decision produces a JSON certificate with hash commitments. Example
 (truncated):
 ```json
 {
-  "noe_version": "v1.0-rc1",
+  "Noe Kernel_version": "v1.0-rc1",
   "chain": "shi @temperature_ok an shi @human_clear khi sek mek @release_pallet sek nek",
   "registry": {
-    "path": "noe/registry.json",
+    "path": "Noe Kernel/registry.json",
     "hash": "9c2c1e4a8b6d5f2a1d9e3c4b7a6f0e11",
     "commit": "git:3f2a1c9"
   },
@@ -422,9 +422,9 @@ An auditor can replay the decision by freezing the context, re-evaluating the
 chain, and verifying that the hashes match. See
 [shipment_certificate_strict.json](examples/auditor_demo/shipment_certificate_strict.json).
 
-Store certificates in an append-only log (`noe/persistence/cert_store.py`).
+Store certificates in an append-only log (`Noe Kernel/persistence/cert_store.py`).
 Auditors verify them by recomputing `context_hashes.safe` and replaying the
-chain against `context_snapshot.safe` using `noe_replay verify <cert_file>`.
+chain against `context_snapshot.safe` using `Noe Kernel_replay verify <cert_file>`.
 
 <br />
 
@@ -462,14 +462,14 @@ Full list: [docs/error_codes.md](docs/error_codes.md)
 
 ## Engineering constraints and trade-offs
 
-Noe is opinionated. It prioritizes deterministic action admission,
+Noe Kernel is opinionated. It prioritizes deterministic action admission,
 replayability, and evidence quality over maximal flexibility.
 
 ### 1. "Modal Logic Theatre" / the threshold critique
 
 **Critique:** "You are redefining knowledge as high confidence."
 
-**Response:** Correct, in a narrow systems sense. Noe does not solve
+**Response:** Correct, in a narrow systems sense. Noe Kernel does not solve
 philosophical truth. It enforces an explicit evidentiary threshold and makes
 that threshold inspectable, replayable, and attributable after the fact.
 
@@ -477,16 +477,16 @@ that threshold inspectable, replayable, and attributable after the fact.
 
 **Critique:** "This is too slow for tight control loops."
 
-**Response:** Correct. Noe is not a reflex controller. It gates discrete
+**Response:** Correct. Noe Kernel is not a reflex controller. It gates discrete
 supervisory decisions - whether a robot may enter a room, whether a pallet
 may be released - at 1–10 Hz. Tight control loops and reactive safety
-functions belong elsewhere in the stack. Noe sits above them.
+functions belong elsewhere in the stack. Noe Kernel sits above them.
 
 ### 3. Garbage in, signed garbage out
 
-**Critique:** "If the sensor lies, Noe just signs the lie."
+**Critique:** "If the sensor lies, Noe Kernel just signs the lie."
 
-**Response:** Correct. Noe does not guarantee perception correctness. What it
+**Response:** Correct. Noe Kernel does not guarantee perception correctness. What it
 provides is a precise record of which admitted inputs led to which decision,
 which improves attribution across sensors, adapters, perception models, and
 supervisory code.
@@ -494,12 +494,12 @@ supervisory code.
 ### 4. Relationship to existing safety patterns
 
 - **PLCs / interlocks:** still the correct mechanism for hard real-time
-  plant-floor safety. Noe sits above them, not in place of them.
-- **Runtime assurance:** Noe can sit inside a broader runtime assurance
+  plant-floor safety. Noe Kernel sits above them, not in place of them.
+- **Runtime assurance:** Noe Kernel can sit inside a broader runtime assurance
   architecture as a symbolic decision gate.
-- **Behavior trees / ROS2 supervisors:** Noe does not replace orchestration;
+- **Behavior trees / ROS2 supervisors:** Noe Kernel does not replace orchestration;
   it constrains action admission within it.
-- **Rule engines:** Noe is narrower, but offers stronger replay and provenance
+- **Rule engines:** Noe Kernel is narrower, but offers stronger replay and provenance
   commitments.
 
 <br />
@@ -507,9 +507,9 @@ supervisory code.
 ## Architecture
 ```mermaid
 flowchart TD
-    A["Untrusted Inputs<br/>(Humans, LLMs, Planners)"] --> B["Noe Parser + Static Validator<br/>(Syntax + Registry + Operator-class Checks)"]
+    A["Untrusted Inputs<br/>(Humans, LLMs, Planners)"] --> B["Noe Kernel Parser + Static Validator<br/>(Syntax + Registry + Operator-class Checks)"]
     B --> C["Context Admission Layer<br/>(C_rich → π_safe → C_safe<br/>Grounding + Staleness + Admissibility)"]
-    C --> D["Noe Interpreter<br/>(Deterministic semantics + typed outcomes)"]
+    C --> D["Noe Kernel Interpreter<br/>(Deterministic semantics + typed outcomes)"]
     D --> E["Downstream Supervisor / Controllers<br/>(Only emitted actions are eligible for execution)"]
     D -.-> F["Certificate / Provenance Record<br/>(Rule, context commitments, outcome, replay)"]
 
@@ -529,12 +529,12 @@ flowchart TD
 |-----------|--------|-------|
 | Python reference runtime | Stable reference | Normative. All conformance vectors defined here. |
 | NIP-011 conformance suite | Locked | SHA-256 manifest. 93 vectors. Aborts on mismatch. |
-| Rust core runtime | Implemented | `rust/noe_core/`. Matched against Python reference at 93/93 vectors. One narrow parse-message-format exemption documented. |
-| C FFI surface | Implemented | `noe_eval_json` / `noe_free_string` / `noe_version`. Panic-contained. Null and UTF-8 errors return error JSON. |
+| Rust core runtime | Implemented | `rust/Noe Kernel_core/`. Matched against Python reference at 93/93 vectors. One narrow parse-message-format exemption documented. |
+| C FFI surface | Implemented | `Noe Kernel_eval_json` / `Noe Kernel_free_string` / `Noe Kernel_version`. Panic-contained. Null and UTF-8 errors return error JSON. |
 | C++20 header-only wrapper | Implemented | RAII memory handling. Zero ROS2 dependency. |
 | ROS2 lifecycle node adapter | Validated on worked scenario | Built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble. Correct blocked/permitted output confirmed. See `ros2_adapter/README.md` for scope. |
 | Grounding reference adapters | Implemented | `packages/grounding/` - LiDAR zone, camera human-presence, epistemic mapping, temporal utilities. |
-| Certificate persistence + replay | Implemented | `noe/persistence/` - append-only JSONL store, tamper detection, replay engine, `noe_replay` CLI. |
+| Certificate persistence + replay | Implemented | `Noe Kernel/persistence/` - append-only JSONL store, tamper detection, replay engine, `Noe Kernel_replay` CLI. |
 | BT.CPP converter | Initial release | `tools/btcpp_converter/` - migration estimator, chain generation, placeholder registry, conversion report. |
 | Domain packs | Not started | Planned for logistics and healthcare verticals. |
 
@@ -547,18 +547,18 @@ conformance manifest as the source of truth.
 
 ## Repository structure
 ```text
-noe/                      # Python reference runtime + persistence layer
+Noe Kernel/                      # Python reference runtime + persistence layer
   persistence/            # cert_store.py, replay.py, audit.py
 rust/
-  noe_core/               # Rust core runtime (conformance-matched)
+  Noe Kernel_core/               # Rust core runtime (conformance-matched)
 ros2_adapter/             # ROS2 lifecycle node, C FFI surface, C++20 wrapper
-  include/noe/            # noe_core.h, noe.hpp
-  src/                    # noe_gate_node.cpp
+  include/Noe Kernel/            # Noe Kernel_core.h, Noe Kernel.hpp
+  src/                    # Noe Kernel_gate_node.cpp
   examples/               # mobile_robot_zone_entry/
 packages/
   grounding/              # LiDAR zone, camera human-presence, epistemic,
                           # temporal reference adapters
-  btcpp_converter/        # BehaviorTree.CPP → Noe chain migration tool
+  btcpp_converter/        # BehaviorTree.CPP → Noe Kernel chain migration tool
 tests/                    # Unit tests + NIP-011 conformance vectors
 examples/                 # End-to-end demos (auditor, robot guard,
                           # integration demo)
@@ -590,5 +590,5 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ## Contact
 
-- Issues: [github.com/noe-protocol/noe/issues](https://github.com/noe-protocol/noe/issues)
-- Discussions: [github.com/noe-protocol/noe/discussions](https://github.com/noe-protocol/noe/discussions)
+- Issues: [github.com/Noe Kernel-protocol/Noe Kernel/issues](https://github.com/Noe Kernel-protocol/Noe Kernel/issues)
+- Discussions: [github.com/Noe Kernel-protocol/Noe Kernel/discussions](https://github.com/Noe Kernel-protocol/Noe Kernel/discussions)
