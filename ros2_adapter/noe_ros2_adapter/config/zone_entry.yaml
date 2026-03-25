@@ -1,0 +1,21 @@
+# config/zone_entry.yaml
+# Default parameters for the mobile robot zone-entry scenario.
+# Loaded by the launch file; override individual values with launch arguments.
+
+noe_gate_node:
+  ros__parameters:
+    # Noe chain to evaluate on each proposed action.
+    # Truth query: true = human present (BLOCKED), false = zone clear (PERMITTED).
+    chain: "shi @human_present nek"
+
+    # Evaluation mode: strict (recommended) enforces all pre-conditions.
+    mode: "strict"
+
+    # Append-only JSONL certificate log location.
+    # Each evaluation appends one line to decisions.jsonl.
+    cert_store_path: "/tmp/noe_certs"
+
+    # Maximum tolerated sensor age in milliseconds.
+    # If /noe/human_present has not been received within this window,
+    # the evaluation is treated as stale (BLOCKED and logged).
+    max_sensor_age_ms: 5000

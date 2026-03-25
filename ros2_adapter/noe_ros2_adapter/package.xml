@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>noe_ros2_adapter</name>
+  <version>0.1.0</version>
+  <description>
+    Thin ROS2 lifecycle node adapter for the noe_core Rust runtime.
+    Evaluates Noe chains via the C FFI boundary and emits permit/block
+    decisions with append-only JSONL audit output.
+  </description>
+  <maintainer email="noe@example.com">Noe Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>std_msgs</depend>
+
+  <!-- nlohmann/json: required for context JSON construction.
+       On Ubuntu 22.04 (ROS2 Humble): apt install nlohmann-json3-dev -->
+  <build_depend>nlohmann-json3-dev</build_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
