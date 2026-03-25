@@ -2,11 +2,11 @@
 
 Thin ROS2 lifecycle node adapter for the Noe core runtime.
 
-Evaluates Noe chains via the Rust C FFI boundary (`noe::evaluate()`), emits permit/block decisions over ROS2 topics, and writes an append-only JSONL certificate log.
+Evaluates Noe truth-query chains via the Rust C FFI boundary (`noe::evaluate()`), emits permit/block decisions over ROS2 topics, and writes an append-only JSONL decision log.
 
 > **Scope**: v1 covers one scenario — mobile robot zone entry — using the chain `shi @human_present nek`. The adapter calls Noe for the truth query; the policy decision (PERMITTED/BLOCKED) is made by the adapter based on the result.
 
----
+<br />
 
 ## Validated on target (2026-03-25)
 
@@ -35,24 +35,25 @@ python3 examples/mobile_robot_zone_entry/publish_scenario.py
 - Long-running load robustness is future work
 - Build fixes applied on target: `now_ms() const` (Humble clock), `on_deactivate` teardown ordering, launch YAML path resolution
 
----
+<br />
 
 ## Prerequisites
 
-| Requirement | Version |
-|-------------|---------|
-| ROS2 | Humble or Iron (Ubuntu 22.04 recommended) |
+| Requirement | Version / source |
+|-------------|------------------|
+| ROS2 | Humble (validated on Ubuntu 22.04.5 ARM64) |
 | Rust / cargo | stable (1.75+) |
-| `nlohmann-json3-dev` | Ubuntu package |
-| `libnlohmann-json3-dev` | `sudo apt install nlohmann-json3-dev` |
+| `nlohmann-json3-dev` | Ubuntu package (`sudo apt install nlohmann-json3-dev`) |
 | colcon | `sudo apt install python3-colcon-common-extensions` |
 
----
+<br />
 
-## Building and verifying with Docker (recommended for macOS / CI)
+## Building and verifying with Docker (optional convenience path)
 
 The adapter targets Ubuntu 22.04 + ROS2 Humble. On macOS or any non-Ubuntu
 machine, use Docker. A `Dockerfile` and `docker_verify.sh` are included.
+
+The primary validated path is native Ubuntu 22.04.5 ARM64 / ROS2 Humble.
 
 **One-shot build + verify:**
 
@@ -82,40 +83,47 @@ Results: 3 passed, 0 failed
 > **Note**: The build layer is cached after the first run. Subsequent runs skip
 > cargo build and colcon build unless source files change.
 
----
+<br />
 
 ## Build Order (native Ubuntu 22.04 + ROS2 Humble)
 
 **Step 1: Build the Rust library first.**
-
 ```bash
 cd <repo_root>/rust/noe_core
 cargo build
 ```
 
-This produces `target/debug/libnoe_core.a`. CMakeLists.txt will fail loudly with a clear message if this file is not present.
+This produces `target/debug/libnoe_core.a`. CMakeLists.txt will fail loudly
+with a clear message if this file is not present.
+
+<br />
 
 **Step 2: Build the ROS2 package.**
-
 ```bash
 cd <repo_root>/ros2_adapter
 source /opt/ros/humble/setup.bash
-colcon build --packages-select noe_ros2_adapter
+colcon build --packages-select noe_ros2_adapter --cmake-args \
+    -DNOE_CORE_LIB_DIR=$HOME/noe_reference/rust/noe_core/target/debug \
+    -DNOE_CORE_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/include \
+    -DNOE_CPP_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/cpp
 source install/setup.bash
 ```
 
-To use a non-default Rust build path:
+To use a non-default Rust build path, override the same variables explicitly:
 ```bash
-colcon build --packages-select noe_ros2_adapter \
-    --cmake-args -DNOE_CORE_LIB_DIR=/path/to/rust/target/release
+colcon build --packages-select noe_ros2_adapter --cmake-args \
+    -DNOE_CORE_LIB_DIR=/path/to/rust/target/release \
+    -DNOE_CORE_INCLUDE_DIR=/path/to/rust/noe_core/include \
+    -DNOE_CPP_INCLUDE_DIR=/path/to/rust/noe_core/cpp
 ```
 
----
+<br />
 
 ## Run
 
-### Terminal 1: Launch the node
+<br />
 
+**Terminal 1: Launch the node**
 ```bash
 source <repo_root>/ros2_adapter/install/setup.bash
 ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
@@ -135,8 +143,9 @@ You should see:
 [noe_gate_node]: NoeGateNode active. Listening on /noe/proposed_action.
 ```
 
-### Terminal 2: Run the scenario
+<br />
 
+**Terminal 2: Run the scenario**
 ```bash
 python3 <repo_root>/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py
 ```
@@ -160,8 +169,9 @@ Expected output:
 === Scenario run complete. Check /tmp/noe_certs/decisions.jsonl ===
 ```
 
-### Terminal 2 (alternate): Manual topic commands
+<br />
 
+**Terminal 2 (alternate): Manual topic commands**
 ```bash
 # Set human present
 ros2 topic pub --once /noe/human_present std_msgs/msg/Bool "data: true"
@@ -174,7 +184,7 @@ ros2 topic echo /noe/permitted --once
 ros2 topic echo /noe/decision --once
 ```
 
----
+<br />
 
 ## Topics
 
@@ -185,7 +195,7 @@ ros2 topic echo /noe/decision --once
 | `/noe/permitted` | `std_msgs/Bool` | Output | `true` = PERMITTED (zone clear), `false` = BLOCKED |
 | `/noe/decision` | `std_msgs/String` | Output | Full Noe result envelope (JSON string) |
 
----
+<br />
 
 ## Parameters
 
@@ -202,11 +212,11 @@ ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py \
     cert_store_path:=/var/log/noe max_sensor_age_ms:=2000
 ```
 
----
+<br />
 
 ## Adapter Decision Log
 
-The adapter decision log is **not** the same format as the Python `cert_store.py` JSONL. It uses a similar naming convention but does not implement chained `cert_id` / `prev_cert_id` SHA-256 semantics.
+The adapter decision log is **not** the same format as the Python `cert_store.py` JSONL. It is a separate adapter log format and does not implement the Python persistence layer’s chained cert_id / prev_cert_id semantics.
 
 Each evaluation appends one JSONL record to `{cert_store_path}/decisions.jsonl`.
 
@@ -240,16 +250,19 @@ Inspect the log:
 cat /tmp/noe_certs/decisions.jsonl | python3 -m json.tool --no-ensure-ascii
 ```
 
----
+<br />
 
 ## Stale Sensor Handling
 
-If `/noe/human_present` has not been received within `max_sensor_age_ms`, the adapter:
-1. Does **not** call Noe (no point — the context would be ungrounded)
-2. Publishes `permitted=false` (BLOCKED, fail-safe)
-3. **Still writes a JSONL record** with `"code": "ERR_STALE_SENSOR"` — dropped-sensor events should be auditable
+Adapter policy on stale sensor input:
 
----
+- does not call Noe
+- publishes `permitted=false` (BLOCKED, fail-safe)
+- writes an auditable JSONL record with `ERR_STALE_SENSOR`
+
+This is an adapter-layer policy choice, not a Noe core semantic.
+
+<br />
 
 ## Architecture Position
 
@@ -273,7 +286,7 @@ If `/noe/human_present` has not been received within `max_sensor_age_ms`, the ad
 **What the node does not yet do:**
 - Emit Python-compatible chained cert records (`cert_id`/`prev_cert_id` — future work)
 
----
+<br />
 
 ## Regression Checks
 
