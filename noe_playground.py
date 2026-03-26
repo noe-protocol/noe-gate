@@ -6,17 +6,17 @@ Type a Noe chain. See canonical form, gloss, parse tree, and verdict.
 Modify the context on the fly to watch evaluation change.
 
 Commands:
-  :help             — show this help
-  :examples         — print example chains
-  :context          — print current context
-  :set @lit true    — set a literal to true in C_safe
-  :set @lit false   — set a literal to false in C_safe
-  :unset @lit       — remove a literal from C_safe
-  :mode strict      — evaluate in strict mode (default — real Noe semantics)
-  :mode partial     — evaluate in partial mode (relaxed grounding)
-  :tree on          — show parse tree (default: on)
-  :tree off         — hide parse tree
-  :reset            — restore default C_safe
+  :help             - show this help
+  :examples         - print example chains
+  :context          - print current context
+  :set @lit true    - set a literal to true in C_safe
+  :set @lit false   - set a literal to false in C_safe
+  :unset @lit       - remove a literal from C_safe
+  :mode strict      - evaluate in strict mode (default - real Noe semantics)
+  :mode partial     - evaluate in partial mode (relaxed grounding)
+  :tree on          - show parse tree (default: on)
+  :tree off         - hide parse tree
+  :reset            - restore default C_safe
   :quit / :q / Ctrl+D
 
 Usage:
@@ -60,7 +60,8 @@ EXAMPLES = [
 
 def _default_context() -> dict:
     now_ms = int(time.time() * 1000)
-    literals = {
+    # Epistemic literals (conditions): True = grounded in knowledge, False = literal only
+    cond_literals = {
         "@human_present":       True,
         "@path_clear":          True,
         "@controller_ready":    True,
@@ -72,12 +73,19 @@ def _default_context() -> dict:
         "@door_open":           True,
         "@sensor_fresh":        True,
     }
-    knowledge = {k: v for k, v in literals.items() if v is True}
+    # Action target literals (mek targets): required by strict mode for action resolution
+    action_literals = {
+        "@move_forward":   "fwd_target",
+        "@release_pallet": "pallet_release",
+        "@stop":           "stop_cmd",
+        "@send_email":     "email_target",
+    }
+    knowledge = {k: v for k, v in cond_literals.items() if v is True}
     return {
         "modal":    {"knowledge": knowledge, "belief": {}, "certainty": {}},
         "temporal": {"now": now_ms, "max_skew_ms": 5000.0},
         "spatial":  {"unit": "mm", "thresholds": {"near": 300.0, "far": 2000.0}},
-        "literals": literals,
+        "literals": {**cond_literals, **action_literals},
         "axioms":   {"value_system": {"accepted": [], "rejected": []}},
         "audit":    {},          # required by strict validator (_validate_audit_strict)
         "entities": {},          # required for entity/spatial operator grounding
@@ -105,7 +113,7 @@ def _format_verdict(result: dict) -> str:
         return YELLOW(f"TRUTH  value={value}")
 
     if domain == "undefined":
-        return RED("BLOCK  (undefined — grounding missing from C_safe)")
+        return RED("BLOCK  (undefined - grounding missing from C_safe)")
 
     if domain in ("error", "err") or code:
         return RED(f"ERROR  {code or str(value)[:60]}")
@@ -149,7 +157,7 @@ def _print_parse_tree(chain: str) -> None:
         for line in _render_parse_tree(parse_tree):
             print(f"  {DIM(line)}")
     except Exception as exc:
-        print(f"  {DIM('Parse tree:')}  {RED(f'unavailable — {exc}')}")
+        print(f"  {DIM('Parse tree:')}  {RED(f'unavailable - {exc}')}")
 
 # ── Context display ───────────────────────────────────────────────────────────
 
@@ -187,7 +195,7 @@ def _print_examples() -> None:
 # ── Help ──────────────────────────────────────────────────────────────────────
 
 HELP = f"""
-{BOLD("Noe Playground")} — interactive chain evaluator
+{BOLD("Noe Playground")} - interactive chain evaluator
 
 {CYAN("Commands:")}
   {YELLOW(":help")}               show this help
@@ -196,7 +204,7 @@ HELP = f"""
   {YELLOW(":set @lit true")}      add @lit to C_safe as true (grounded)
   {YELLOW(":set @lit false")}     set @lit to false (literal only, not grounded)
   {YELLOW(":unset @lit")}         remove @lit from C_safe entirely
-  {YELLOW(":mode strict")}        evaluate in strict mode (default — real Noe semantics)
+  {YELLOW(":mode strict")}        evaluate in strict mode (default - real Noe semantics)
   {YELLOW(":mode partial")}       evaluate in partial mode (relaxed grounding)
   {YELLOW(":tree on|off")}        show or hide parse tree
   {YELLOW(":reset")}              restore default C_safe
@@ -235,7 +243,7 @@ def _unset_context(ctx: dict, literal: str) -> None:
 def main() -> None:
     print()
     print(BOLD("  Noe Playground"))
-    print(DIM("  Type a chain to evaluate it. Gloss is display-only — never used for evaluation."))
+    print(DIM("  Type a chain to evaluate it. Gloss is display-only - never used for evaluation."))
     print(DIM("  Evaluation mode: strict (real Noe semantics). Type :help for all commands."))
     print(FIRST_RUN)
     _print_examples()
@@ -280,7 +288,7 @@ def main() -> None:
                     print(RED("  Usage: :mode strict | :mode partial"))
                 else:
                     mode = parts[1]
-                    note = "(real Noe semantics — recommended)" if mode == "strict" else "(relaxed grounding)"
+                    note = "(real Noe semantics - recommended)" if mode == "strict" else "(relaxed grounding)"
                     print(DIM(f"  Mode → {mode} {note}"))
 
             elif cmd == ":tree":
@@ -335,7 +343,7 @@ def main() -> None:
             verdict = _format_verdict(result)
             print(f"  {DIM('Verdict  :')}  {verdict}")
         except Exception as exc:
-            print(f"  {DIM('Verdict  :')}  {RED(f'PARSE ERROR — {exc}')}")
+            print(f"  {DIM('Verdict  :')}  {RED(f'PARSE ERROR - {exc}')}")
 
         print()
 
