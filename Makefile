@@ -124,12 +124,12 @@ build-zone-entry-example: rust-build-ffi  ## Compile the zone-entry C example
 	    -Wl,-rpath,rust/noe_core/target/debug \
 	    -o examples/ros2_zone_entry/run_example
 
-run-zone-entry: build-zone-entry-example  ## Run zone-entry demo (human present + absent)
-	@echo "=== Zone entry: human present ==="
-	examples/ros2_zone_entry/run_example examples/ros2_zone_entry/context_human_present.json
+run-zone-entry: build-zone-entry-example  ## Run zone-entry demo (zone blocked + zone clear)
+	@echo "=== Zone entry: zone blocked (human present) ==="
+	examples/ros2_zone_entry/run_example examples/ros2_zone_entry/context_zone_blocked.json
 	@echo ""
-	@echo "=== Zone entry: human absent ==="
-	examples/ros2_zone_entry/run_example examples/ros2_zone_entry/context_human_absent.json
+	@echo "=== Zone entry: zone clear (no human) ==="
+	examples/ros2_zone_entry/run_example examples/ros2_zone_entry/context_zone_clear.json
 
 # ─── Housekeeping ────────────────────────────────────────────────────
 
