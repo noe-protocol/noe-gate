@@ -14,8 +14,8 @@ Usage:
     python3 publish_scenario.py
 
 Expected output:
-    [PASS] permitted=False (expected=False)   ← human present  → BLOCKED
-    [PASS] permitted=True  (expected=True)    ← human absent   → PERMITTED
+    [PASS] permitted=False (expected=False)   ← human present  → BLOCKED (guard failed)
+    [PASS] permitted=True  (expected=True)    ← human absent   → PERMITTED (action emitted)
 """
 
 import time
