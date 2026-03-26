@@ -28,7 +28,7 @@ untrusted proposer  -->  Noe Gate  -->  downstream controller
                 ↘ certificate / replay record
 ```
 
-> **Naming note:** **Noe** is the underlying symbolic protocol. **Noe Gate** is the deterministic action-gating runtime built on that protocol. Internal package and module names use the `noe` protocol namespace (`import noe`, `noe/`, `noe-runtime`). Product-facing references use the Noe Gate name.
+> **Naming note:** **Noe** is the underlying symbolic protocol. **Noe Gate** is the deterministic action-gating runtime built on that protocol. Internal package and module names use the `noe` protocol namespace (`import noe`, `noe/`). The distribution package is `noe-gate`.
 
 <br />
 
@@ -145,11 +145,11 @@ make playground        # interactive chain evaluator
 For LLM tool-use workflows and agentic pipelines:
 
 ```bash
-pip install noe-runtime
+pip install noe-gate
 ```
 
 ```python
-import noe  # install: noe-runtime, import: noe
+import noe  # install: noe-gate, import: noe
 
 runtime = noe.NoeRuntime()
 
