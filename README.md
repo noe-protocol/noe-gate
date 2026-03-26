@@ -131,10 +131,10 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 
-make demo              # flagship shipment gate
-make integration-demo  # permit / veto / stale / error boundary
-make conformance       # locked NIP-011 conformance vectors
-make playground        # interactive chain evaluator
+make demo  
+make integration-demo
+make conformance
+make playground
 ```
 
 <br />
