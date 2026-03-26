@@ -2,7 +2,7 @@
 
 Thin ROS2 lifecycle node adapter for the Noe core runtime.
 
-Evaluates Noe truth-query chains via the Rust C FFI boundary (`noe::evaluate()`), emits permit/block decisions over ROS2 topics, and writes an append-only JSONL decision log.
+Evaluates Noe chains via the Rust C FFI boundary (`noe::evaluate()`), emits permit/block decisions over ROS2 topics, and writes an append-only JSONL certificate log.
 
 > **Scope**: v1 covers one scenario — mobile robot zone entry — using the chain `shi @human_present nek`. The adapter calls Noe for the truth query; the policy decision (PERMITTED/BLOCKED) is made by the adapter based on the result.
 
@@ -14,13 +14,18 @@ Evaluates Noe truth-query chains via the Rust C FFI boundary (`noe::evaluate()`)
 
 **Validated flow:**
 ```bash
+REPO_ROOT=$HOME/noe-gate
+
+cd "$REPO_ROOT/ros2_adapter"
+source /opt/ros/humble/setup.bash
 colcon build --packages-select noe_ros2_adapter --cmake-args \
-    -DNOE_CORE_LIB_DIR=$HOME/noe_reference/rust/noe_core/target/debug \
-    -DNOE_CORE_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/include \
-    -DNOE_CPP_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/cpp
+    -DNOE_CORE_LIB_DIR="$REPO_ROOT/rust/noe_core/target/debug" \
+    -DNOE_CORE_INCLUDE_DIR="$REPO_ROOT/rust/noe_core/include" \
+    -DNOE_CPP_INCLUDE_DIR="$REPO_ROOT/rust/noe_core/cpp"
+source install/setup.bash
 
 ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
-# (separate terminal — after node reaches ACTIVE ~4s)
+# (separate terminal - after node reaches ACTIVE ~4s)
 python3 examples/mobile_robot_zone_entry/publish_scenario.py
 ```
 
@@ -39,21 +44,20 @@ python3 examples/mobile_robot_zone_entry/publish_scenario.py
 
 ## Prerequisites
 
-| Requirement | Version / source |
-|-------------|------------------|
-| ROS2 | Humble (validated on Ubuntu 22.04.5 ARM64) |
+| Requirement | Version |
+|-------------|---------|
+| ROS2 | Humble or Iron (Ubuntu 22.04 recommended) |
 | Rust / cargo | stable (1.75+) |
-| `nlohmann-json3-dev` | Ubuntu package (`sudo apt install nlohmann-json3-dev`) |
+| `nlohmann-json3-dev` | Ubuntu package |
+| `libnlohmann-json3-dev` | `sudo apt install nlohmann-json3-dev` |
 | colcon | `sudo apt install python3-colcon-common-extensions` |
 
 <br />
 
-## Building and verifying with Docker (optional convenience path)
+## Building and verifying with Docker (recommended for macOS / CI)
 
 The adapter targets Ubuntu 22.04 + ROS2 Humble. On macOS or any non-Ubuntu
 machine, use Docker. A `Dockerfile` and `docker_verify.sh` are included.
-
-The primary validated path is native Ubuntu 22.04.5 ARM64 / ROS2 Humble.
 
 **One-shot build + verify:**
 
@@ -88,44 +92,41 @@ Results: 3 passed, 0 failed
 ## Build Order (native Ubuntu 22.04 + ROS2 Humble)
 
 **Step 1: Build the Rust library first.**
+
 ```bash
-cd <repo_root>/rust/noe_core
+# Set REPO_ROOT once if you have not already:
+# REPO_ROOT=$HOME/noe-gate
+
+# Step 1: Build the Rust library
+cd "$REPO_ROOT/rust/noe_core"
 cargo build
 ```
 
-This produces `target/debug/libnoe_core.a`. CMakeLists.txt will fail loudly
-with a clear message if this file is not present.
-
-<br />
+This produces `target/debug/libnoe_core.a`. CMakeLists.txt will fail loudly with a clear message if this file is not present.
 
 **Step 2: Build the ROS2 package.**
+
 ```bash
-cd <repo_root>/ros2_adapter
+cd "$REPO_ROOT/ros2_adapter"
 source /opt/ros/humble/setup.bash
-colcon build --packages-select noe_ros2_adapter --cmake-args \
-    -DNOE_CORE_LIB_DIR=$HOME/noe_reference/rust/noe_core/target/debug \
-    -DNOE_CORE_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/include \
-    -DNOE_CPP_INCLUDE_DIR=$HOME/noe_reference/rust/noe_core/cpp
+colcon build --packages-select noe_ros2_adapter
 source install/setup.bash
 ```
 
-To use a non-default Rust build path, override the same variables explicitly:
+To use a non-default Rust build path:
 ```bash
-colcon build --packages-select noe_ros2_adapter --cmake-args \
-    -DNOE_CORE_LIB_DIR=/path/to/rust/target/release \
-    -DNOE_CORE_INCLUDE_DIR=/path/to/rust/noe_core/include \
-    -DNOE_CPP_INCLUDE_DIR=/path/to/rust/noe_core/cpp
+colcon build --packages-select noe_ros2_adapter \
+    --cmake-args -DNOE_CORE_LIB_DIR="$REPO_ROOT/rust/noe_core/target/release"
 ```
 
 <br />
 
 ## Run
 
-<br />
+### Terminal 1: Launch the node
 
-**Terminal 1: Launch the node**
 ```bash
-source <repo_root>/ros2_adapter/install/setup.bash
+source "$REPO_ROOT/ros2_adapter/install/setup.bash"
 ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
 ```
 
@@ -143,11 +144,10 @@ You should see:
 [noe_gate_node]: NoeGateNode active. Listening on /noe/proposed_action.
 ```
 
-<br />
+### Terminal 2: Run the scenario
 
-**Terminal 2: Run the scenario**
 ```bash
-python3 <repo_root>/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py
+python3 "$REPO_ROOT/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py"
 ```
 
 Expected output:
@@ -169,9 +169,8 @@ Expected output:
 === Scenario run complete. Check /tmp/noe_certs/decisions.jsonl ===
 ```
 
-<br />
+### Terminal 2 (alternate): Manual topic commands
 
-**Terminal 2 (alternate): Manual topic commands**
 ```bash
 # Set human present
 ros2 topic pub --once /noe/human_present std_msgs/msg/Bool "data: true"
@@ -216,7 +215,7 @@ ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py \
 
 ## Adapter Decision Log
 
-The adapter decision log is **not** the same format as the Python `cert_store.py` JSONL. It is a separate adapter log format and does not implement the Python persistence layer’s chained cert_id / prev_cert_id semantics.
+The adapter decision log is **not** the same format as the Python `cert_store.py` JSONL. It uses a similar naming convention but does not implement chained `cert_id` / `prev_cert_id` SHA-256 semantics.
 
 Each evaluation appends one JSONL record to `{cert_store_path}/decisions.jsonl`.
 
@@ -254,13 +253,10 @@ cat /tmp/noe_certs/decisions.jsonl | python3 -m json.tool --no-ensure-ascii
 
 ## Stale Sensor Handling
 
-Adapter policy on stale sensor input:
-
-- does not call Noe
-- publishes `permitted=false` (BLOCKED, fail-safe)
-- writes an auditable JSONL record with `ERR_STALE_SENSOR`
-
-This is an adapter-layer policy choice, not a Noe core semantic.
+If `/noe/human_present` has not been received within `max_sensor_age_ms`, the adapter:
+1. Does **not** call Noe (no point — the context would be ungrounded)
+2. Publishes `permitted=false` (BLOCKED, fail-safe)
+3. **Still writes a JSONL record** with `"code": "ERR_STALE_SENSOR"` — dropped-sensor events should be auditable
 
 <br />
 
@@ -293,11 +289,11 @@ This is an adapter-layer policy choice, not a Noe core semantic.
 After any change, verify:
 
 ```bash
-# Rust conformance: must remain 93/93
-cd <repo_root>/rust/noe_core && cargo test --test conformance -- --nocapture
+# Rust conformance: must remain 91/91
+cd "$REPO_ROOT/rust/noe_core" && cargo test --test conformance -- --nocapture
 
 # C smoke test
-cd <repo_root> && make run-c-smoketest
+cd "$REPO_ROOT" && make run-c-smoketest
 
 # C++ smoke test
 make run-cpp-smoketest
