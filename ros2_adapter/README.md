@@ -25,7 +25,11 @@ This path assumes a fresh clone into `~/noe-gate`. If you clone elsewhere, repla
 > or remove it manually before cloning fresh.
 
 ```bash
-git clone https://github.com/noe-protocol/noe-gate.git ~/noe-gate
+if [ -d ~/noe-gate/.git ]; then
+  cd ~/noe-gate && git pull
+else
+  git clone https://github.com/noe-protocol/noe-gate.git ~/noe-gate
+fi
 export REPO_ROOT="$HOME/noe-gate"
 
 cd "$REPO_ROOT/rust/noe_core"
