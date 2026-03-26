@@ -59,8 +59,8 @@ This repository now includes a Python reference runtime, a Rust core, language b
 - C and C++ integration boundaries - smoke tests passing
 - ROS2 lifecycle adapter built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble
 - Worked zone-entry scenario:
-  - human present -- BLOCKED
-  - human absent -- PERMITTED
+  - @zone_clear=false – BLOCKED
+  - @zone_clear=true – PERMITTED
   - result: `ALL PASS`
 
 **Not yet claimed:**
@@ -75,44 +75,21 @@ This repository now includes a Python reference runtime, a Rust core, language b
 ## Quick Start
 
 
-### ROS2 - validated target path
+### ROS2 — validated target path
 
-Built and runtime-validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble. See
-[ros2_adapter/README.md](ros2_adapter/README.md) for the exact build
-environment, flags, and known limitations before attempting a fresh
-installation.
+Validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble.
 
-```bash
-# 1. Build the Rust core
-cd rust/noe_core && cargo build --release
-cd ../..
+For the exact build, launch, and scenario steps, see:
+[`ros2_adapter/README.md`](ros2_adapter/README.md)
 
-# 2. Build the ROS2 adapter
-source /opt/ros/humble/setup.bash
-cd ros2_adapter
-colcon build --packages-select noe_ros2_adapter
+The current worked ROS2 scenario uses the action chain:
 
-# 3. Run the zone-entry example
-source /opt/ros/humble/setup.bash
-source install/setup.bash
-ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
-```
+`shi @zone_clear khi sek mek @enter_zone_alpha sek nek`  
+`KNOW @zone_clear IF [ DO @enter_zone_alpha ] END`
 
-In a second terminal:
-
-```bash
-source /opt/ros/humble/setup.bash
-source install/setup.bash
-python3 examples/mobile_robot_zone_entry/publish_scenario.py
-```
-
-Expected output:
-
-```
-Scenario 1 PASS   # human present --> BLOCKED
-Scenario 2 PASS   # human absent  --> PERMITTED
-Result: ALL PASS
-```
+and validates:
+- `@zone_clear=false` → blocked
+- `@zone_clear=true` → permitted
 
 <br />
 
@@ -192,17 +169,17 @@ make demo
 ### Common commands
 
 ```bash
-make demo              # flagship shipment gate
-make demo-full         # full auditor demo suite
-make integration-demo  # execution-boundary demo (permit/veto/stale/error)
-make guard             # robot guard golden-vector demo (7 ticks)
-make conformance       # NIP-011 conformance vectors
-make test              # unit tests
-make bench             # ROS bridge overhead benchmark
-make audit-demo        # chain --> store --> replay --> verify sequence
-make playground        # interactive chain evaluator (REPL)
-make all               # run everything
-make help              # show all available targets
+make demo
+make demo-full
+make integration-demo
+make guard
+make conformance
+make test
+make bench
+make audit-demo
+make playground
+make all
+make help
 ```
 
 <br />
@@ -469,7 +446,7 @@ The following English glosses are display-only reading aids. Canonical Noe chain
 | `sek` | `[` / `]` | Explicit scope boundary | `sek mek @action sek` |
 | `nek` | END | Chain terminator | `... sek nek` |
 | `mek` | DO | Action emission | `mek @release_pallet` |
-| `men` | LOG | Audit / inspection action | `men @safety_check` |
+| `men` | AUDIT | Audit / inspection action | `men @safety_check` |
 
 <br />
 
