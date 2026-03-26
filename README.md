@@ -7,10 +7,10 @@ downstream actuators such as robots and industrial automation. It evaluates
 a deterministic decision chain against grounded context and returns one of
 three outcomes:
 
-- **`list[action]`** → permission granted; action emitted
-- **`undefined`** → no action emitted because the guard did not resolve to
+- **`list[action]`** -- permission granted; action emitted
+- **`undefined`** -- no action emitted because the guard did not resolve to
   permission
-- **`error`** → strict-mode contract rejection, such as
+- **`error`** -- strict-mode contract rejection, such as
   `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE`
 
 Noe Gate is not a control loop or motion planner. It is a fail-stop decision
@@ -22,10 +22,13 @@ proposal must be separated from permission. In safety-relevant environments,
 it is not enough to generate an action. The system must also be able to show
 why that action was allowed under grounded context, and reproduce the same
 verdict later from the same rule and context.
+
 ```
-untrusted proposer  →  Noe Gate  →  downstream controller
+untrusted proposer  -->  Noe Gate  -->  downstream controller
                 ↘ certificate / replay record
 ```
+
+> **Naming note:** **Noe** is the underlying symbolic protocol. **Noe Gate** is the deterministic action-gating runtime built on that protocol. Internal package and module names use the `noe` protocol namespace (`import noe`, `noe/`, `noe-runtime`). Product-facing references use the Noe Gate name.
 
 <br />
 
@@ -39,7 +42,8 @@ untrusted proposer  →  Noe Gate  →  downstream controller
 - NIP-011 conformance suite (locked vectors, SHA-256 manifest)
 - Grounding reference adapters (LiDAR, camera, epistemic, temporal)
 - Certificate persistence, replay, and audit tooling
-- BehaviorTree.CPP → Noe Gate migration tool
+- BehaviorTree.CPP to Noe Gate migration tool
+- Interactive chain evaluator playground
 
 <br />
 
@@ -55,8 +59,8 @@ This repository now includes a Python reference runtime, a Rust core, language b
 - C and C++ integration boundaries - smoke tests passing
 - ROS2 lifecycle adapter built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble
 - Worked zone-entry scenario:
-  - human present → BLOCKED
-  - human absent → PERMITTED
+  - human present -- BLOCKED
+  - human absent -- PERMITTED
   - result: `ALL PASS`
 
 **Not yet claimed:**
@@ -77,35 +81,36 @@ Built and runtime-validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble. See
 [ros2_adapter/README.md](ros2_adapter/README.md) for the exact build
 environment, flags, and known limitations before attempting a fresh
 installation.
+
 ```bash
 # 1. Build the Rust core
-cd rust/Noe Gate_core && cargo build --release
+cd rust/noe_core && cargo build --release
 cd ../..
 
 # 2. Build the ROS2 adapter
 source /opt/ros/humble/setup.bash
 cd ros2_adapter
-colcon build --packages-select Noe Gate_ros2_adapter
+colcon build --packages-select noe_ros2_adapter
 
 # 3. Run the zone-entry example
 source /opt/ros/humble/setup.bash
 source install/setup.bash
-ros2 launch Noe Gate_ros2_adapter mobile_robot_zone_entry.launch.py
+ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
 ```
 
-
 In a second terminal:
+
 ```bash
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 python3 examples/mobile_robot_zone_entry/publish_scenario.py
 ```
 
-
 Expected output:
+
 ```
-Scenario 1 PASS   # human present → BLOCKED
-Scenario 2 PASS   # human absent  → PERMITTED
+Scenario 1 PASS   # human present --> BLOCKED
+Scenario 2 PASS   # human absent  --> PERMITTED
 Result: ALL PASS
 ```
 
@@ -115,19 +120,22 @@ Result: ALL PASS
 
 **Requirements:** Python 3.11 recommended (3.10 supported), `make`,
 macOS / Linux / WSL2.
-```bash
-git clone https://github.com/Noe Gate-protocol/Noe Gate.git
-cd Noe Gate
 
+```bash
+git clone https://github.com/noe-protocol/noe-gate.git
+cd noe-gate
+
+```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 
-pip install --upgrade pip
-pip install -e ".[dev]"
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 
 make demo              # flagship shipment gate
 make integration-demo  # permit / veto / stale / error boundary
 make conformance       # locked NIP-011 conformance vectors
+make playground        # interactive chain evaluator
 ```
 
 <br />
@@ -135,45 +143,46 @@ make conformance       # locked NIP-011 conformance vectors
 ### Agent governance - pip install
 
 For LLM tool-use workflows and agentic pipelines:
+
 ```bash
-pip install Noe Gate-protocol
+pip install noe-runtime
 ```
+
 ```python
-import Noe Gate
+import noe  # install: noe-runtime, import: noe
 
-gate = Noe Gate.Gate("Noe Gate/registry.json")
+runtime = noe.NoeRuntime()
 
-context = {
+ctx = runtime.build_context({
     "domain": {"human_approved_broadcast": True},
     "local":  {}
-}
+})
 
 chain = "shi @human_approved_broadcast khi sek mek @send_email sek nek"
-result = gate.evaluate(chain, context)
+result = runtime.evaluate(chain, ctx)
 
-if result.permitted:
-    execute(result.action)
-    store_certificate(result.certificate)
+if result.get("domain") == "action":
+    execute(result["value"])
 ```
 
-See [docs/quickstart_llm_governance.md](docs/quickstart_llm_governance.md)
-for a full walkthrough.
+CLIs installed by the package: `noe-replay`, `noe-audit`, `noe-btcpp-convert`.
 
 <br />
 
 ### Windows
+
 ```bash
 # Install WSL2 + Ubuntu, then open an Ubuntu terminal
 sudo apt update
 sudo apt install -y make git python3.11 python3.11-venv python3-pip
 
-git clone https://github.com/Noe Gate-protocol/Noe Gate.git
-cd Noe Gate
+git clone https://github.com/noe-protocol/noe-gate.git
+cd noe-gate
 
 python3.11 -m venv .venv
 source .venv/bin/activate
 
-pip install ".[dev]"
+python -m pip install ".[dev]"
 
 make conformance
 make demo
@@ -182,6 +191,7 @@ make demo
 <br />
 
 ### Common commands
+
 ```bash
 make demo              # flagship shipment gate
 make demo-full         # full auditor demo suite
@@ -190,7 +200,8 @@ make guard             # robot guard golden-vector demo (7 ticks)
 make conformance       # NIP-011 conformance vectors
 make test              # unit tests
 make bench             # ROS bridge overhead benchmark
-make audit-demo        # chain → store → replay → verify sequence
+make audit-demo        # chain --> store --> replay --> verify sequence
+make playground        # interactive chain evaluator (REPL)
 make all               # run everything
 make help              # show all available targets
 ```
@@ -199,7 +210,7 @@ make help              # show all available targets
 
 ## Contents
 
-1. [Why Noe Gate exists](#why-Noe Gate-exists)
+1. [Why Noe Gate exists](#why-noe-gate-exists)
 2. [Determinism and replay](#determinism-and-replay)
 3. [Epistemic admission](#epistemic-admission)
 4. [Replayable evidence, not legal verdicts](#replayable-evidence-not-legal-verdicts)
@@ -244,7 +255,7 @@ but:
 Noe Gate is designed to make those questions answerable.
 
 | Need | Common baseline | What Noe Gate adds |
-|------|-----------------|---------------|
+|------|-----------------|-------------------|
 | Deterministic gating of discrete actions | Rule engines, behavior-tree guards, supervisor code | A bounded decision language with deterministic replay across conforming runtimes |
 | Hard real-time plant-floor safety | PLCs, interlocks, low-level safety controllers | Noe Gate does not replace these; it sits upstream of them |
 | Supervisory control around advanced autonomy | Runtime assurance architectures, runtime monitors | Explicit guard chains, admissible context projection, and replayable certificates |
@@ -277,11 +288,11 @@ Noe Gate enforces an **integer-only contract** for normative commitments. Every
 `*_hash` input is float-free. Richer upstream context may contain floats, but
 sensor and planner adapters must quantize before projection into `C_safe`.
 
-`π_safe` is the deterministic projection from richer upstream state into the
+`pi_safe` is the deterministic projection from richer upstream state into the
 minimal context the evaluator is allowed to consume. It is responsible for
 pruning stale inputs, enforcing admissibility rules, and exposing grounded
 predicate membership to the kernel. Debounce, hysteresis, and other
-perception-side smoothing belong upstream of `π_safe`.
+perception-side smoothing belong upstream of `pi_safe`.
 
 <br />
 
@@ -391,12 +402,13 @@ conformance runner aborts on any mismatch by design.
 
 Every decision produces a JSON certificate with hash commitments. Example
 (truncated):
+
 ```json
 {
-  "Noe Gate_version": "v1.0-rc1",
+  "noe_version": "v1.0-rc1",
   "chain": "shi @temperature_ok an shi @human_clear khi sek mek @release_pallet sek nek",
   "registry": {
-    "path": "Noe Gate/registry.json",
+    "path": "noe/registry.json",
     "hash": "9c2c1e4a8b6d5f2a1d9e3c4b7a6f0e11",
     "commit": "git:3f2a1c9"
   },
@@ -422,9 +434,9 @@ An auditor can replay the decision by freezing the context, re-evaluating the
 chain, and verifying that the hashes match. See
 [shipment_certificate_strict.json](examples/auditor_demo/shipment_certificate_strict.json).
 
-Store certificates in an append-only log (`Noe Gate/persistence/cert_store.py`).
+Store certificates in an append-only log (`noe/persistence/cert_store.py`).
 Auditors verify them by recomputing `context_hashes.safe` and replaying the
-chain against `context_snapshot.safe` using `Noe Gate_replay verify <cert_file>`.
+chain against `context_snapshot.safe` using `noe_replay verify <cert_file>`.
 
 <br />
 
@@ -445,18 +457,50 @@ Full list: [docs/error_codes.md](docs/error_codes.md)
 
 ## Operator cheat sheet
 
-| Operator | Role | Example |
-|----------|------|---------|
-| `shi` | Evidentiary status check at the knowledge tier | `shi @door_open` |
-| `vek` | Evidentiary status check at the belief tier | `vek @path_clear` |
-| `an` | Conjunction (AND) | `shi @a an shi @b` |
-| `ur` | Disjunction (OR) | `shi @a ur shi @b` |
-| `nai` | Negation (NOT) | `nai (shi @danger)` |
-| `khi` | Guard (if … then) | `shi @safe khi sek mek @go sek nek` |
-| `sek` | Explicit scope boundary | `sek mek @action sek` |
-| `nek` | Chain terminator | `… sek nek` |
-| `mek` | Action emission | `mek @release_pallet` |
-| `men` | Audit/log action | `men @safety_check` |
+The following English glosses are display-only reading aids. Canonical Noe chains remain authoritative for parsing and evaluation.
+
+| Operator | Gloss | Role | Example |
+|----------|-------|------|---------|
+| `shi` | KNOW | Evidentiary status check at the knowledge tier | `shi @door_open` |
+| `vek` | BELIEVE | Evidentiary status check at the belief tier | `vek @path_clear` |
+| `an` | AND | Conjunction | `shi @a an shi @b` |
+| `ur` | OR | Disjunction | `shi @a ur shi @b` |
+| `nai` | NOT | Negation | `nai (shi @danger)` |
+| `khi` | IF | Guard introducer for conditional action emission | `shi @safe khi sek mek @go sek nek` |
+| `sek` | `[` / `]` | Explicit scope boundary | `sek mek @action sek` |
+| `nek` | END | Chain terminator | `... sek nek` |
+| `mek` | DO | Action emission | `mek @release_pallet` |
+| `men` | LOG | Audit / inspection action | `men @safety_check` |
+
+<br />
+
+## Interactive playground
+
+`make playground` launches an interactive chain evaluator. Type a chain, see the
+canonical form, gloss, parse tree, and verdict. Modify the context on the fly to
+watch evaluation flip.
+
+```
+  Noe Gate Playground
+  Evaluation mode: strict (real Noe Gate semantics).
+
+Try this:
+  shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek
+
+Then:
+  :set @path_clear false
+
+Then run the same chain again and watch it flip from PERMIT to BLOCK.
+Same chain, different grounded context, different verdict.
+
+noe [strict]> shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek
+
+  Canonical:   shi @path_clear an shi @controller_ready khi sek mek @move_forward sek nek
+  Gloss    :   KNOW @path_clear AND KNOW @controller_ready IF [ DO @move_forward ] END
+  Verdict  :   PERMIT  --> @move_forward
+```
+
+Commands: `:examples` `:context` `:set @lit true/false` `:mode strict/partial` `:tree on/off` `:reset` `:help`
 
 <br />
 
@@ -479,7 +523,7 @@ that threshold inspectable, replayable, and attributable after the fact.
 
 **Response:** Correct. Noe Gate is not a reflex controller. It gates discrete
 supervisory decisions - whether a robot may enter a room, whether a pallet
-may be released - at 1–10 Hz. Tight control loops and reactive safety
+may be released - at 1 to 10 Hz. Tight control loops and reactive safety
 functions belong elsewhere in the stack. Noe Gate sits above them.
 
 ### 3. Garbage in, signed garbage out
@@ -505,10 +549,11 @@ supervisory code.
 <br />
 
 ## Architecture
+
 ```mermaid
 flowchart TD
     A["Untrusted Inputs<br/>(Humans, LLMs, Planners)"] --> B["Noe Gate Parser + Static Validator<br/>(Syntax + Registry + Operator-class Checks)"]
-    B --> C["Context Admission Layer<br/>(C_rich → π_safe → C_safe<br/>Grounding + Staleness + Admissibility)"]
+    B --> C["Context Admission Layer<br/>(C_rich to pi_safe to C_safe<br/>Grounding + Staleness + Admissibility)"]
     C --> D["Noe Gate Interpreter<br/>(Deterministic semantics + typed outcomes)"]
     D --> E["Downstream Supervisor / Controllers<br/>(Only emitted actions are eligible for execution)"]
     D -.-> F["Certificate / Provenance Record<br/>(Rule, context commitments, outcome, replay)"]
@@ -529,13 +574,14 @@ flowchart TD
 |-----------|--------|-------|
 | Python reference runtime | Stable reference | Normative. All conformance vectors defined here. |
 | NIP-011 conformance suite | Locked | SHA-256 manifest. 93 vectors. Aborts on mismatch. |
-| Rust core runtime | Implemented | `rust/Noe Gate_core/`. Matched against Python reference at 93/93 vectors. One narrow parse-message-format exemption documented. |
-| C FFI surface | Implemented | `Noe Gate_eval_json` / `Noe Gate_free_string` / `Noe Gate_version`. Panic-contained. Null and UTF-8 errors return error JSON. |
+| Rust core runtime | Implemented | `rust/noe_core/`. Matched against Python reference at 93/93 vectors. One narrow parse-message-format exemption documented. |
+| C FFI surface | Implemented | `noe_eval_json` / `noe_free_string` / `noe_version`. Panic-contained. Null and UTF-8 errors return error JSON. |
 | C++20 header-only wrapper | Implemented | RAII memory handling. Zero ROS2 dependency. |
 | ROS2 lifecycle node adapter | Validated on worked scenario | Built and run on Ubuntu 22.04.5 ARM64 / ROS2 Humble. Correct blocked/permitted output confirmed. See `ros2_adapter/README.md` for scope. |
 | Grounding reference adapters | Implemented | `packages/grounding/` - LiDAR zone, camera human-presence, epistemic mapping, temporal utilities. |
-| Certificate persistence + replay | Implemented | `Noe Gate/persistence/` - append-only JSONL store, tamper detection, replay engine, `Noe Gate_replay` CLI. |
+| Certificate persistence + replay | Implemented | `noe/persistence/` - append-only JSONL store, tamper detection, replay engine, `noe_replay` CLI. |
 | BT.CPP converter | Initial release | `tools/btcpp_converter/` - migration estimator, chain generation, placeholder registry, conversion report. |
+| Interactive playground | Implemented | `noe_playground.py` - REPL with parse tree, gloss, context mutation, `make playground`. |
 | Domain packs | Not started | Planned for logistics and healthcare verticals. |
 
 **Portability contract:** any conforming runtime must match parse and
@@ -546,24 +592,28 @@ conformance manifest as the source of truth.
 <br />
 
 ## Repository structure
+
 ```text
-Noe Gate/                      # Python reference runtime + persistence layer
-  persistence/            # cert_store.py, replay.py, audit.py
+noe/                       # Python reference runtime + persistence layer
+  persistence/             # cert_store.py, replay.py, audit.py
+  glossary.json            # operator gloss mappings (display only)
+  gloss.py                 # read-only gloss renderer
 rust/
-  Noe Gate_core/               # Rust core runtime (conformance-matched)
-ros2_adapter/             # ROS2 lifecycle node, C FFI surface, C++20 wrapper
-  include/Noe Gate/            # Noe Gate_core.h, Noe Gate.hpp
-  src/                    # Noe Gate_gate_node.cpp
-  examples/               # mobile_robot_zone_entry/
+  noe_core/                # Rust core runtime (conformance-matched)
+ros2_adapter/              # ROS2 lifecycle node, C FFI surface, C++20 wrapper
+  include/noe/             # noe_core.h, noe.hpp
+  src/                     # noe_gate_node.cpp
+  examples/                # mobile_robot_zone_entry/
 packages/
-  grounding/              # LiDAR zone, camera human-presence, epistemic,
-                          # temporal reference adapters
-  btcpp_converter/        # BehaviorTree.CPP → Noe Gate chain migration tool
-tests/                    # Unit tests + NIP-011 conformance vectors
-examples/                 # End-to-end demos (auditor, robot guard,
-                          # integration demo)
-nips/                     # Specification documents
-docs/                     # Integration guides, error codes, threat model
+  grounding/               # LiDAR zone, camera human-presence, epistemic,
+                           # temporal reference adapters
+  btcpp_converter/         # BehaviorTree.CPP to Noe Gate chain migration tool
+tests/                     # Unit tests + NIP-011 conformance vectors
+examples/                  # End-to-end demos (auditor, robot guard,
+                           # integration demo)
+nips/                      # Specification documents
+docs/                      # Integration guides, error codes, threat model
+noe_playground.py          # Interactive chain evaluator
 ```
 
 <br />
@@ -590,5 +640,5 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ## Contact
 
-- Issues: [github.com/Noe Gate-protocol/Noe Gate/issues](https://github.com/Noe Gate-protocol/Noe Gate/issues)
-- Discussions: [github.com/Noe Gate-protocol/Noe Gate/discussions](https://github.com/Noe Gate-protocol/Noe Gate/discussions)
+- Issues: [github.com/noe-protocol/noe-gate/issues](https://github.com/noe-protocol/noe-gate/issues)
+- Discussions: [github.com/noe-protocol/noe-gate/discussions](https://github.com/noe-protocol/noe-gate/discussions)
