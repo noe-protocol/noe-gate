@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-noe_playground.py — Interactive Noe chain evaluator.
+noe_playground.py - Interactive Noe chain evaluator.
 
 Type a Noe chain. See canonical form, gloss, parse tree, and verdict.
 Modify the context on the fly to watch evaluation change.
@@ -79,6 +79,8 @@ def _default_context() -> dict:
         "spatial":  {"unit": "mm", "thresholds": {"near": 300.0, "far": 2000.0}},
         "literals": literals,
         "axioms":   {"value_system": {"accepted": [], "rejected": []}},
+        "audit":    {},          # required by strict validator (_validate_audit_strict)
+        "entities": {},          # required for entity/spatial operator grounding
         "rel":      {},
         "demonstratives": {},
     }
