@@ -5,8 +5,8 @@
 noe_gate_node:
   ros__parameters:
     # Noe chain to evaluate on each proposed action.
-    # Truth query: true = human present (BLOCKED), false = zone clear (PERMITTED).
-    chain: "shi @human_present nek"
+    # Action emission query: if @zone_clear is known true, emits @enter_zone_alpha (PERMITTED), else undefined (BLOCKED).
+    chain: "shi @zone_clear khi sek mek @enter_zone_alpha sek nek"
 
     # Evaluation mode: strict (recommended) enforces all pre-conditions.
     mode: "strict"
