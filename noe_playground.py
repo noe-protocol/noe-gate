@@ -167,14 +167,14 @@ def _print_context(ctx: dict) -> None:
     all_keys  = sorted(set(list(knowledge.keys()) + list(literals.keys())))
     print()
     print(BOLD("  Current context:"))
-    print(DIM("  ─" * 30))
+    print(DIM("  " + "─" * 60))
     for k in all_keys:
         in_k    = k in knowledge
         val     = literals.get(k, knowledge.get(k))
         grounded = GREEN("✓ grounded") if in_k else DIM("  literal only")
         val_str  = GREEN("true") if val is True else (RED("false") if val is False else str(val))
         print(f"    {k:<28} {val_str:<14} {grounded}")
-    print(DIM("  ─" * 30))
+    print(DIM("  " + "─" * 60))
     print(DIM("  Use :set @literal true/false or :unset @literal to modify."))
     print()
 
@@ -183,7 +183,7 @@ def _print_context(ctx: dict) -> None:
 def _print_examples() -> None:
     print()
     print(BOLD("  Example chains:"))
-    print(DIM("  ─" * 30))
+    print(DIM("  " + "─" * 60))
     for i, (label, chain) in enumerate(EXAMPLES, start=1):
         print(f"  {i}. {label}")
         print(f"     {chain}")
