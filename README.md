@@ -125,7 +125,6 @@ macOS / Linux / WSL2.
 git clone https://github.com/noe-protocol/noe-gate.git
 cd noe-gate
 
-```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 
