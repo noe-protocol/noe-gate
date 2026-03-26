@@ -16,7 +16,7 @@ from .noe_parser import run_noe_logic
 # Derive version from package metadata
 try:
     from importlib.metadata import version
-    __version__ = version("noe-runtime")
+    __version__ = version("noe-gate")
 except Exception:
     __version__ = "1.0.0"
 
