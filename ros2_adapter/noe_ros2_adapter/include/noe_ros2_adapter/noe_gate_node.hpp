@@ -9,7 +9,7 @@
 //   cleanup   → release state
 //
 // Topics consumed:
-//   /noe/human_present  (std_msgs/Bool)   — grounded sensor reading
+//   /noe/zone_clear      (std_msgs/Bool)   — grounded sensor: zone is positively clear
 //   /noe/proposed_action (std_msgs/String) — triggers evaluation
 //
 // Topics published:
@@ -17,10 +17,10 @@
 //   /noe/decision   (std_msgs/String) — full Noe result JSON
 //
 // Parameters:
-//   chain            (string) — Noe chain, default "shi @human_present nek"
+//   chain            (string) — Noe chain, default "shi @zone_clear khi sek mek @enter_zone_alpha sek nek"
 //   mode             (string) — "strict" or "partial", default "strict"
 //   cert_store_path  (string) — path to write decisions.jsonl
-//   max_sensor_age_ms (int64) — max age of human_present before considered stale
+//   max_sensor_age_ms (int64) — max age of zone_clear before considered stale
 
 #pragma once
 
@@ -61,7 +61,7 @@ private:
 
     // ── Sensor state (protected by mutex) ─────────────────────────────────────
     struct SensorState {
-        bool    human_present{false};
+        bool    zone_clear{false};
         int64_t received_at_ms{0};   // 0 = never received
     };
     SensorState sensor_{};
@@ -75,14 +75,14 @@ private:
     std::mutex    cert_mutex_;         // serialise writes
 
     // ── ROS2 handles ──────────────────────────────────────────────────────────
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr   sub_human_present_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr   sub_zone_clear_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_proposed_action_;
     rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>::SharedPtr   pub_permitted_;
     rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>::SharedPtr pub_decision_;
 
     // ── Internal methods ──────────────────────────────────────────────────────
 
-    void on_human_present(const std_msgs::msg::Bool::SharedPtr msg);
+    void on_zone_clear(const std_msgs::msg::Bool::SharedPtr msg);
     void on_proposed_action(const std_msgs::msg::String::SharedPtr msg);
 
     // Run noe::evaluate and publish results. Sensor state is snapshotted under
@@ -98,7 +98,7 @@ private:
         const std::string& proposed_action,
         const std::string& result_json,
         const std::string& decision_str,
-        bool               human_present_snapshot,
+        bool               zone_clear_snapshot,
         int64_t            now_ms) const;
 
     // Current wall-clock milliseconds (via ROS2 clock).
