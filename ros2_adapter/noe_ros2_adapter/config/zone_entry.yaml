@@ -16,6 +16,6 @@ noe_gate_node:
     cert_store_path: "/tmp/noe_certs"
 
     # Maximum tolerated sensor age in milliseconds.
-    # If /noe/human_present has not been received within this window,
+    # If /noe/zone_clear has not been received within this window,
     # the evaluation is treated as stale (BLOCKED and logged).
     max_sensor_age_ms: 5000
