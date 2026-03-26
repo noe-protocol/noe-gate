@@ -1,0 +1,47 @@
+{
+  "root": {
+    "literals": {
+      "@zone_clear": false,
+      "@enter_zone_alpha": "fwd_target"
+    },
+    "modal": {
+      "knowledge": {
+        "@zone_clear": false
+      },
+      "belief": {},
+      "certainty": {}
+    },
+    "axioms": {
+      "value_system": {
+        "accepted": [],
+        "rejected": []
+      }
+    },
+    "rel": {},
+    "spatial": {
+      "unit": "metric",
+      "thresholds": {
+        "near": 2.0,
+        "far": 10.0
+      },
+      "orientation": {
+        "target": 0.0,
+        "tolerance": 0.5
+      }
+    },
+    "temporal": {
+      "now": 1000,
+      "max_skew_ms": 5000
+    },
+    "audit": {},
+    "entities": {}
+  },
+  "domain": {
+    "literals": {
+      "@zone_id": "restricted_zone_alpha"
+    }
+  },
+  "local": {
+    "timestamp": 1000
+  }
+}
