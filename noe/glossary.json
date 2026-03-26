@@ -1,0 +1,85 @@
+{
+  "_comment": "Noe operator glossary — read-only English gloss layer for display only. Canonical Noe operators remain authoritative. This file MUST NOT be used for parsing, validation, or evaluation. Operators with unresolved or internally inconsistent meanings across the current spec/test/code surface are intentionally omitted.",
+
+  "epistemic": {
+    "shi": "KNOW",
+    "vek": "BELIEVE",
+    "sha": "CERTAIN"
+  },
+
+  "logic": {
+    "an": "AND",
+    "ur": "OR",
+    "nai": "NOT",
+    "nex": "EXCLUDE"
+  },
+
+  "normative": {
+    "tor": "NORMATIVELY_CORRECT"
+  },
+
+  "temporal": {
+    "nau": "NOW",
+    "ret": "PAST",
+    "tri": "FUTURE",
+    "yel": "REPEAT"
+  },
+
+  "relational": {
+    "kos": "FROM",
+    "til": "TO"
+  },
+
+  "spatial": {
+    "nel": "NEAR",
+    "en": "IN_REGION",
+    "tra": "TOWARD",
+    "fra": "AWAY",
+    "lef": "LEFT_OF",
+    "rai": "RIGHT_OF",
+    "sup": "ABOVE",
+    "bel": "BELOW",
+    "fai": "IN_FRONT_OF",
+    "ban": "BEHIND"
+  },
+
+  "deixis": {
+    "dia": "THIS",
+    "doq": "THAT"
+  },
+
+  "delivery": {
+    "vus": "SEND",
+    "vel": "RECEIVE",
+    "noq": "REQUEST"
+  },
+
+  "action": {
+    "mek": "DO",
+    "men": "LOG"
+  },
+
+  "guard": {
+    "khi": "IF",
+    "sek": "["
+  },
+
+  "structure": {
+    "da": "CLAUSE",
+    "qua": "QUESTION",
+    "nek": "END"
+  },
+
+  "interrogative": {
+    "soi": "WHAT",
+    "kru": "WHO",
+    "fek": "WHY"
+  },
+
+  "morphology": {
+    "tok": "CONCRETE_NOMINALIZER",
+    "al": "ABSTRACT_NOMINALIZER",
+    "nei": "INVERT",
+    "ko": "BIND"
+  }
+}
