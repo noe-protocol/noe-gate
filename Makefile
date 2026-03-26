@@ -1,59 +1,71 @@
-# Noe Reference Implementation — Makefile
-# Usage: make test | make conformance | make demo | make bench | make all | make integration-demo
+# Noe Gate — Makefile
+# Usage: make test | make conformance | make demo | make playground | make bench | make all
 
-.PHONY: test conformance demo demo-full guard bench integration-demo all clean \
+PYTHON ?= python3
+
+.PHONY: test conformance gloss playground demo demo-full guard bench integration-demo \
+        audit-demo all clean clean-all help \
         rust-parity-fixtures rust-conformance rust-diff rust-bench \
-        rust-build-ffi run-c-smoketest run-cpp-smoketest \
+        rust-build-ffi rust-hash-parity rust-parser-golden rust-test \
+        run-c-smoketest run-cpp-smoketest \
         build-zone-entry-example run-zone-entry
 
 # ─── Core Test Suites ────────────────────────────────────────────────
 
 test:                          ## Run all unit tests
-	python3 -m unittest discover tests
+	$(PYTHON) -m unittest discover tests
 
-conformance:                   ## Run NIP-011 conformance suite (80 vectors)
-	python3 tests/nip011/run_conformance.py
+conformance:                   ## Run locked NIP-011 conformance suite
+	$(PYTHON) tests/nip011/run_conformance.py
+
+# Optional: override with CHAIN="your chain here"
+CHAIN ?= shi @human_present nek
+gloss:                         ## Display canonical + glossed form of a Noe chain
+	@$(PYTHON) noe/gloss.py --side-by-side $(CHAIN)
 
 # ─── Demos ───────────────────────────────────────────────────────────
 
 demo:                          ## Run flagship shipment demo
-	python3 examples/auditor_demo/verify_shipment.py
+	$(PYTHON) examples/auditor_demo/verify_shipment.py
 
 demo-full:                     ## Run full auditor demo set
 	bash examples/auditor_demo/run_demo_full.sh
 
 guard:                         ## Run robot guard golden-vector demo (7 ticks)
-	python3 examples/robot_guard_demo.py
+	$(PYTHON) examples/robot_guard_demo.py
 
 integration-demo:              ## Run execution-boundary integration demo (permit/veto/error)
-	python3 examples/integration_demo/run_integration_demo.py
+	$(PYTHON) examples/integration_demo/run_integration_demo.py
+
+playground:                    ## Launch interactive Noe chain evaluator (REPL)
+	$(PYTHON) noe_playground.py
+
+audit-demo:                    ## Run cert-store + replay demo
+	$(PYTHON) scripts/audit_demo.py
 
 # ─── Benchmarks ──────────────────────────────────────────────────────
 
 bench:                         ## Run ROS bridge overhead benchmark
-	python3 benchmarks/bridge_overhead.py
-
-audit-demo:                    ## Run Phase 2 cert-store + replay demo
-	.venv311/bin/python scripts/audit_demo.py
+	$(PYTHON) benchmarks/bridge_overhead.py
 
 # ─── Aggregate ───────────────────────────────────────────────────────
 
-all: ## Run everything
+all:                           ## Run everything
 	@echo ""
 	@echo "── UNIT TESTS ────────────────────────────────────────────"
-	python3 -m unittest discover tests
+	$(PYTHON) -m unittest discover tests
 	@echo ""
 	@echo "── CONFORMANCE ───────────────────────────────────────────"
-	python3 tests/nip011/run_conformance.py
+	$(PYTHON) tests/nip011/run_conformance.py
 	@echo ""
 	@echo "── SAFETY DEMO ───────────────────────────────────────────"
-	python3 examples/robot_guard_demo.py
+	$(PYTHON) examples/robot_guard_demo.py
 	@echo ""
 	@echo "── AUDIT DEMO ────────────────────────────────────────────"
-	python3 examples/auditor_demo/verify_shipment.py
+	$(PYTHON) examples/auditor_demo/verify_shipment.py
 	@echo ""
 	@echo "── PERFORMANCE ───────────────────────────────────────────"
-	python3 benchmarks/bridge_overhead.py
+	$(PYTHON) benchmarks/bridge_overhead.py
 	@echo ""
 	@echo "════════════════════════════════════════════════════════════"
 	@echo "  ✅  ALL SUITES PASSED"
@@ -61,10 +73,10 @@ all: ## Run everything
 	@echo "  stale / conflicting / missing context → non-execution"
 	@echo "════════════════════════════════════════════════════════════"
 
-# ─── Rust Runtime (Phase 5) ─────────────────────────────────────────
+# ─── Rust Runtime ────────────────────────────────────────────────────
 
 rust-parity-fixtures:          ## Export Python ground truth for Rust conformance
-	.venv311/bin/python scripts/export_vectors.py
+	$(PYTHON) scripts/export_vectors.py
 
 rust-conformance:              ## Run Rust NIP-011 conformance (exact JSON match)
 	cd rust/noe_core && $${HOME}/.cargo/bin/cargo test --test conformance 2>&1
@@ -78,13 +90,13 @@ rust-parser-golden:            ## Run Rust parser precedence/associativity tests
 rust-test:                     ## Run all Rust tests (hash + parser + conformance)
 	cd rust/noe_core && $${HOME}/.cargo/bin/cargo test 2>&1
 
-rust-diff:                     ## Compare Rust vs Python outputs (requires ground_truth_rust.json)
-	.venv311/bin/python scripts/diff_harness.py rust/noe_core/tests/vectors/ground_truth.json
+rust-diff:                     ## Compare Rust vs Python outputs (requires ground_truth.json)
+	$(PYTHON) scripts/diff_harness.py rust/noe_core/tests/vectors/ground_truth.json
 
-rust-bench:                    ## Rust benchmarks (only after 80/80 exact pass)
-	@echo "ERROR: run 'make rust-conformance' first and verify 80/80" && false
+rust-bench:                    ## Rust benchmarks (run rust-conformance first)
+	@echo "ERROR: run 'make rust-conformance' first and verify all pass" && false
 
-# ─── Rust FFI (Phase 6) ──────────────────────────────────────────────
+# ─── Rust FFI ────────────────────────────────────────────────────────
 
 rust-build-ffi:                ## Build Rust shared+static library for C/C++ consumers
 	cd rust/noe_core && $${HOME}/.cargo/bin/cargo build
@@ -128,8 +140,13 @@ clean:                         ## Remove generated artifacts and caches
 	rm -f examples/auditor_demo/hallucination_certificate_*.json
 	rm -f examples/auditor_demo/shipment_certificate_*.json
 	rm -f examples/auditor_demo/*_clear_certificate.json
+	rm -rf examples/integration_demo/artifacts/
 	rm -rf guard_logs/
 
-help:                          ## Show this help
+clean-all: clean               ## Deep clean including Rust build outputs and FFI binaries
+	rm -rf rust/noe_core/target/
+	rm -f /tmp/noe_c_smoke /tmp/noe_cpp_smoke
+
+help:                          ## Show all available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}'
