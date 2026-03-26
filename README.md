@@ -75,7 +75,7 @@ This repository now includes a Python reference runtime, a Rust core, language b
 ## Quick Start
 
 
-### ROS2 — validated target path
+### ROS2 - Validated target path
 
 Validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble.
 
