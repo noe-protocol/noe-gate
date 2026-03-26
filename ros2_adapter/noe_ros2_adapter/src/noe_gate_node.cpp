@@ -36,7 +36,7 @@ NoeGateNode::NoeGateNode(const rclcpp::NodeOptions& options)
     : LifecycleNode("noe_gate_node", options)
 {
     // Declare all parameters with defaults so they appear in param dumps.
-    declare_parameter<std::string>("chain",           "shi @human_present nek");
+    declare_parameter<std::string>("chain",           "shi @zone_clear khi sek mek @enter_zone_alpha sek nek");
     declare_parameter<std::string>("mode",            "strict");
     declare_parameter<std::string>("cert_store_path", "/tmp/noe_certs");
     declare_parameter<int64_t>("max_sensor_age_ms",   5000);
