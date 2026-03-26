@@ -4,7 +4,13 @@ Thin ROS2 lifecycle node adapter for the Noe core runtime.
 
 Evaluates Noe chains via the Rust C FFI boundary (`noe::evaluate()`), emits permit/block decisions over ROS2 topics, and writes an append-only JSONL certificate log.
 
-> **Scope**: v1 covers one scenario - mobile robot zone entry - using the action chain `shi @zone_clear khi sek mek @enter_zone_alpha sek nek`. The adapter calls Noe to evaluate conditional action admissibility; the policy decision (PERMITTED/BLOCKED) is extracted directly from the emitted domain (action vs undefined).
+**Scope**: v1 covers one scenario - mobile robot zone entry - using the action chain: 
+
+`shi @zone_clear khi sek mek @enter_zone_alpha sek nek`. 
+
+KNOW @zone_clear IF [ DO @enter_zone_alpha ] END
+
+The adapter calls Noe to evaluate conditional action admissibility; the policy decision (PERMITTED/BLOCKED) is extracted directly from the emitted domain (action vs undefined).
 
 <br />
 
@@ -14,15 +20,10 @@ Evaluates Noe chains via the Rust C FFI boundary (`noe::evaluate()`), emits perm
 
 Validated on Ubuntu 22.04.5 ARM64 + ROS2 Humble.
 
-These commands are intended to be pasted exactly as written on a fresh Ubuntu 22.04 + ROS2 Humble machine. They assume the repository is cloned to `~/noe-gate`.
-
-This path assumes a fresh clone into `~/noe-gate`. If you clone elsewhere, replace that path consistently.
+These commands are intended to be pasted exactly as written on a fresh Ubuntu 22.04 + ROS2 Humble machine. They assume the repository is cloned to `~/noe-gate`. If you clone elsewhere, see [Custom Clone Locations](#custom-clone-locations-advanced).
 
 **Terminal 1: build and launch**
 
-
-> If `~/noe-gate` already exists, either `cd ~/noe-gate && git pull` to update,
-> or remove it manually before cloning fresh.
 
 ```bash
 if [ -d ~/noe-gate/.git ]; then
@@ -47,6 +48,8 @@ source install/setup.bash
 ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
 ```
 
+<br />
+
 **Terminal 2: publish the worked scenario**
 
 
@@ -59,6 +62,8 @@ source /opt/ros/humble/setup.bash
 source install/setup.bash
 python3 "$REPO_ROOT/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py"
 ```
+
+<br />
 
 ### Expected result
 
@@ -89,12 +94,11 @@ If `source install/setup.bash` fails, the ROS2 package did not build successfull
 
 ## Prerequisites
 
-| Requirement | Version |
+| Requirement | Install |
 |-------------|---------|
-| ROS2 | Humble or Iron (Ubuntu 22.04 recommended) |
-| Rust / cargo | stable (1.75+) |
-| `nlohmann-json3-dev` | Ubuntu package |
-| `libnlohmann-json3-dev` | `sudo apt install nlohmann-json3-dev` |
+| ROS2 Humble | Ubuntu 22.04 recommended — [ros.org/install](https://docs.ros.org/en/humble/Installation.html) |
+| Rust / cargo | `curl https://sh.rustup.rs -sSf \| sh` |
+| nlohmann-json | `sudo apt install nlohmann-json3-dev` |
 | colcon | `sudo apt install python3-colcon-common-extensions` |
 
 <br />
@@ -107,7 +111,6 @@ machine, use Docker. A `Dockerfile` and `docker_verify.sh` are included.
 **One-shot build + verify:**
 
 ```bash
-# From repo root:
 docker build -t noe_ros2_build -f ros2_adapter/Dockerfile .
 docker run --rm noe_ros2_build
 ```
@@ -204,7 +207,7 @@ source install/setup.bash
 python3 "$REPO_ROOT/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py"
 ```
 
-Expected output:
+Representative output:
 ```
 --- Scenario 1: zone blocked (@zone_clear=False) → expect BLOCKED ---
 [SENT] /noe/zone_clear = False
@@ -248,7 +251,9 @@ ros2 topic echo /noe/decision --once
 | `/noe/permitted` | `std_msgs/Bool` | Output | `true` = PERMITTED (zone clear), `false` = BLOCKED |
 | `/noe/decision` | `std_msgs/String` | Output | Full Noe result envelope (JSON string) |
 
----
+> Topics use the `/noe/` namespace because the adapter exposes the underlying Noe protocol semantics. "Noe Gate" refers to the runtime boundary, not a separate wire protocol namespace.
+
+<br />
 
 ## Parameters
 
@@ -312,6 +317,8 @@ If `/noe/zone_clear` has not been received within `max_sensor_age_ms`, the adapt
 2. Publishes `permitted=false` (BLOCKED, fail-safe)
 3. **Still writes a JSONL record** with `"code": "ERR_STALE_SENSOR"` — dropped-sensor events should be auditable
 
+This fail-safe stale-input policy is implemented by the ROS2 adapter, not by the core Noe evaluator itself.
+
 <br />
 
 ## Architecture Position
@@ -343,7 +350,6 @@ If `/noe/zone_clear` has not been received within `max_sensor_age_ms`, the adapt
 After any change, verify:
 
 ```bash
-# Rust conformance: must remain 93/93
 cd "$REPO_ROOT/rust/noe_core" && cargo test --test conformance -- --nocapture
 
 # C smoke test
@@ -361,6 +367,8 @@ make run-zone-entry
 ## Custom Clone Locations (Advanced)
 
 If you clone the repository somewhere other than `~/noe-gate`, you must explicitly configure `REPO_ROOT` before running `cargo` or `colcon` commands.
+
+Replace the path below with your actual checkout path:
 
 ```bash
 export REPO_ROOT="/absolute/path/to/your/noe-gate-checkout"
