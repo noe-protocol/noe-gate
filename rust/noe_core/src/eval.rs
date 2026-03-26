@@ -988,16 +988,18 @@ fn eval_question(q_type: &Option<String>, body: &Expr, ctx: &ContextLayers, mode
 // ---------------------------------------------------------------------------
 
 fn eval_conditional(cond: &Expr, guard: &Expr, ctx: &ContextLayers, mode: &str) -> NoeVal {
-    let guard_val = eval_expr(guard, ctx, mode);
-    // Guard must be truth-typed
-    match guard_val {
-        NoeVal::Truth(true) => eval_expr(cond, ctx, mode),
+    // Grammar: `cond khi sek_scope`
+    // `cond` is the truth condition (LHS), `guard` is the action scope (RHS).
+    // Evaluate the truth condition first.
+    let cond_val = eval_expr(cond, ctx, mode);
+    match cond_val {
+        NoeVal::Truth(true) => eval_expr(guard, ctx, mode),
         NoeVal::Truth(false) => NoeVal::Undefined,
         NoeVal::Undefined => NoeVal::Undefined,
-        NoeVal::Error { .. } => guard_val,
+        NoeVal::Error { .. } => cond_val,
         _ => NoeVal::Error {
             code: ERR_GUARD_TYPE,
-            message: "khi guard must evaluate to truth or undefined".to_string(),
+            message: "khi condition must evaluate to truth or undefined".to_string(),
         },
     }
 }
