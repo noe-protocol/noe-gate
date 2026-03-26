@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "noe-runtime"
-version = "1.0.0"
-description = "Noe: deterministic policy runtime for agent/robot action gating with grounded context and replayable provenance"
+name = "noe-gate"
+version = "1.1.0"
+description = "Noe: deterministic policy runtime for agent/robot action gating with grounded context, sensor grounding, append-only audit, and replayable provenance"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 authors = [{ name = "The Noe Foundation" }]
-keywords = ["robotics", "agents", "policy", "safety", "auditability", "logic", "provenance"]
+keywords = ["robotics", "agents", "policy", "safety", "auditability", "logic", "provenance", "grounding", "replay"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -24,22 +24,31 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
-dependencies = [
-    "arpeggio>=2.0.0",
-]
+dependencies = ["arpeggio>=2.0.0"]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-]
+dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0", "build>=1.0.0"]
+
+[project.scripts]
+noe-audit          = "noe.persistence.cli_audit:main"
+noe-replay         = "noe.persistence.cli_replay:main"
+noe-btcpp-convert  = "packages.btcpp_converter.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/noe-protocol/noe"
-Repository = "https://github.com/noe-protocol/noe"
+Homepage      = "https://github.com/noe-protocol/noe"
+Repository    = "https://github.com/noe-protocol/noe"
 Documentation = "https://github.com/noe-protocol/noe/tree/main/docs"
 
+# ---------------------------------------------------------------------------
+# Package discovery — explicit: install noe.* and packages.grounding.* only.
+# ---------------------------------------------------------------------------
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["noe*"]
-exclude = ["tests*", "benchmarks*", "examples*"]
+where   = ["."]
+include = ["noe*", "packages*"]
+exclude = ["tests*", "benchmarks*", "examples*", "scripts*"]
+
+# ---------------------------------------------------------------------------
+# Package data — noe/registry.json must ship in the wheel (not just sdist).
+# ---------------------------------------------------------------------------
+[tool.setuptools.package-data]
+"noe" = ["registry.json"]
