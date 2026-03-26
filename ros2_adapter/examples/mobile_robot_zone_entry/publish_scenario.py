@@ -14,8 +14,8 @@ Usage:
     python3 publish_scenario.py
 
 Expected output:
-    [PASS] permitted=False (expected=False)   ← human present  → BLOCKED (guard failed)
-    [PASS] permitted=True  (expected=True)    ← human absent   → PERMITTED (action emitted)
+    [PASS] permitted=False (expected=False)   ← zone_clear=False → BLOCKED (guard failed)
+    [PASS] permitted=True  (expected=True)    ← zone_clear=True  → PERMITTED (action emitted)
 """
 
 import time
@@ -29,8 +29,8 @@ class ZoneEntryScenarioPublisher(Node):
     def __init__(self):
         super().__init__('zone_entry_scenario_publisher')
 
-        self.pub_human_present   = self.create_publisher(Bool,   '/noe/human_present',  10)
-        self.pub_proposed_action = self.create_publisher(String, '/noe/proposed_action', 10)
+        self.pub_zone_clear       = self.create_publisher(Bool,   '/noe/zone_clear',      10)
+        self.pub_proposed_action  = self.create_publisher(String, '/noe/proposed_action', 10)
 
         self.sub_permitted = self.create_subscription(
             Bool, '/noe/permitted', self.on_permitted, 10)
@@ -60,16 +60,16 @@ class ZoneEntryScenarioPublisher(Node):
         self.last_permitted_at = 0.0
         self.last_decision_at  = 0.0
 
-    def run_scenario(self, human_present: bool, expected_permitted: bool,
+    def run_scenario(self, zone_clear: bool, expected_permitted: bool,
                      proposed_action: str = 'enter_zone_alpha') -> bool:
         self.get_logger().info(
-            f"\n--- human_present={human_present}  expected_permitted={expected_permitted} ---")
+            f"\n--- zone_clear={zone_clear}  expected_permitted={expected_permitted} ---")
 
         self.reset_response_state()
 
         # Publish sensor context first.
-        self.pub_human_present.publish(Bool(data=human_present))
-        self.get_logger().info(f"[SENT] /noe/human_present = {human_present}")
+        self.pub_zone_clear.publish(Bool(data=zone_clear))
+        self.get_logger().info(f"[SENT] /noe/zone_clear = {zone_clear}")
 
         # Short pause — let the gate node ingest the new sensor value before
         # the proposed_action triggers evaluation.
@@ -107,8 +107,10 @@ def main():
         rclpy.spin_once(node, timeout_sec=0.1)
 
     try:
-        r1 = node.run_scenario(human_present=True,  expected_permitted=False)
-        r2 = node.run_scenario(human_present=False, expected_permitted=True)
+        # Scenario 1: zone blocked (human present) → zone_clear=False → BLOCKED
+        r1 = node.run_scenario(zone_clear=False, expected_permitted=False)
+        # Scenario 2: zone clear (no human) → zone_clear=True → PERMITTED
+        r2 = node.run_scenario(zone_clear=True,  expected_permitted=True)
 
         node.get_logger().info(
             "\n=== Scenario run complete. Check /tmp/noe_certs/decisions.jsonl ===")
