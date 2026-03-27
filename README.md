@@ -116,39 +116,20 @@ make playground
 
 <br />
 
-### Agent governance - pip install
-
-For LLM tool-use workflows and agentic pipelines:
-
-```bash
-pip install noe-gate
-```
-
-```python
-import noe  # install: noe-gate, import: noe
-
-runtime = noe.NoeRuntime()
-
-ctx = runtime.build_context({
-    "domain": {"human_approved_broadcast": True},
-    "local":  {}
-})
-
-chain = "shi @human_approved_broadcast khi sek mek @send_email sek nek"
-result = runtime.evaluate(chain, ctx)
-
-if result.get("domain") == "action":
-    execute(result["value"])
-```
-
-CLIs installed by the package: `noe-replay`, `noe-audit`, `noe-btcpp-convert`.
-
-<br />
-
 ### Windows
 
+Windows support is expected via WSL2, but the setup path has not yet been fully validated end to end.
+
+Recommended approach:
+- use WSL2 with Ubuntu
+- run the Linux installation steps from the Ubuntu shell
+- do not assume native PowerShell or CMD support
+
+Until this path is fully validated, macOS, Linux, and ROS2-on-Ubuntu should be treated as the primary supported environments.
+
+After installing WSL2 and Ubuntu, open an Ubuntu shell and run:
+
 ```bash
-# Install WSL2 + Ubuntu, then open an Ubuntu terminal
 sudo apt update
 sudo apt install -y make git python3.11 python3.11-venv python3-pip
 
@@ -158,10 +139,13 @@ cd noe-gate
 python3.11 -m venv .venv
 source .venv/bin/activate
 
-python -m pip install ".[dev]"
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 
-make conformance
 make demo
+make integration-demo
+make conformance
+make playground
 ```
 
 <br />
