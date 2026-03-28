@@ -5,12 +5,12 @@
 Noe Gate sits between untrusted proposers (humans, LLMs, and planners) and downstream actuators such as robots and industrial automation. It evaluates proposed actions against explicit grounded context and emits a typed result: `list[action]`, `undefined`, or `error`.
 
 **Core flow**
-1.	Proposal: an untrusted source proposes an action
-2.	Permission check: deterministic checks are evaluated against grounded context
-3.	Decision: the action is permitted or blocked
-4.	Outcome: `list[action]`, `undefined`, or `error`
+1. Proposal: an untrusted source proposes an action
+2. Permission check: deterministic checks are evaluated against grounded context
+3. Decision: the action is permitted or blocked
+4. Outcome: `list[action]`, `undefined`, or `error`
 
-Noe Gate is not a control loop or motion planner. It is a fail-stop decision boundary for discrete, safety-relevant actions, with replayable evidence records. Fallback policies, recovery behavior, liveness, and low-level safety responses remain system-level responsibilities outside the runtime, but the certificate can still capture the policy and liveness parameters in effect when the admission decision was made.
+Noe Gate is not a control loop, motion planner, or hard real-time safety layer. It is a fail-stop decision boundary for discrete, safety-relevant actions, with replayable evidence records. Fallback policies, recovery behavior, liveness, and low-level safety responses remain system-level responsibilities outside the runtime, but the certificate can still capture the policy and liveness parameters in effect when the admission decision was made.
 
 In safety-relevant environments, generating an action is not enough. The system must also be able to show why that action was permitted, under what context, and whether another conforming runtime would reach the same verdict.
 
@@ -122,12 +122,6 @@ python3 "$REPO_ROOT/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenar
 
 <br />
 
-Expected result
-	•	@zone_clear=false → blocked
-	•	@zone_clear=true → permitted
-	•	result: ALL PASS
-
-
 For troubleshooting, Docker validation, topics, parameters, and adapter-specific details, see [ros2_adapter/README.md](ros2_adapter/README.md).
 
 ### Python - reference and demo path
@@ -226,43 +220,54 @@ make help
 
 ## Why Noe Gate exists
 
-Modern autonomy stacks already use rule engines, PLC interlocks, runtime
-assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe Gate
-does not replace all of these.** Its purpose is narrower.
+Modern autonomy stacks already use rule engines, PLC interlocks, runtime assurance monitors, behavior-tree guards, and ROS2 supervisor logic. **Noe Gate does not replace all of these.** Its purpose is narrower.
 
-Noe Gate exists for the case where **untrusted proposers** are allowed to suggest
-safety-relevant actions, but those actions must pass through a **small
-deterministic enforcement boundary** that is:
+PLCs and interlocks solve deterministic safety in a closed world: fixed logic, fixed inputs, and hard real-time control. Noe Gate serves a different layer of the stack: deterministic, auditable admission of actions proposed by planners, LLMs, or other systems whose internal reasoning is not itself a sufficient safety contract.
+
+Noe Gate exists for the case where **untrusted proposers** are allowed to suggest safety-relevant actions, but those actions must pass through a **small deterministic enforcement boundary** that is:
 
 - grounded in an explicit admissible context (`C_safe`)
 - replayable across conforming runtimes
 - capable of distinguishing benign non-permission from contract violation
-- able to produce portable evidence records for audit and incident
-  reconstruction
+- able to produce portable evidence records for audit and incident reconstruction
 
-In that setting, the central questions are not just "was the action blocked"
-but:
+In that setting, the central questions are not just "was the action blocked" but:
 
 - What exact context was admitted into the decision boundary?
 - What rule was evaluated?
 - Why was the action emitted, withheld, or refused?
-- Can another conforming runtime replay the same decision and obtain the same
-  normative result?
+- Can another conforming runtime replay the same decision and obtain the same normative result?
 
 Noe Gate is designed to make those questions answerable.
 
-| Need | Common baseline | What Noe Gate adds |
-|------|-----------------|-------------------|
-| Deterministic gating of discrete actions | Rule engines, behavior-tree guards, supervisor code | A bounded decision language with deterministic replay across conforming runtimes |
-| Hard real-time plant-floor safety | PLCs, interlocks, low-level safety controllers | Noe Gate does not replace these; it sits upstream of them |
-| Supervisory control around advanced autonomy | Runtime assurance architectures, runtime monitors | Explicit guard chains, admissible context projection, and replayable certificates |
-| Constraining AI- or planner-generated proposals before actuation | Custom wrappers and application logic | A formal action-admission boundary between proposers and actuators |
-| Post-incident reconstruction | Logs, traces, ad hoc telemetry | Frozen context commitments plus typed, replayable decision outcomes |
+Comparison is scoped to portable replay across implementations and typed evidence artifacts, not merely to deterministic execution within a single implementation.
+
+| Pattern | Portable replay across implementations | Explicit epistemic typing | Portable evidence artifact | Good for hard real-time control | Typical role |
+|---|---|---|---|---|---|
+| Behavior tree guards | Partial | No | Partial | No | Supervisory orchestration |
+| Runtime assurance monitor | Partial | No | Partial | Partial | Safety supervision |
+| Rule / policy wrapper | Partial | No | Partial | No | Application-level gating |
+| PLC / interlock | No | No | No | Yes | Low-level safety |
+| Noe Gate | Yes | Yes | Yes | No | Deterministic action admission |
 
 Noe Gate's claim is not that it is better than all existing safety mechanisms. Its
 claim is narrower: **when action proposals come from untrusted or probabilistic
 sources, Noe Gate provides a deterministic, replayable, evidence-bearing gate
 before execution.**
+
+<br />
+
+## When Noe Gate is not the right tool
+
+Noe Gate is not the right tool for:
+
+- hard real-time interlocks
+- sub-millisecond reflex control
+- low-level motion control
+- systems where deterministic replay and evidence records are not important
+- cases where a simple static rule layer already solves the problem adequately
+
+Its role is narrower: deterministic admission of discrete, safety-relevant actions at the supervisory boundary.
 
 <br />
 
@@ -319,6 +324,8 @@ record of the rule, admitted context, and outcome. This supports:
 - compliance evidence workflows
 - fault attribution across perception, adapter, and decision layers
 
+<br />
+
 **What Noe Gate provides:**
 
 - **Deterministic evaluation:** identical normative inputs produce identical
@@ -336,6 +343,21 @@ record of the rule, admitted context, and outcome. This supports:
 
 Noe Gate should therefore be understood as **evidence infrastructure for action
 admission**, not as a complete legal or safety determination system.
+
+<br />
+
+### Example: stale modality blocks admission
+
+A planner proposes `@enter_zone_alpha`.
+
+- vision reports `@zone_clear=true`
+- lidar is stale under the active freshness policy
+- the admitted context does not satisfy the required decision contract
+- Noe Gate does not emit the action
+- the result is `undefined` or `error`, depending on the configured contract path
+- the certificate records the chain, context commitments, and the blocking condition
+
+This is the kind of case where many systems log a failure but do not produce a portable, replayable decision artifact. Noe Gate is designed to make the blocking reason explicit and reproducible.
 
 <br />
 
@@ -397,32 +419,36 @@ conformance runner aborts on any mismatch by design.
 
 ## What a certificate looks like
 
-Every decision produces a JSON certificate with hash commitments. Example
-(truncated):
+Every decision produces a JSON certificate with hash commitments. Optional renderings fields may be included for display, but MUST NOT affect canonical hashes or replay checks. Example (truncated):
 
 ```json
 {
   "noe_version": "v1.0-rc1",
   "chain": "shi @temperature_ok an shi @human_clear khi sek mek @release_pallet sek nek",
+  "renderings": {
+    "gloss_en": "KNOW @temperature_ok AND KNOW @human_clear IF [ DO @release_pallet ] END"
+  },
   "registry": {
     "path": "noe/registry.json",
     "hash": "9c2c1e4a8b6d5f2a1d9e3c4b7a6f0e11",
     "commit": "git:3f2a1c9"
   },
   "context_hashes": {
-    "root":   "4802862d...4d74",
+    "root": "4802862d...4d74",
     "domain": "8d84e2f1...3c90",
-    "local":  "f83bb963...7264",
-    "safe":   "4b766825...dbbf"
+    "local": "f83bb963...7264",
+    "safe": "4b766825...dbbf"
   },
   "outcome": {
     "domain": "list",
-    "value": [{
-      "type": "action",
-      "verb": "mek",
-      "target": "@release_pallet",
-      "action_hash": "3031cedd...f00b"
-    }]
+    "value": [
+      {
+        "type": "action",
+        "verb": "mek",
+        "target": "@release_pallet",
+        "action_hash": "3031cedd...f00b"
+      }
+    ]
   }
 }
 ```
@@ -462,7 +488,7 @@ The following English glosses are display-only reading aids. Canonical Noe chain
 | `vek` | BELIEVE | Evidentiary status check at the belief tier | `vek @path_clear` |
 | `an` | AND | Conjunction | `shi @a an shi @b` |
 | `ur` | OR | Disjunction | `shi @a ur shi @b` |
-| `nai` | NOT | Negation | `nai shi @human_presen)` |
+| `nai` | NOT | Negation | `nai shi @human_present` |
 | `khi` | IF | Guard introducer for conditional action emission | `shi @path_clear khi sek mek @go sek nek` |
 | `sek` | `[` / `]` | Explicit scope boundary | `sek mek @action sek` |
 | `nek` | END | Chain terminator | `... sek nek` |
