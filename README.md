@@ -2,30 +2,21 @@
 
 **A deterministic action-gating kernel for autonomous systems.**
 
-Noe Gate sits between untrusted proposers - humans, LLMs, planners - and
-downstream actuators such as robots and industrial automation. It evaluates
-a deterministic decision chain against grounded context and returns one of
-three outcomes:
+Noe Gate sits between untrusted proposers (humans, LLMs, and planners) and downstream actuators such as robots and industrial automation. It evaluates proposed actions against explicit grounded context and emits a typed result: `list[action]`, `undefined`, or `error`.
 
-- **`list[action]`** -- permission granted; action emitted
-- **`undefined`** -- no action emitted because the guard did not resolve to
-  permission
-- **`error`** -- strict-mode contract rejection, such as
-  `ERR_EPISTEMIC_MISMATCH` or `ERR_CONTEXT_STALE`
+**Core flow**
+1.	Proposal: an untrusted source proposes an action
+2.	Permission check: deterministic checks are evaluated against grounded context
+3.	Decision: the action is permitted or blocked
+4.	Outcome: `list[action]`, `undefined`, or `error`
 
-Noe Gate is not a control loop or motion planner. It is a fail-stop decision
-boundary for discrete, safety-relevant actions, with replayable evidence
-records.
+Noe Gate is not a control loop or motion planner. It is a fail-stop decision boundary for discrete, safety-relevant actions, with replayable evidence records. Fallback policies, recovery behavior, liveness, and low-level safety responses remain system-level responsibilities outside the runtime, but the certificate can still capture the policy and liveness parameters in effect when the admission decision was made.
 
-**Thesis:** As autonomy stacks increasingly rely on untrusted proposers,
-proposal must be separated from permission. In safety-relevant environments,
-it is not enough to generate an action. The system must also be able to show
-why that action was allowed under grounded context, and reproduce the same
-verdict later from the same rule and context.
+In safety-relevant environments, generating an action is not enough. The system must also be able to show why that action was permitted, under what context, and whether another conforming runtime would reach the same verdict.
 
 ```
 untrusted proposer  -->  Noe Gate  -->  downstream controller
-                ↘ certificate / replay record
+                     \-> certificate / replay record
 ```
 
 > **Naming note:** **Noe** is the underlying symbolic protocol. **Noe Gate** is the deterministic action-gating runtime built on that protocol. Internal package and module names use the `noe` protocol namespace (`import noe`, `noe/`). The distribution package is `noe-gate`.
@@ -74,24 +65,70 @@ This repository now includes a Python reference runtime, a Rust core, language b
 
 ## Quick Start
 
+### ROS2 - validated target path
 
-### ROS2 - Validated target path
+Validated on Ubuntu 22.04.5 ARM64 + ROS2 Humble.
 
-Validated on Ubuntu 22.04.5 ARM64 / ROS2 Humble.
-
-For the exact build, launch, and scenario steps, see:
-[`ros2_adapter/README.md`](ros2_adapter/README.md)
-
-The current worked ROS2 scenario uses the action chain:
+The current worked ROS2 scenario uses:
 
 `shi @zone_clear khi sek mek @enter_zone_alpha sek nek`  
 `KNOW @zone_clear IF [ DO @enter_zone_alpha ] END`
 
-and validates:
+**Expected result**
 - `@zone_clear=false` → blocked
 - `@zone_clear=true` → permitted
+- result: `ALL PASS`
+
+**Terminal 1: build and launch**
+
+
+```bash
+if [ -d ~/noe-gate/.git ]; then
+  cd ~/noe-gate && git pull
+else
+  git clone https://github.com/noe-protocol/noe-gate.git ~/noe-gate
+fi
+export REPO_ROOT="$HOME/noe-gate"
+
+cd "$REPO_ROOT/rust/noe_core"
+cargo build
+cd ../..
+
+cd "$REPO_ROOT/ros2_adapter"
+source /opt/ros/humble/setup.bash
+colcon build --base-paths . --packages-select noe_ros2_adapter --cmake-args \
+  -DNOE_CORE_LIB_DIR="$REPO_ROOT/rust/noe_core/target/debug" \
+  -DNOE_CORE_INCLUDE_DIR="$REPO_ROOT/rust/noe_core/include" \
+  -DNOE_CPP_INCLUDE_DIR="$REPO_ROOT/rust/noe_core/cpp"
+
+source install/setup.bash
+ros2 launch noe_ros2_adapter mobile_robot_zone_entry.launch.py
+```
 
 <br />
+
+**Terminal 2: publish the worked scenario**
+
+
+Open a second terminal and run:
+
+```bash
+export REPO_ROOT="$HOME/noe-gate"
+cd "$REPO_ROOT/ros2_adapter"
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+python3 "$REPO_ROOT/ros2_adapter/examples/mobile_robot_zone_entry/publish_scenario.py"
+```
+
+<br />
+
+Expected result
+	•	@zone_clear=false → blocked
+	•	@zone_clear=true → permitted
+	•	result: ALL PASS
+
+
+For troubleshooting, Docker validation, topics, parameters, and adapter-specific details, see [ros2_adapter/README.md](ros2_adapter/README.md).
 
 ### Python - reference and demo path
 
@@ -251,7 +288,7 @@ sensor and planner adapters must quantize before projection into `C_safe`.
 `pi_safe` is the deterministic projection from richer upstream state into the
 minimal context the evaluator is allowed to consume. It is responsible for
 pruning stale inputs, enforcing admissibility rules, and exposing grounded
-predicate membership to the kernel. Debounce, hysteresis, and other
+predicate membership to the runtime. Debounce, hysteresis, and other
 perception-side smoothing belong upstream of `pi_safe`.
 
 <br />
@@ -425,8 +462,8 @@ The following English glosses are display-only reading aids. Canonical Noe chain
 | `vek` | BELIEVE | Evidentiary status check at the belief tier | `vek @path_clear` |
 | `an` | AND | Conjunction | `shi @a an shi @b` |
 | `ur` | OR | Disjunction | `shi @a ur shi @b` |
-| `nai` | NOT | Negation | `nai (shi @danger)` |
-| `khi` | IF | Guard introducer for conditional action emission | `shi @safe khi sek mek @go sek nek` |
+| `nai` | NOT | Negation | `nai shi @human_presen)` |
+| `khi` | IF | Guard introducer for conditional action emission | `shi @path_clear khi sek mek @go sek nek` |
 | `sek` | `[` / `]` | Explicit scope boundary | `sek mek @action sek` |
 | `nek` | END | Chain terminator | `... sek nek` |
 | `mek` | DO | Action emission | `mek @release_pallet` |
